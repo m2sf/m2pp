@@ -1,0 +1,47 @@
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE CharQueue;
+
+(* Put-Back Character Queue *)
+
+
+(* Operations *)
+
+(* ---------------------------------------------------------------------------
+ * function isEmpty()
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if the queue is empty, else FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isEmpty ( ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function isFull()
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if the queue is full, else FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isFull ( ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure Insert(ch)
+ * ---------------------------------------------------------------------------
+ * Adds ch to the tail of the queue if queue is not full.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE Insert ( ch : CHAR );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure Remove(ch)
+ * ---------------------------------------------------------------------------
+ * Removes the character at the head of the queue if queue is not empty.
+ * Passes the removed character in ch, or NUL if the queue is empty.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE Remove ( VAR ch : CHAR );
+
+
+END CharQueue.
