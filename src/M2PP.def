@@ -1,0 +1,20 @@
+(*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE M2PP;
+
+(* Modula-2 Preprocessor *)
+
+IMPORT Dictionary, FileIO;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure Expand(template, dict, outfile)
+ * ---------------------------------------------------------------------------
+ * Expands template file into output file using dictionary dict.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE Expand
+  ( template : FileIO.File; dict : Dictionary; outfile : FileIO.File );
+
+
+END M2PP.
