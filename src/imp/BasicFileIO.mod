@@ -7,13 +7,6 @@ IMPLEMENTATION MODULE BasicFileIO;
 FROM UnsignedInt IMPORT ULONGINT;
 
 
-TYPE File; (* OPAQUE *)
-
-TYPE Mode = ( Read, Write, Append );
-
-TYPE Status = ( Success, Failure ); (* TO DO: refine *)
-
-
 (* Operations *)
 
 (* -----------------------------------------------------------------------
