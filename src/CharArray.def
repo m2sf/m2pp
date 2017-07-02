@@ -38,13 +38,13 @@ PROCEDURE StripNonAlphaNum ( VAR array : ARRAY OF CHAR );
 (* Removes all non-alphanumeric characters, including whitespace from array. *)
 
 
-(* Case Transformations *)
-
 PROCEDURE ToWordSequence ( VAR array : ARRAY OF CHAR );
 (* Replaces any minus, plus, asterisk, solidus, single and double quote that
    is enclosed by letters to whitespace, then trim-collapses whitespace, and
    then removes non-aphanumeric characters except whitespace from array. *)
 
+
+(* Case Transformations *)
 
 PROCEDURE ToLower ( VAR array : ARRAY OF CHAR );
 (* Converts all uppercase characters in array to lowercase. *)
