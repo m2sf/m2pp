@@ -1,0 +1,61 @@
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation. *)
+
+DEFINITION MODULE Dictionary;
+
+(* Key/Value Dictionary *)
+
+IMPORT String;
+
+FROM String IMPORT StringT; (* alias for String.String *)
+
+
+CONST MaxKeyLength = 32;
+
+
+(* Procedure type for passing to procedure WithKeyValuePairDo *)
+
+TYPE IterBodyProc = PROCEDURE ( ARRAY OF CHAR, StringT );
+
+
+(* Introspection *)
+
+PROCEDURE count ( ) : CARDINAL;
+(* Returns the number of items in the global dictionary. *)
+
+
+(* Lookup Operations *)
+
+PROCEDURE isPresent ( VAR (* CONST *) key : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if a value is stored for key in the global dictionary. *)
+
+
+PROCEDURE stringForKey ( VAR (* CONST *) key : ARRAY OF CHAR ) : StringT;
+(* Returns the string value stored for key, if key is present in the global
+   dictionary. Returns NIL if key is not present in the global dictionary. *)
+
+
+(* Insert Operations *)
+
+PROCEDURE StoreArrayForKey
+  ( VAR (* CONST *) key; VAR array : ARRAY OF CHAR );
+(* Obtains an interned string for array,
+   then stores the string for key in the global dictionary. *)
+
+
+PROCEDURE StoreStringForKey
+  ( VAR (* CONST *) key : ARRAY OF CHAR; string : StringT );
+(* Stores string for key in the global dictionary. *)
+
+
+(* Removal Operations *)
+
+PROCEDURE RemoveKey ( VAR (* CONST *) key );
+(* Removes key and its value in the global dictionary. *)
+
+
+(* Iteration *)
+
+PROCEDURE WithKeyValuePairsDo ( p : IterBodyProc );
+
+
+END Dictionary.
