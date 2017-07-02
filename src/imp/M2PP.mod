@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE M2PP;
 
 (* Modula-2 Preprocessor *)
 
-IMPORT Dictionary, String, CharQueue, FileIO;
+IMPORT Dictionary, String, BasicFileIO;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -20,89 +20,75 @@ CONST
   DOUBLEQUOTE = CHR(34);
 
 
-TYPE Context = RECORD
-  dict    : Dictionary;
-  infile,
-  outfile : FileIO.File
-END; (* Context *)
-
-
 (* ---------------------------------------------------------------------------
- * procedure Expand(template, dict, outfile)
+ * procedure Expand(template, outfile)
  * ---------------------------------------------------------------------------
- * Expands template file into output file using dictionary dict.
+ * Expands template file into output file using a global dictionary.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE Expand
-  ( template : FileIO.File; dict : Dictionary; outfile : FileIO.File );
+PROCEDURE Expand ( template : File; outfile : File );
 
-VAR
-  c : Context;
-  
 BEGIN
-  c.dict := dict;
-  c.infile := template;
-  c.outfile := outfile;
   
-  WHILE NOT EOF(c) DO
+  WHILE NOT EOF(template) DO
     
-    ReadChar(c, ch);
+    ReadChar(template, ch);
     
     CASE ch OF
     (* tabulator *)
       TAB :
         IF ReplaceTabsWithSpaces THEN
-          WriteChars(c, "  ")
+          WriteChars(outfile, "  ")
         ELSE
-          WriteChar(c, ch)
+          WriteChar(outfile, ch)
         END (* IF *)
       
     (* line feed *)
     | LF :
         (* write newline *)
-        WriteLn(c)
+        WriteLn(outfile)
         
     (* carriage return *)
     | CR :
         (* write newline *)
-        WriteLn(c);
+        WriteLn(outfile);
         
         (* if LF follows, skip it *)
-        ReadChar(c, ch);
+        ReadChar(template, ch);
         IF ch # LF THEN
           (* not LF, put it back *)
-          CharQueue.Insert(ch)
+          InsertChar(template, ch)
         END (* IF *)
         
     (* double quoted literal *)
     | DOUBLEQUOTE :
         (* prevent expansion within quoted literal *)
-        CopyCharsUpTo(c, ch)
+        CopyCharsUpTo(template, ch)
         
     (* placeholder *)
     | '#' :
       (* get next char *)
-      ReadChar(c, ch);
+      ReadChar(template, ch);
       
       IF ch = '#' THEN
         (* 2nd char matched *)
-        ExpandPlaceholder(c)
+        ExpandPlaceholder(template, outfile)
         
       ELSE (* 2nd char did not match *)
-        WriteChar(c, "#");
+        WriteChar(outfile, "#");
         (* put 2nd char back *)
-        CharQueue.Insert(ch)
+        InsertChar(template, ch)
       END (* IF *)
     
     (* single quoted literal *)
     | SINGLEQUOTE :
         (* prevent expansion within quoted literal *)
-        CopyCharsUpTo(c, ch)
+        CopyCharsUpTo(template, ch)
         
-    (* m2pp pragma*)
+    (* m2pp directive *)
     | '(' :
       (* get next char *)
-      ReadChar(c, ch);
+      ReadChar(template, ch);
       
       IF ch = '*' THEN
         (* 2nd char matched *)
@@ -110,38 +96,38 @@ BEGIN
         
         IF ch = '?' THEN
           (* 3rd char matched *)
-          Pragma(c)
+          Directive(template, outfile)
           
         ELSE (* 3rd char did not match *)
-          WriteChars(c, "(*");
+          WriteChars(outfile, "(*");
           (* put 3rd char back *)
-          CharQueue.Insert(ch)
+          InsertChar(template, ch)
         END (* IF *)
         
       ELSE (* 2nd char did not match *)
-        WriteChar(c, "(");
+        WriteChar(outfile, "(");
         (* put 2nd char back *)
-        CharQueue.Insert(ch)
+        InsertChar(template, ch)
       END (* IF *)
     
     (* m2pp comment *)
     | '/' :
       (* 1st char matched *)
-      ReadChar(c, ch);
+      ReadChar(template, ch);
       
       IF ch = '*' THEN
         (* 2nd char matched *)
-        SkipComment(c);
+        SkipComment(template);
         
       ELSE (* 2nd char did not match *)
-        WriteChar("/");
+        WriteChar(outfile, "/");
         (* put last char back *)
-        CharQueue.Insert(ch)
+        InsertChar(template, ch)
       END (* IF *)
       
     (* any other chars *)
     ELSE
-      WriteChar(c, ch)
+      WriteChar(template, ch)
     END (* CASE *)
   END (* WHILE *)  
 END Expand;
@@ -153,57 +139,62 @@ END Expand;
  * Returns TRUE if infile has reached EOF, else FALSE.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE EOF( VAR (* CONST *) c : Context ) : BOOLEAN;
+PROCEDURE EOF( infile : File ) : BOOLEAN;
 
 BEGIN
-  RETURN FileIO.eof(c.infile)
+  RETURN BasicFileIO.eof(infile)
 END EOF;
 
 
 (* ---------------------------------------------------------------------------
- * procedure ReadChar(ch)
+ * procedure ReadChar(infile ch)
  * ---------------------------------------------------------------------------
- * Reads a character from the input file
+ * Reads a character from the input file and passes it back in ch
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE ReadChar( VAR (* CONST *) c : Context; VAR ch : CHAR );
-
-VAR
-  octet : CARDINAL;
+PROCEDURE ReadChar( infile : File; VAR ch : CHAR );
   
 BEGIN
-  IF CharQueue.isEmpty() THEN
-    FileIO.Read(c.infile, octet);
-    ch := CHR(octet)
-  ELSE
-    CharQueue.Remove(ch)
-  END (* IF *)  
+  BasicFileIO.ReadChar(infile, ch);
 END ReadChar;
 
 
 (* ---------------------------------------------------------------------------
- * procedure WriteChar(ch)
+ * procedure InsertChar(infile, ch)
  * ---------------------------------------------------------------------------
- * Writes a character to the output file
+ * Inserts ch into infile's insert buffer to be reread by next ReadChar call
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE WriteChar( VAR (* CONST *) c; ch : CHAR );
+PROCEDURE InsertChar( infile : File; VAR ch : CHAR );
+  
+BEGIN
+  BasicFileIO.InsertChar(infile, ch);
+END InsertChar;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure WriteChar(outfile, ch)
+ * ---------------------------------------------------------------------------
+ * Writes a character to the output file if it is a printable character
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WriteChar( outfile : File; ch : CHAR );
 
 BEGIN
   (* write to output if printable char *)
   IF (ch >= SPACE) AND (ch # DEL) THEN
-    FileIO.Write(c.outfile, ORD(ch))
+    BasicFileIO.WriteChar(outfile, ch)
   END   
 END WriteChar;
 
 
 (* ---------------------------------------------------------------------------
- * procedure WriteChars(array)
+ * procedure WriteChars(outfile, array)
  * ---------------------------------------------------------------------------
  * Writes a character array to the output file
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE WriteChars( VAR (* CONST *) c : Context; array : ARRAY OF CHAR );
+PROCEDURE WriteChars( outfile : File; array : ARRAY OF CHAR );
 
 VAR
   ch : CHAR;
@@ -221,168 +212,169 @@ BEGIN
     
     (* write to output if printable char *)
     IF (ch >= SPACE) AND (ch # DEL) THEN
-      FileIO.Write(c.outfile, ORD(ch))
+      BasicFileIO.Write(outfile, ch)
     END   
   END (* FOR *)
 END WriteChars;
 
 
 (* ---------------------------------------------------------------------------
- * procedure WriteStr(array)
+ * procedure WriteStr(outfile, array)
  * ---------------------------------------------------------------------------
  * Writes a string to the output file
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE WriteStr( VAR (* CONST *) c : Context; string : StringT );
+PROCEDURE WriteStr( outfile : File; string : StringT );
 
-PROCEDURE WriteCharsSimple ( array : ARRAY OF CHAR );
-
-BEGIN
-  WriteChars(c, array)
-END WriteCharsSimple;
+PROCEDURE WriteCharsToOutfile ( array : ARRAY OF CHAR );
 
 BEGIN
-  String.withCharsDo(string, WriteCharsSimple)
+  WriteChars(outfile, array)
+END WriteCharsToOutfile;
+
+BEGIN
+  String.withCharsDo(string, WriteCharsToOutfile)
 END WriteStr;
 
 
 (* ---------------------------------------------------------------------------
- * procedure WriteLn
+ * procedure WriteLn(outfile)
  * ---------------------------------------------------------------------------
  * Writes a newline to the output file
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE WriteLn( VAR (* CONST *) c : Context );
+PROCEDURE WriteLn( outfile : File );
 
 BEGIN
-  FileIO.WriteLn(c.outfile)
-END WriteStr;
+  BasicFileIO.WriteLn(outfile)
+END WriteLn;
 
 
 (* ---------------------------------------------------------------------------
- * procedure CopyQuotedLiteral
+ * procedure CopyQuotedLiteral(infile, outfile, delimiter)
  * ---------------------------------------------------------------------------
- * Reads quoted literal from stdin and writes it verbatim to stdout
+ * Reads a quoted literal from infile and writes it verbatim to outfile
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE CopyQuotedLiteral( VAR (* CONST *) c : Context; delimiter : CHAR );
+PROCEDURE CopyQuotedLiteral ( infile, outfile : File; delimiter : CHAR );
   
 VAR
   next : CHAR;
 
 BEGIN
   (* print lead delimiter already consumed by caller *)
-  WriteChar(c, delimiter);
+  WriteChar(outfile, delimiter);
   
   (* get next char *)
-  ReadChar(c, next);
+  ReadChar(infile, next);
   
   WHILE next # delimiter DO
     IF (next) >= SPACE THEN
-      WriteChar(c, next)
+      WriteChar(outfile, next)
     END; (* IF *)
     
     (* get next char *)
-    ReadChar(c, next);
+    ReadChar(infile, next);
   END (* WHILE *)
   
   (* put last char back *)
-  CharQueue.Insert(next)
+  InsertChar(next)
 END CopyQuotedLiteral;
 
 
 (* ---------------------------------------------------------------------------
- * procedure ExpandPlaceholder
+ * procedure ExpandPlaceholder(infile, outfile)
  * ---------------------------------------------------------------------------
- * Reads a quoted literal from stdin and writes it verbatim to stdout
+ * Reads a placeholder from infile and writes its translation to outfile
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE ExpandPlaceholder ( VAR (* CONST *) c : Context );
+PROCEDURE ExpandPlaceholder ( infile, outfile : File );
 
 VAR
   valid : BOOLEAN;
   ident, replacement : StringT;
   
 BEGIN
-  GetIdent(c, ident, next, valid);
+  GetIdent(infile, ident, next, valid);
   
   IF NOT valid OR (next # '#') THEN
-    WriteCharsc(c, "##");
-    WriteStr(c, ident);
-    CharQueue.Insert(next);
+    WriteChars(outfile, "##");
+    WriteStr(outfile, ident);
+    InsertChar(infile, next);
     RETURN
   END; (* IF *)
   
   (* get next char *)
-  ReadChar(c, next);
+  ReadChar(infile, next);
   
   IF next # '#' THEN
-    WriteChars(c, "##");
-    WriteStr(c, ident);
-    WriteChar(c, "#");
-    CharQueue.Insert(next);
+    WriteChars(outfile, "##");
+    WriteStr(outfile, ident);
+    WriteChar(outfile, "#");
+    InsertChar(next);
     RETURN
   END; (* IF *)
   
   (* lookup replacement string *)
-  IF Dictionary.lookup(c.dict, ident, replacement) THEN
+  replacement := Dictionary.stringForKey(ident);
+  IF replacement # NIL THEN
     (* print replacement string *)
-    WriteStr(c, replacement)
+    WriteStr(outfile, replacement)
     
   ELSE (* no entry found *)
-    WriteChars(c, "##");
-    WriteStr(c, ident);
-    WriteChars(c, "##")
+    WriteChars(outfile, "##");
+    WriteStr(outfile, ident);
+    WriteChars(outfile, "##")
   END (* IF *)
 END ExpandPlaceholder;
 
 
 (* ---------------------------------------------------------------------------
- * procedure Pragma
+ * procedure Directive(infile)
  * ---------------------------------------------------------------------------
- * Reads a quoted literal from stdin and writes it verbatim to stdout
+ * Reads an M2PP preprocessor directive from infile and processes it
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE Pragma ( VAR (* CONST *) c : Context );
+PROCEDURE Directive ( infile : File );
 
 VAR
   ident, version : StringT;
   
 BEGIN
-  ReadChar(c, next);
+  ReadChar(infile, next);
   
-  (* conditional insert pragma *)
-  IF ((next >= 'a') AND (next <= 'z')) OR
-     ((next >= 'A') AND (next <= 'Z')) THEN
-    GetIdent(c, ident, next, valid)
+  (* conditional insert directive *)
+  IF ((next >= 'a') AND (next <= 'z')) THEN
+    GetIdent(infile, ident, next, valid)
     
     (* check if identifier matches version string *)
-    IF Dictionary.lookup(c.dict, "ver", version) AND (ident = version) THEN
+    version := Dictionary.stringForKey("ver");
+    IF (version # NIL) AND (ident = version) THEN
       (* continue *)
       RETURN
       
-    ELSE (* skip chars until next pragma *)
-      SkipToStartOfPragma(c)
+    ELSE (* skip chars until next directive *)
+      SkipToStartOfDirective(infile)
     END (* IF *)
     
-  (* section terminator pragma *)
+  (* section terminator directive *)
   ELSIF next = ';' THEN
-    SkipToEndOfPragma(c)
+    SkipToEndOfDirective(infile)
     
   ELSE (* illegal char *)  
     (* TO DO : report error *)
-    SkipToEndOfPragma(c)
+    SkipToEndOfDirective(infile)
   END (* CASE *)
-END Pragma;
+END Directive;
 
 
 (* ---------------------------------------------------------------------------
- * procedure SkipComment
+ * procedure SkipComment(infile)
  * ---------------------------------------------------------------------------
- * Reads and consumes a preprocessor comment from input
+ * Reads and consumes a preprocessor comment from infile
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE SkipComment( VAR (* CONST *) c : Context );
+PROCEDURE SkipComment( infile : File );
 
 VAR
   next : CHAR;
@@ -393,11 +385,11 @@ BEGIN
   
   WHILE NOT delimiterFound DO
     (* get next char *)
-    ReadChar(c, next);
+    ReadChar(infile, next);
     
     IF next = '*' THEN
       (* possibly closing delimiter *)
-      ReadChar(c, next);
+      ReadChar(infile, next);
       
       IF next = '/' THEN
         delimiterFound := TRUE
