@@ -1,0 +1,525 @@
+/* M2PP -- EBNF Grammar for Modula-2 Preprocessor.
+ *
+ * Copyright (c) 2017 The Modula-2 Software Foundation
+ *
+ * Author & Maintainer: Benjamin Kowarsch <org.m2sf>
+ *
+ * @synopsis
+ *
+ * M2PP is a Modula-2 preprocessor with template expansion capability.
+ *
+ * This document describes the grammar of M2PP template files in EBNF.
+ *
+ * @repository
+ *
+ * https://github.com/m2sf/m2r10
+ *
+ * @file
+ *
+ * m2pp-grammar.gll
+ *
+ * Grammar of M2PP template files.
+ *
+ */
+
+grammar m2pp;
+
+/* Reserved Words */
+
+reserved
+  MACRO, DEFUN, DEFMAP, END, IF, ELIF, ELSE, FORTO, FORIN, Q, QQ, NL;
+
+
+/* * *   N o n - T e r m i n a l   S y m b o l s   * * */
+
+/* Template */
+
+template :=
+  ( sourceFragment | placeholder | directive | TemplateComment )*
+  ;
+
+
+/*** Source Fragment Syntax ***/
+
+/* Source Fragment */
+
+sourceFragment :=
+  Tab | Space | Newline |
+  identOrResword | QuotedLiteral | NumberLiteral |
+  
+  '=' | '#' | '<' | '<=' | '>' | '>=' | '+' | '-' | '*' |
+  '.' | '..' | '(' | ')' | '[' | ']' | '{' | '}' |
+  '!' | '(*' | '*)'
+  ;
+
+m2ppSymbol :=
+  plahoPrefix | plahoSuffix | dirPrefix | dirSuffix |
+  m2ppResword | commonSymbol
+  ;
+
+commonSymbol :=
+  Tab | Space | Newline |
+  ident | QuotedLiteral | NumberLiteral |
+  '=' | '#' | '<' | '<=' | '>' | '>=' | '+' | '-' | '*' |
+  '.' | '..' | '(' | ')' | '[' | ']' | '!' | '(*' | '*)'
+  ;
+
+
+/*** Placeholder Syntax ***/
+
+/* Placeholder */
+
+placeholder :=
+  plahoPrefix placeholderIdent modifier? plahoSuffix
+  ;
+
+alias placeholderIdent = StdIdent ;
+
+/* Modifier */
+
+modifier :=
+  ( methodInvocation | charSubscript | wordSubscript )+
+  ;
+
+/* Method Invocation */
+
+methodInvocation :=
+  '.' methodIdent
+  ;
+
+/* Method Identifier */
+
+methodIdent :=
+  'lower' | 'upper' | 'camel' | 'title' | 'capital' | 'strip' | 'quoted'
+  ;
+
+/* Character Based Subscript or Slice */
+
+charSubscript :=
+  '[' leftIndex ( '..' rightIndex )? ']'
+  ;
+
+/* Word Based Subscript or Slice */
+
+wordSubscript :=
+  '(' leftIndex ( '..' rightIndex )? ')'
+  ;
+
+/* Left and Right Index */
+
+leftIndex, rightIndex :=
+  unaryMinus? ( NumberLiteral | StdIdent )
+  ;
+
+
+/*** Directive Syntax ***/
+
+/* Directive */
+
+directive :=
+  definition | invocation
+  ;
+
+definition :=
+  macroDefinition | functionDefinition | mapDefinition
+  ;
+
+invocation :=
+  ifDirective | forToDirective | forInDirective |
+  builtinMacroInvocation | userDefinedInvocation
+  ;
+
+
+/* Macro Definition */
+
+macroDefinition :=
+  macroOpeningTag macroBody definitionClosingTag
+  ;
+
+macroOpeningTag :=
+  dirPrefix MACRO '(' macroIdent ( ',' _ macroParam )* ')' dirSuffix
+  ;
+
+alias macroIdent, macroParam = StdIdent ;
+
+alias macroBody = body ;
+
+alias _ = Space ;
+
+
+/* Body */
+
+body :=
+  ( sourceFragment | placeholder | invocation )+
+  ;
+
+/* Definition Closing Tag */
+
+definitionClosingTag :=
+  dirPrefix END _ ident dirSuffix
+
+
+/* Function Definition */
+
+functionDefinition :=
+  functionOpeningTag functionBody definitionClosingTag
+  ;
+
+functionOpeningTag :=
+  dirPrefix DEFUN '(' functionIdent ( ',' _ parameter )* ')' dirSuffix
+  ;
+
+alias functionIdent, parameter = StdIdent ;
+
+alias functionBody = body ;
+
+
+/* Map Definition */
+
+mapDefinition :=
+  mapOpeningTag mapBody definitionClosingTag
+  ;
+
+mapOpeningTag :=
+  dirPrefix DEFMAP '(' mapIdent ')' dirSuffix
+  ;
+
+alias mapIdent = StdIdent ;
+  
+/* Map Body */
+
+mapBody :=
+  element ( ',' _ element )*
+
+/* Map Element */
+
+element :=
+  NumberLiteral | QuotedLiteral | ident
+  ;
+
+
+/* IF-ELIF-ELSE Directive */
+
+ifDirective :=
+  ifOpeningTag ifBody
+  ( elifOpeningTag elifBody )*
+  ( elseOpeningTag elseBody )?
+  invocationClosingTag
+  ;
+
+ifOpeningTag :=
+  dirPrefix IF '(' boolExpression ')' dirSuffix
+  ;
+
+elifOpeningTag :=
+  dirPrefix ELIF '(' boolExpression ')' dirSuffix
+  ;
+
+elseOpeningTag :=
+  dirPrefix ELSE dirSuffix
+  ;
+
+alias ifBody, elifBody, elseBody = body ;
+
+/* Invocation Closing Tag */
+
+invocationClosingTag :=
+  dirPrefix END ( _ ident )? dirSuffix
+  ;
+
+
+/* FORTO Directive */
+
+forToDirective :=
+  forToOpeningTag forToBody invocationClosingTag
+  ;
+
+forToOpeningTag :=
+  dirPrefix FORTO '(' loopVariant ',' _ startValue ',' _ endValue ')'
+  dirSuffix
+  ;
+
+alias forToBody = body ;
+
+
+/* FORIN Directive */
+
+forInDirective :=
+  forInOpeningTag forInBody invocationClosingTag
+  ;
+
+forInOpeningTag :=
+  dirPrefix FORIN '(' loopVariant ',' _ mapIdent ')' dirSuffix
+  ;
+
+alias forInBody = body ;
+
+
+/* Built-in Macro Invocation */
+
+builtinMacroInvocation :=
+  catInvocation | evalInvocation | typeCastInvocation |
+  quote | doubleQuote | newline
+  ;
+
+
+/* CAT Invocation */
+
+catInvocation:=
+  dirPrefix CAT '(' ident ( ',' _ ident )+ ')' dirSuffix
+  ;
+
+
+/* EVAL Invocation */
+
+evalDirective :=
+  dirPrefix EVAL '(' expression ')' dirSuffix
+  ;
+
+
+/* TCAST Invocation */
+
+typeCastDirective :=
+  dirPrefix TCAST '(' typeIdent, _ value ')' dirSuffix
+  ;
+
+alias typeIdent, value = ident ;
+
+
+/* Quote */
+
+quote :=
+  dirPrefix Q dirSuffix
+  ;
+
+
+/* Double-Quote */
+
+quote :=
+  dirPrefix QQ dirSuffix
+  ;
+
+
+/* Newline */
+
+newline :=
+  dirPrefix NL dirSuffix
+  ;
+
+
+/* * *   T e r m i n a l   S y m b o l s   * * */
+
+/* Placeholder Delimiters */
+
+plaHoPrefix, plaHoSuffix := '##' ;
+
+/* Alternative Delimiter Pair */
+
+altPlaHoPrefix := '(*#';
+
+altPlaHoSuffix := '*)' ;
+
+
+/* Directive Delimiters */
+
+dirPrefix, dirSuffix := '%%' ;
+
+/* Alternative Delimiter Pair */
+
+altDirPrefix := '(*?';
+
+altDirSuffix := '*)' ;
+
+
+/* Identifier */
+
+StdIdent :=
+  Letter ( Letter | Digit )*
+  ;
+
+/* Foreign Identifier */
+
+ForeignIdent :=
+  '$' ( Letter | Digit ) ForeignIdentTail* |
+  StdIdent ForeignIdentTail+
+  ;
+
+/* Foreign Identifier Tail */
+
+.ForeignIdentTail :=
+  ( '$' | '_' ) ( Letter | Digit )+
+  ;
+
+
+/* Number Literal */
+
+NumberLiteral :=
+  '0' ( RealNumberTail | 'b' Base2DigitSeq | ( 'x' | 'u' ) Base16DigitSeq )? |
+  ( '1' .. '9' ) DecimalNumberTail?
+  ;
+
+/* Decimal Number Tail */
+
+.DecimalNumberTail :=
+  DigitSep? DigitSeq RealNumberTail?
+  ;
+
+/* Real Number Tail */
+
+.RealNumberTail :=
+  '.' DigitSeq ( 'e' ( '+' | '-' )? DigitSeq )?
+  ;
+
+/* Digit Sequence */
+
+.DigitSeq :=
+  Digit+ ( DigitSep Digit+ )*
+  ;
+
+/* Base-2 Digit Sequence */
+
+.Base2DigitSeq :=
+  Base2Digit+ ( DigitSep Base2Digit+ )*
+  ;
+
+/* Base-16 Digit Sequence */
+
+.Base16DigitSeq :=
+  Base16Digit+ ( DigitSep Base16Digit+ )*
+  ;
+
+/* Digit Separator */
+
+alias DigitSep = "'" ;
+
+/* Digit */
+
+.Digit := '0' .. '9' ;
+
+/* Base-2 Digit */
+
+.Base2Digit := '0' | '1' ;
+
+/* Base-16 Digit */
+
+.Base16Digit := Digit | ( 'A' .. 'F' ) ;
+
+
+/* String Literal */
+
+StringLiteral :=
+  SingleQuotedString | DoubleQuotedString
+  ;
+
+/* Single-Quoted String Literal */
+
+.SingleQuotedString :=
+  "'" ( QuotableCharacter | '"' )* "'"
+  ;
+
+.SingleQuote = "'" ;
+
+
+/* Double-Quoted String Literal */
+
+.DoubleQuotedString :=
+  '"' ( QuotableCharacter | "'" )* '"'
+  ;
+
+.DoubleQuote = '"' ;
+
+
+/* Quotable Character */
+
+.QuotableCharacter :=
+  Digit | Letter | Space | NonAlphaNumQuotable
+  ;
+
+/* Letter */
+
+.Letter := 'a' .. 'z' | 'A' .. 'Z' ;
+
+
+/* Non-Alphanumeric Quotable Character */
+
+.NonAlphaNumQuotable :=
+  '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' |
+  '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' |
+  '[' | '\' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~'
+  ;
+
+
+/* Invisibles */
+
+/* Tabulator */
+
+Tab := 0u9 ;
+
+/* Whitespace */
+
+Space := 0u20 ;
+
+/* End of Line Marker */
+
+Newline :=
+  LF | CR ( LF )?
+  ;
+
+/* ASCII LF */
+
+.LF := 0uA ;
+
+/* ASCII CR */
+
+.CR := 0uD ;
+
+
+/* Line Comment */
+
+LineComment :=
+  '!' CommentChar* Newline
+  ;
+
+BlockComment :=
+  '(*' ( CommentLeadChar CommentChar* | BlockComment | Newline )* '*)'
+  ;
+
+CommentLeadChar :=
+  Tab | Space | SingleQuote | DoubleQuote | Backslash |
+  | '!' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ','
+  | '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '@'
+  | '[' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~'
+  ;
+
+CommentChar :=
+  CommentLeadChar | '#' | '?'
+  ;
+
+
+/* * *   I g n o r e   S y m b o l s   * * */
+
+/* Template Comment */
+
+TemplateComment :=
+  '/*' ( AnyPrintable | Tab | Space | Newline )* '*/'
+  ;
+
+.AnyPrintable := 0u21 .. 0u7E ; /* greedy */
+
+
+/*** Recommended Debugging Aid ***/
+
+/* Not part of the language specification */
+
+/* Disabled Code Section */
+
+DisabledCodeSection :=
+  '?<' /* strictly in first column of a line */
+  ( AnyPrintable | Tab | Space | Newline )*
+  '>?' /* strictly in first column of a line */
+  ;
+
+
+endg m2pp.
+
+/* END OF FILE */
