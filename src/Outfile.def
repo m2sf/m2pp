@@ -4,7 +4,7 @@ DEFINITION MODULE Outfile;
 
 (* I/O library for writing text files with tab expansion *)
 
-IMPORT BasicFileIO;
+IMPORT BasicFileIO, Newline;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -43,12 +43,21 @@ PROCEDURE Close ( VAR outfile : Outfile );
 (* ---------------------------------------------------------------------------
  * procedure SetTabWidth(outfile, value)
  * ---------------------------------------------------------------------------
- * Sets tab width for outfile. The default value is two.
+ * Sets the tab width for outfile. The default value is two.
  * ------------------------------------------------------------------------ *)
 
 TYPE TabWidth = CARDINAL [0..8];
 
 PROCEDURE SetTabWidth ( outfile : Outfile; value : TabWidth );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure SetNewlineMode(outfile, mode)
+ * ---------------------------------------------------------------------------
+ * Sets the newline mode for outfile. The default is Newline.mode().
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE SetNewlineMode ( outfile : Outfile; mode : Newline.Mode );
 
 
 (* ---------------------------------------------------------------------------
