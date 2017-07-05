@@ -98,13 +98,12 @@ BEGIN
       ELSE (* sole slash *)
         (* consume and write *)
         Infile.ReadChar(infile, next);
-        Outfile.WriteChar(outfile, '/');
-        noVisibleOutputSinceNewline := FALSE
+        Outfile.WriteChar(outfile, '/')
       END (* IF *)
       
     (* any other chars *)
     ELSE
-      (* consume *)
+      (* consume and write *)
       Infile.ReadChar(infile, next);
       Outfile.WriteChar(outfile, next)
     END (* CASE *)
@@ -265,7 +264,6 @@ BEGIN
       Outfile.WriteChars(outfile, "(*?");
       Outfile.WriteString(outfile, ident)
     END (* IF *)
-    
     
   ELSIF String.matchesArray(ident, "TCAST") THEN
     
