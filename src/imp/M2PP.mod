@@ -106,11 +106,7 @@ BEGIN
     ELSE
       (* consume *)
       Infile.ReadChar(infile, next);
-      Outfile.WriteChar(outfile, next);
-      
-      IF (next > SPACE) AND (next # DEL) THEN
-        noVisibleOutputSinceNewline := FALSE
-      END (* IF *)
+      Outfile.WriteChar(outfile, next)
     END (* CASE *)
   END (* WHILE *)  
 END Expand;
