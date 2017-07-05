@@ -271,6 +271,7 @@ BEGIN
   lexbuf.array[0] := NUL
 END Clear;
 
+
 (* ---------------------------------------------------------------------------
  * private procedure AppendChar(lexbuf, ch)
  * ---------------------------------------------------------------------------
@@ -290,6 +291,7 @@ BEGIN
   lexbuf.length := lexbuf.length + 1;
   lexbuf.array[lexbuf.length] := NUL
 END AppendChar;
+
 
 (* ---------------------------------------------------------------------------
  * private procedure stringForLexeme(lexbuf)
