@@ -2,7 +2,7 @@
 
 IMPLEMENTATION MODULE Infile;
 
-(* Modula-2 Preprocessor Text I/O *)
+(* I/O library for reading text files with line and column counters *)
 
 IMPORT String, BasicFileIO;
 
