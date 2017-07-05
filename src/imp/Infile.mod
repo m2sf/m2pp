@@ -148,7 +148,7 @@ BEGIN
   
   (* read one further if CR LF found *)
   IF (la1 = CR) AND (la2 = LF) THEN
-    la1 = LF;
+    la1 := LF;
     BasicFileIO.ReadChar(infile.file, la2)
   END; (* IF *)
   
@@ -282,8 +282,8 @@ END Clear;
 PROCEDURE AppendChar ( VAR lexbuf : LexemeBuffer; ch : CHAR );
 
 BEGIN
-  (* ignore any characters in excess of maximum lexeme length *)
-  IF lexbuf.length >= MaxLexemeLength THEN
+  (* ignore any characters in excess of maximum line length *)
+  IF lexbuf.length >= MaxLineLength THEN
     RETURN
   END; (* IF *)
   
