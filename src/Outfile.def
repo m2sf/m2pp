@@ -44,6 +44,7 @@ PROCEDURE Close ( VAR outfile : Outfile );
  * procedure SetTabWidth(outfile, value)
  * ---------------------------------------------------------------------------
  * Sets the tab width for outfile. The default value is two.
+ * Operation only permitted prior to first write operation to outfile.
  * ------------------------------------------------------------------------ *)
 
 TYPE TabWidth = CARDINAL [0..8];
@@ -55,6 +56,7 @@ PROCEDURE SetTabWidth ( outfile : Outfile; value : TabWidth );
  * procedure SetNewlineMode(outfile, mode)
  * ---------------------------------------------------------------------------
  * Sets the newline mode for outfile. The default is Newline.mode().
+ * Operation only permitted prior to first write operation to outfile.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE SetNewlineMode ( outfile : Outfile; mode : Newline.Mode );
@@ -86,6 +88,15 @@ PROCEDURE WriteChars
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE WriteString ( outfile : Outfile; string : StringT );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure WriteTab(outfile)
+ * ---------------------------------------------------------------------------
+ * Writes tab to outfile. Expands tabs to spaces if tabwidth > 0.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WriteTab ( outfile : Outfile );
 
 
 (* ---------------------------------------------------------------------------
