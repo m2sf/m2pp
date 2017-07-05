@@ -224,7 +224,7 @@ END column;
 PROCEDURE MarkLexeme( infile : Infile );
 
 BEGIN
-  Clear(infile.lexemeBuffer)
+  Clear(infile.lexbuf)
 END MarkLexeme;
 
 
