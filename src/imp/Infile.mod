@@ -19,8 +19,6 @@ CONST
  * hidden declaration of opaque type
  * ------------------------------------------------------------------------ *)
 
-TYPE Infile; (* OPAQUE *)
-
 TYPE Infile = POINTER TO InfileDescriptor;
 
 TYPE InfileDescriptor = RECORD
@@ -289,7 +287,8 @@ BEGIN
   
   (* append ch to lexeme buffer *)
   lexbuf.array[lexbuf.length] := ch;
-  lexbuf.length := lexbuf.length + 1
+  lexbuf.length := lexbuf.length + 1;
+  lexbuf.array[lexbuf.length] := NUL
 END AppendChar;
 
 (* ---------------------------------------------------------------------------
