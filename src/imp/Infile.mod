@@ -8,6 +8,9 @@ IMPORT String, BasicFileIO;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
+FROM SYSTEM IMPORT TSIZE;
+FROM Storage IMPORT ALLOCATE, DEALLOCATE;
+
 
 CONST
   NUL   = CHR(0);
@@ -41,8 +44,24 @@ PROCEDURE Open
    VAR (* CONST *) path : ARRAY OF CHAR;
    VAR           status : BasicFileIO.Status );
 
+VAR
+  file : BasicFileIO.File;
+  s : BasicFileIO.Status;
+  
 BEGIN
-  (* TO DO *)
+  BasicFileIO.Open(file, path, BasicFileIO.Mode.Read, s);
+  
+  IF s # BasicFileIO.Success THEN
+    status := s;
+    RETURN
+  END; (* IF *)
+  
+  ALLOCATE(infile, TSIZE(InfileDescriptor));
+  
+  infile^.file := file;
+  infile^.line := 1;
+  infile^.column := 1;
+  Clear(infile^.lexbuf)
 END Open;
 
 
@@ -54,8 +73,19 @@ END Open;
 
 PROCEDURE Close ( VAR infile : Infile );
 
+VAR
+  s : BasicFileIO.Status;
+  
 BEGIN
-  (* TO DO *)
+  IF infile = NIL THEN
+    RETURN
+  END; (* IF *)
+  
+  BasicFileIO.Close(infile^.file, s);
+  
+  IF s = BasicFileIO.Success THEN
+    infile := NIL
+  END (* IF *)
 END Close;
 
 
@@ -72,34 +102,34 @@ BEGIN
   
   IF ch = LF THEN
     (* newline terminates symbols *)
-    Clear(infile.lexbuf);
+    Clear(infile^.lexbuf);
     
     (* update line and column counters *)
-    infile.column := 1;
-    infile.line := infile.line + 1
+    infile^.column := 1;
+    infile^.line := infile^.line + 1
     
   ELSIF ch = CR THEN
     (* newline terminates symbols *)
-    Clear(infile.lexbuf);
+    Clear(infile^.lexbuf);
     
     (* update line and column counters *)
-    infile.column := 1;
-    infile.line := infile.line + 1;
+    infile^.column := 1;
+    infile^.line := infile^.line + 1;
     
     (* get next character *)
-    ch := BasicFileIO.ReadChar(infile.file, ch);
+    ch := BasicFileIO.ReadChar(infile^.file, ch);
     
     (* any LF following a CR is ignored *)
     IF ch # LF THEN
-      BasicFileIO.InsertChar(infile.file, ch)
+      BasicFileIO.InsertChar(infile^.file, ch)
     END (* IF *)
     
   ELSE
     (* append to lexeme buffer *)
-    AppendChar(infile.lexbuf, ch);
+    AppendChar(infile^.lexbuf, ch);
     
     (* update column counter *)
-    infile.column := infile.column + 1
+    infile.column := infile^.column + 1
   END (* IF *)
 END ReadChar;
 
@@ -116,8 +146,8 @@ VAR
   ch : CHAR;
   
 BEGIN
-  ch := BasicFileIO.ReadChar(infile.file, ch);
-  BasicFileIO.InsertChar(infile.file, ch);
+  ch := BasicFileIO.ReadChar(infile^.file, ch);
+  BasicFileIO.InsertChar(infile^.file, ch);
   
   (* CR is always interpreted as LF *)
   IF ch = CR THEN
@@ -141,18 +171,18 @@ VAR
   
 BEGIN
   (* read the next two characters *)
-  BasicFileIO.ReadChar(infile.file, la1);
-  BasicFileIO.ReadChar(infile.file, la2);
+  BasicFileIO.ReadChar(infile^.file, la1);
+  BasicFileIO.ReadChar(infile^.file, la2);
   
   (* read one further if CR LF found *)
   IF (la1 = CR) AND (la2 = LF) THEN
     la1 := LF;
-    BasicFileIO.ReadChar(infile.file, la2)
+    BasicFileIO.ReadChar(infile^.file, la2)
   END; (* IF *)
   
   (* put both characters back *)
-  BasicFileIO.InsertChar(infile.file, la1);
-  BasicFileIO.InsertChar(infile.file, la2);
+  BasicFileIO.InsertChar(infile^.file, la1);
+  BasicFileIO.InsertChar(infile^.file, la2);
   
   (* CR is always interpreted as LF *)
   IF la2 = CR THEN
@@ -172,7 +202,7 @@ END la2Char;
 PROCEDURE status ( infile : Infile ) : BasicFileIO.Status;
 
 BEGIN
-  RETURN BasicFileIO.status(infile.file)
+  RETURN BasicFileIO.status(infile^.file)
 END status;
 
 
@@ -185,7 +215,7 @@ END status;
 PROCEDURE eof ( infile : Infile ) : BOOLEAN;
 
 BEGIN
-  RETURN BasicFileIO.eof(infile.file)
+  RETURN BasicFileIO.eof(infile^.file)
 END eof;
 
 
@@ -198,7 +228,7 @@ END eof;
 PROCEDURE line ( infile : Infile ) : CARDINAL;
 
 BEGIN
-  RETURN infile.line
+  RETURN infile^.line
 END line;
 
 
@@ -211,7 +241,7 @@ END line;
 PROCEDURE column ( infile : Infile ) : CARDINAL;
 
 BEGIN
-  RETURN infile.column
+  RETURN infile^.column
 END column;
 
 
@@ -224,7 +254,7 @@ END column;
 PROCEDURE MarkLexeme( infile : Infile );
 
 BEGIN
-  Clear(infile.lexbuf)
+  Clear(infile^.lexbuf)
 END MarkLexeme;
 
 
@@ -238,7 +268,7 @@ END MarkLexeme;
 PROCEDURE lexeme ( infile : Infile ) : StringT;
 
 BEGIN
-  RETURN stringForLexeme(infile.lexbuf)
+  RETURN stringForLexeme(infile^.lexbuf)
 END lexeme;
 
 
