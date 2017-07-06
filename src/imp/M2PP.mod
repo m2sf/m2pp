@@ -305,7 +305,9 @@ END Directive;
 (* ---------------------------------------------------------------------------
  * procedure SkipComment(infile)
  * ---------------------------------------------------------------------------
- * Reads and consumes a preprocessor comment from infile
+ * Reads and consumes a preprocessor comment from infile. If the current
+ * writing position of outfile is at column 1 and a newline immediately
+ * follows the comment in infile, then the newline is also consumed.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE SkipComment( infile : Infile; outfile : Outfile);
