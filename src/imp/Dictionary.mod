@@ -161,6 +161,7 @@ PROCEDURE valueForKey ( key : Key; VAR status : Status ) : StringT;
 
 VAR
   thisNode : Node;
+  searchKey : Comparison;
   
 BEGIN
   (* set sentinel's key to search key *)
@@ -169,16 +170,23 @@ BEGIN
   (* start at the root *)
   thisNode := dictionary.root;
   
+  (* compare search key and key of current node *)
+  searchKey := keyComparison(key, thisNode^.key);
+  
   (* search until key is found or bottom of tree is reached *)
-  WHILE key # thisNode^.key DO
+  WHILE searchKey # Equal DO
+        
     (* move down left if key is less than key of current node *)
-    IF key < this^.key THEN
+    IF searchKey = Less THEN (* key < thisNode^.key *)
       thisNode := thisNode^.left
       
     (* move down right if key is greater than key of current node *)
-    ELSIF key > this^.key THEN
+    ELSE (* key > thisNode^.key *)
       thisNode := thisNode^.right
-    END (* IF *)
+    END; (* IF *)
+    
+    (* compare search key and key of current node *)
+    searchKey := keyComparison(key, thisNode^.key)
   END; (* WHILE *)
   
   (* restore sentinel's key *)
@@ -311,7 +319,7 @@ BEGIN
   
   ELSE
     CASE keyComparison(key, node^.key) OF
-      (* key already exists *)
+    (* key already exists *)
       Equal :
         status := KeyAlreadyPresent;
         RETURN NIL
@@ -319,23 +327,19 @@ BEGIN
     (* key < node^.key *)
     | Less :
         (* recursive insert left *)
-        node := insert(node^.left, key, value, status);
-        
-        (* bail out if allocation failed *)
-        IF status = AllocationFailed THEN
-          RETURN NIL
-        END (* IF *)
+        node := insert(node^.left, key, value, status)
         
     (* key > node^.key *)
     | Greater :
         (* recursive insert right *)
-        node := insert(node^.right, key, value, status);
+        node := insert(node^.right, key, value, status)
         
-        (* bail out if allocation failed *)
-        IF status = AllocationFailed THEN
-          RETURN NIL
-        END (* IF *)
     END (* CASE *)
+  END; (* IF *)
+  
+  (* bail out if allocation failed *)
+  IF status = AllocationFailed THEN
+    RETURN NIL
   END; (* IF *)
   
   (* rebalance the tree *)
@@ -369,7 +373,7 @@ BEGIN
   prevNode := node;
   
   (* move down left if search key is less than that of current node *)
-  IF key < mode^.key THEN
+  IF keyComparison(key, node^.key) = Less THEN
     node := remove(node^.left, key, status)
     
   (* move down right if search key is not less than that of current node *)
