@@ -449,8 +449,49 @@ TYPE Comparison = (Equal, Less, Greater);
 PROCEDURE keyComparison
   ( VAR (* CONST *) left, right : ARRAY OF CHAR) : Comparison;
 
+VAR
+  index, maxIndex : CARDINAL;
+  
 BEGIN
-  (* TO DO *)
+  index := 0;  
+  maxIndex := MaxKeyLength;
+  
+  IF HIGH(left) < maxIndex THEN
+    maxIndex := HIGH(left)
+  END; (* IF *)
+  
+  IF HIGH(right) < maxIndex THEN
+    maxIndex := HIGH(right)
+  END; (* IF *)
+  
+  (* find first mismatching character *)
+  WHILE (index <= maxIndex) AND (left[index] = right[index]) DO
+    index := index + 1
+  END; (* WHILE *)
+  
+  (* all chars match to max key length *)
+  IF index > MaxKeyLength THEN
+    RETURN Equal
+  
+  (* no mismatch found *)
+  ELSIF index > maxIndex THEN
+    (* left is shorter than right *)
+    IF HIGH(left) < HIGH(right) THEN
+      RETURN Less
+    (* left is longer than right *)
+    ELSIF HIGH(left) > HIGH(right) THEN
+      RETURN Greater
+    (* left and right have same length *)
+    ELSE
+      RETURN Equal
+    END (* IF *)
+    
+  (* mismatch found -- mismatching char decides *)
+  ELSIF left[index] < right[index] THEN
+    RETURN Less
+  ELSE
+    RETURN Greater
+  END (* IF *)
 END keyComparison;
 
 
