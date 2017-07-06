@@ -469,12 +469,20 @@ BEGIN
     index := index + 1
   END; (* WHILE *)
   
+  (* mismatch found -- mismatching char decides *)
+  IF index <= maxIndex THEN
+    IF left[index] < right[index] THEN
+      RETURN Less
+    ELSE
+      RETURN Greater
+    END (* IF *)
+  
   (* all chars match to max key length *)
-  IF index > MaxKeyLength THEN
+  ELSIF index > MaxKeyLength THEN
     RETURN Equal
   
-  (* no mismatch found *)
-  ELSIF index > maxIndex THEN
+  (* no mismatch found -- length decides *)
+  ELSE (* maxIndex < index <= MaxKeyLength *)
     (* left is shorter than right *)
     IF HIGH(left) < HIGH(right) THEN
       RETURN Less
@@ -485,12 +493,6 @@ BEGIN
     ELSE
       RETURN Equal
     END (* IF *)
-    
-  (* mismatch found -- mismatching char decides *)
-  ELSIF left[index] < right[index] THEN
-    RETURN Less
-  ELSE
-    RETURN Greater
   END (* IF *)
 END keyComparison;
 
