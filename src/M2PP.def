@@ -6,15 +6,17 @@ DEFINITION MODULE M2PP;
 
 IMPORT Dictionary, FileIO;
 
+FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
+FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
+
 
 (* ---------------------------------------------------------------------------
- * procedure Expand(template, dict, outfile)
+ * procedure Expand(infile, outfile)
  * ---------------------------------------------------------------------------
- * Expands template file into output file using dictionary dict.
+ * Expands template file infile to output file outfile.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE Expand
-  ( template : FileIO.File; dict : Dictionary; outfile : FileIO.File );
+PROCEDURE Expand ( infile : InfileT; outfile : OutfileT );
 
 
 END M2PP.
