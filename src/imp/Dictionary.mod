@@ -26,6 +26,11 @@ TYPE NodeDescriptor = RECORD
 END; (* NodeDescriptor *)
 
 
+CONST MaxKeyLength = 32;
+
+TYPE Key = ARRAY [0..MaxKeyLength] OF CHAR;
+
+
 VAR
   dictionary : Tree;
   prevNode,
@@ -67,7 +72,7 @@ END stringForKey;
 (* Insert Operations *)
 
 PROCEDURE StoreArrayForKey
-  ( VAR (* CONST *) key; VAR array : ARRAY OF CHAR );
+  ( VAR (* CONST *) key : ARRAY OF CHAR; VAR array : ARRAY OF CHAR );
 (* Obtains an interned string for array,
    then stores the string for key in the global dictionary. *)
 
@@ -87,7 +92,7 @@ END StoreStringForKey;
 
 (* Removal Operations *)
 
-PROCEDURE RemoveKey ( VAR (* CONST *) key : Key );
+PROCEDURE RemoveKey ( VAR (* CONST *) key : ARRAY OF CHAR );
 (* Removes key and its value in the global dictionary. *)
 
 BEGIN
@@ -275,7 +280,10 @@ END split;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE insert
-  ( node : Node; key : Key; value : StringT; VAR status : Status ) : Node;
+  ( node       : Node;
+    key        : ARRAY OF CHAR;
+    value      : StringT;
+    VAR status : Status ) : Node;
 
 VAR
   newNode : Node;
@@ -300,29 +308,34 @@ BEGIN
     
     (* link it to the tree *)
     node := newNode
-    
-  ELSIF node^.key > key THEN
-    (* recursive insert left *)
-    node := insert(node^.left, key, value, status);
-    
-    (* bail out if allocation failed *)
-    IF status = AllocationFailed THEN
-      RETURN NIL
-    END (* IF *)
   
-  ELSIF node^.key < key THEN
-    (* recursive insert right *)
-    node := insert(node^.right, key, vallue, status);
+  ELSE
+    CASE keyComparison(key, node^.key) OF
+      (* key already exists *)
+      Equal :
+        status := KeyAlreadyPresent;
+        RETURN NIL
     
-    (* bail out if allocation failed *)
-    IF status = AllocationFailed THEN
-      RETURN NIL
-    END (* IF *)
-      
-  ELSE (* key already exists *)
-    (* bail out *)
-    status := KeyAlreadyPresent;
-    RETURN NIL
+    (* key < node^.key *)
+    | Less :
+        (* recursive insert left *)
+        node := insert(node^.left, key, value, status);
+        
+        (* bail out if allocation failed *)
+        IF status = AllocationFailed THEN
+          RETURN NIL
+        END (* IF *)
+        
+    (* key > node^.key *)
+    | Greater :
+        (* recursive insert right *)
+        node := insert(node^.right, key, value, status);
+        
+        (* bail out if allocation failed *)
+        IF status = AllocationFailed THEN
+          RETURN NIL
+        END (* IF *)
+    END (* CASE *)
   END; (* IF *)
   
   (* rebalance the tree *)
@@ -422,6 +435,23 @@ BEGIN
   (* deallocate the node *)
   DEALLOCATE(node)
 END RemoveAll;
+
+
+(* ---------------------------------------------------------------------------
+ * private function keyComparison(left, right)
+ * ---------------------------------------------------------------------------
+ * Compares keys left and right using ASCII collation order and returns Equal
+ * if the keys match, Less if left < right, or Greater if left > right.
+ * ------------------------------------------------------------------------ *)
+
+TYPE Comparison = (Equal, Less, Greater);
+
+PROCEDURE keyComparison
+  ( VAR (* CONST *) left, right : ARRAY OF CHAR) : Comparison;
+
+BEGIN
+  (* TO DO *)
+END keyComparison;
 
 
 BEGIN  
