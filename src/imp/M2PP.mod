@@ -159,26 +159,9 @@ BEGIN
     RETURN
   END; (* IF *)
   
-  (* mark identifier *)
-  Infile.MarkChar(infile);
-  
-  (* consume and write lead char *)
-  Infile.ReadChar(infile, next);
-  Outfile.WriteChar(outfile, next);
-  next := Infile.lookahead(infile);
-  
-  (* consume and write tail of identifier *)
-  WHILE ((next >= 'a') AND (next <= 'z')) OR
-        ((next >= 'A') AND (next <= 'Z')) OR
-        ((next >= '0') AND (next <= '9')) DO
-    Infile.ReadChar(infile, next);
-    Outfile.WriteChar(outfile, next);
-    next := Infile.lookahead(infile)
-  END; (* WHILE *)
-  
-  (* get identifier *)
-  ident := Infile.lexeme(infile);
-    
+  (* read identifier *)
+  ident := stdIdent(infile);
+      
   (* lookup replacement string *)
   replacement := Dictionary.stringForKey(ident);
   IF replacement # NIL THEN
@@ -488,9 +471,8 @@ VAR
 BEGIN
   delimiterFound := FALSE;
   
-  (* consume '/' *)
+  (* consume "/*" *)
   Infile.ReadChar(infile, next);
-  (* consume '*' *)
   Infile.ReadChar(infile, next);
   
   (* consume chars until closing delimiter *)
