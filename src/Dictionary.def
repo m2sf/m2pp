@@ -33,7 +33,7 @@ TYPE Status =
     AllocationFailed );
 
 
-(* Procedure type for passing to procedure WithKeyValuePairDo *)
+(* Procedure type for passing to procedure WithKeyValuePairsDo *)
 
 TYPE VisitorProc = PROCEDURE ( Key, Value );
 
