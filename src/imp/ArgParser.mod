@@ -13,7 +13,6 @@ VAR
   srcFile  : StringT;
   errCount : CARDINAL;
   tabwidth : CARDINAL [0..8];
-  crlfMode : Newline.Mode;
   
 
 (* Public Operations *)
@@ -304,13 +303,13 @@ BEGIN
   END; (* IF *)
   
   IF String.matchesArray(mode, "lf") THEN
-    crlfMode := Newline.LF
+    Newline.SetMode(Newline.LF)
     
   ELSIF String.matchesArray(mode, "cr") THEN
-    crlfMode := Newline.CR
+    Newline.SetMode(Newline.CR)
   
-  ELSIF String.matchesArray(mode, "") THEN
-    crlfMode := Newline.CRLF
+  ELSIF String.matchesArray(mode, "crlf") THEN
+    Newline.SetMode(Newline.CRLF)
   
   ELSE
     (* error: unrecognised mode *)
