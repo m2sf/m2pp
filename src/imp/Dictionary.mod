@@ -10,9 +10,17 @@ FROM String IMPORT StringT; (* alias for String.String *)
 
 
 TYPE Tree = RECORD;
-  entries : CARDINAL;
-  root    : Node
+  entries    : CARDINAL;
+  root       : Node;
+  lastSearch : Cache;
+  lastStatus : Status
 END; (* Tree *)
+
+
+TYPE Cache = RECORD
+  key   : Key;
+  value : Value
+END; (* Cache *)
 
 
 TYPE Node = POINTER TO NodeDescriptor;
@@ -20,15 +28,13 @@ TYPE Node = POINTER TO NodeDescriptor;
 TYPE NodeDescriptor = RECORD
   level : CARDINAL;
   key   : Key;
-  value : StringT;
+  value : Value;
   left,
   right : Node
 END; (* NodeDescriptor *)
 
 
-CONST MaxKeyLength = 32;
-
-TYPE Key = ARRAY [0..MaxKeyLength] OF CHAR;
+CONST MaxKeyLength = SignificantCharsInKey;
 
 
 VAR
@@ -36,76 +42,245 @@ VAR
   prevNode,
   candidate,
   bottom     : Node;
-  
-  lastStatus : Status;
-  
+    
 
 (* Introspection *)
 
+(* ---------------------------------------------------------------------------
+ * function Dictionary.count()
+ * ---------------------------------------------------------------------------
+ * Returns the number of key/value pairs in the global dictionary.
+ * Does not set dictionary status.
+ * ------------------------------------------------------------------------ *)
+
 PROCEDURE count ( ) : CARDINAL;
-(* Returns the number of entries in the global dictionary. *)
 
 BEGIN
   RETURN dictionary.entries
 END count;
 
 
-(* Lookup Operations *)
+(* ---------------------------------------------------------------------------
+ * function Dictionary.status()
+ * ---------------------------------------------------------------------------
+ * Returns the status of the last operation on the global dictionary.
+ * Does not set dictionary status.
+ * ------------------------------------------------------------------------ *)
 
-PROCEDURE isPresent ( VAR (* CONST *) key : ARRAY OF CHAR ) : BOOLEAN;
-(* Returns TRUE if a value is stored for key in the global dictionary. *)
+PROCEDURE status ( ) : Status;
 
 BEGIN
-  (* TO DO *)
+  RETURN dictionary.lastStatus
+END status;
+
+
+(* Lookup Operations *)
+
+(* ---------------------------------------------------------------------------
+ * function Dictionary.isPresent(key)
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if key is present in the global dictionary, else FALSE.
+ * Fails and returns NIL if key is NIL.  Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isPresent ( key : Key ) : BOOLEAN;
+
+VAR
+  value : Value;
+
+BEGIN
+  (* bail out if key is NIL *)
+  IF key = NIL THEN
+    dictionary.lastStatus := NilNotPermitted;
+    RETURN FALSE
+  END; (* IF *)
+  
+  (* return TRUE if key matches last searched key *)
+  IF (dictionary.lastSearch.key # NIL) AND
+     (key = dictionary.lastSearch.key) THEN
+    dictionary.lastStatus := Success;
+    RETURN TRUE
+  END; (* IF *)
+  
+  (* search key *)
+  value := lookup(dictionary.root, key, dictionary.lastStatus);
+  
+  (* entry found *)
+  IF value # NIL THEN
+    dictionary.lastSearch.key := key;
+    dictionary.lastSearch.value := value;
+  END; (* IF *)
+  
+  RETURN (dictionary.lastStatus = Success)
 END isPresent;
 
 
-PROCEDURE stringForKey ( VAR (* CONST *) key : ARRAY OF CHAR ) : StringT;
-(* Returns the string value stored for key, if key is present in the global
-   dictionary. Returns NIL if key is not present in the global dictionary. *)
+(* ---------------------------------------------------------------------------
+ * function Dictionary.valueForKey(key)
+ * ---------------------------------------------------------------------------
+ * Returns the value stored for key in the global dictionary, or NIL if no key 
+ * is present in the dictionary. Fails if key is NIL. Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE valueForKey ( key : Key ) : Value;
 
 BEGIN
-  RETURN valueForKey(key, lastStatus)
-END stringForKey;
+  (* bail out if key is NIL *)
+  IF key = NIL THEN
+    dictionary.lastStatus := NilNotPermitted;
+    RETURN NIL
+  END; (* IF *)
+  
+  (* return cached value if key matches last searched key *)
+  IF (dictionary.lastSearch.key # NIL) AND
+     (key = dictionary.lastSearch.key) THEN
+    dictionary.lastStatus := Success;
+    RETURN dictionary.lastSearch.value
+  END; (* IF *)
+  
+  (* search key *)
+  value := lookup(dictionary.root, key);
+  
+  (* entry found *)
+  IF value # NIL THEN
+    dictionary.lastSearch.key := key;
+    dictionary.lastSearch.value := value;
+    dictionary.lastStatus := Success;
+    RETURN value
+    
+  (* entry not found *)
+  ELSE
+    dictionary.lastStatus := EntryNotFound;
+    RETURN NIL
+  END (* IF *)
+END valueForKey;
 
 
 (* Insert Operations *)
 
+(* ---------------------------------------------------------------------------
+ * procedure Dictionary.StoreValueForKey(key, value)
+ * ---------------------------------------------------------------------------
+ * Stores value for key in the global dictionary.  Fails if key or value or
+ * both are NIL.  Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE StoreValueForKey ( key : Key; value : Value );
+
+VAR
+  newRoot : Node;
+  status : Status;
+  
+BEGIN
+  (* bail out if key or value or both are NIL *)
+  IF (key = NIL) OR (value = NIL) THEN
+    dictionary.lastStatus := NilNotPermitted;
+    RETURN
+  END; (* IF *)
+  
+  (* insert new entry *)
+  newRoot := insert(dictionary.root, key, value, dictionary.lastStatus);
+  
+  (* replace dictionary root, update counter *)
+  IF dictionary.lastStatus = Success THEN
+    dictionary.root := newRoot;
+    dictionary.entries := dictionary.entries + 1
+  END (* IF *)
+END StoreValueForKey;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure Dictionary.StoreArrayForKey(key, array)
+ * ---------------------------------------------------------------------------
+ * Obtains an interned string for array, then stores the string as value for
+ * key in the global dictionary.  Fails if key is NIL or if array produces a
+ * NIL string.  Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
 PROCEDURE StoreArrayForKey
-  ( VAR (* CONST *) key : ARRAY OF CHAR; VAR array : ARRAY OF CHAR );
-(* Obtains an interned string for array,
-   then stores the string for key in the global dictionary. *)
+  ( key : Key; VAR (* CONST *) array : ARRAY OF CHAR );
+
+VAR
+  value : Value;
 
 BEGIN
-  (* TO DO *)
+  (* bail out if key is NIL *)
+  IF key = NIL THEN
+    dictionary.lastStatus := NilNotPermitted;
+    RETURN
+  END; (* IF *)
+  
+  (* check key before getting interned string for value *)  
+  IF lookup(dictionary.root, key) = NIL THEN
+    value := String.fromArray(array);
+    
+    IF value = NIL THEN
+      dictionary.lastStatus := NilNotPermitted;
+      RETURN
+      
+    ELSE (* all clear *)
+      StoreValueForKey(value, key)
+      
+  ELSE (* key already exists *)
+    dictionary.lastStatus := KeyAlreadyExists;
+    RETURN
+  END (* IF *)
 END StoreArrayForKey;
-
-
-PROCEDURE StoreStringForKey
-  ( VAR (* CONST *) key : ARRAY OF CHAR; string : StringT );
-(* Stores string for key in the global dictionary. *)
-
-BEGIN
-  StoreEntry(key, string, lastStatus)
-END StoreStringForKey;
 
 
 (* Removal Operations *)
 
-PROCEDURE RemoveKey ( VAR (* CONST *) key : ARRAY OF CHAR );
-(* Removes key and its value in the global dictionary. *)
+(* ---------------------------------------------------------------------------
+ * procedure Dictionary.RemoveKey(key)
+ * ---------------------------------------------------------------------------
+ * Removes key and its value from the global dictionary.  Fails if key is NIL
+ * or if key is not present in the dictionary.  Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE RemoveKey ( key : Key );
 
 BEGIN
-  RemoveEntry(key, lastStatus)
+  (* bail out if key is NIL *)
+  IF key = NIL THEN
+    dictionary.lastStatus := NilNotPermitted;
+    RETURN
+  END; (* IF *)
+  
+  (* remove *)
+  RemoveKey(key, dictionary.lastStatus);
+  
+  IF dictionary.lastStatus = Success THEN
+    dictionary.entries := dictionary.entries - 1
+    
+    (* clear cache if removed key is in cache *)
+    IF key = dictionary.lastSearch.key THEN
+      dictionary.lastSearch.key := NIL;
+      dictionary.lastSearch.value := NIL
+    END (* IF *)
+  END (* IF *)
 END RemoveKey;
 
 
 (* Iteration *)
 
-PROCEDURE WithKeyValuePairsDo ( p : IterBodyProc );
+(* ---------------------------------------------------------------------------
+ * procedure Dictionary.WithKeyValuePairsDo(p)
+ * ---------------------------------------------------------------------------
+ * Iterates over all key/value pairs in the global dictionary in key order
+ * and calls calls visitor procedure p for each pair, passing key and value.
+ * Keys are ordered in ASCII collation order.  Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WithKeyValuePairsDo ( p : VisitorProc );
 
 BEGIN
-  (* TO DO *)
+  IF p = NIL THEN
+    dictionary.lastStatus := NilNotPermitted;
+    RETURN
+  END; (* IF *)
+  
+  Traverse(dictionary.root, p);
+  dictionary.lastStatus := Success
 END WithKeyValuePairsDo;
 
 
@@ -122,54 +297,21 @@ END WithKeyValuePairsDo;
  * ------------------------------------------------------------------------ *)
 
 (* ---------------------------------------------------------------------------
- * private procedure StoreEntry(key, value, status)
+ * private function lookup(node, key, status)
  * ---------------------------------------------------------------------------
- * Stores value for key in dictionary.  Fails if NIL is passed in for value
- * or if zero is passed in for key.  Passes status back in status.
+ * Looks up key in the subtree whose root is thisNode.  Returns its value if
+ * key is found, otherwise returns NIL.  Passes status back in status.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE StoreEntry ( key : Key; value : StringT; VAR status : Status );
+PROCEDURE lookup ( thisNode : Node; key : Key; VAR status : Status ) : Value;
 
 VAR
-  newRoot : Node;
-  
-BEGIN
-  (* bail out if value is NIL *)
-  IF value = NIL THEN
-    status := InvalidValue;
-    RETURN
-  END; (* IF *)
-  
-  (* insert new entry *)
-  newRoot := insert(dictionary.root, key, value, status);
-  
-  IF status = Success THEN
-    dictionary.root := newRoot;
-    dictionary.entries := dictionary.entries + 1
-  END (* IF *)
-END StoreEntry;
-
-
-(* ---------------------------------------------------------------------------
- * private function valueForKey(key, status)
- * ---------------------------------------------------------------------------
- * Returns the value for key in dictionary.  Returns NIL if no entry is stored
- * for key in dictionary.  Passes status back in status.
- * ------------------------------------------------------------------------ *)
-
-PROCEDURE valueForKey ( key : Key; VAR status : Status ) : StringT;
-
-VAR
-  thisNode : Node;
   searchKey : Comparison;
   
 BEGIN
   (* set sentinel's key to search key *)
   bottom^.key := key;
-  
-  (* start at the root *)
-  thisNode := dictionary.root;
-  
+    
   (* compare search key and key of current node *)
   searchKey := keyComparison(key, thisNode^.key);
   
@@ -190,7 +332,7 @@ BEGIN
   END; (* WHILE *)
   
   (* restore sentinel's key *)
-  bottom^.key := 0;
+  bottom^.key := NIL;
   
   (* check whether or not bottom has been reached *)
   IF thisNode # bottom THEN
@@ -200,30 +342,7 @@ BEGIN
     status := EntryNotFound;
     RETURN NIL
   END (* IF *)
-END valueForKey;
-
-
-(* ---------------------------------------------------------------------------
- * private procedure RemoveEntry(key, status)
- * ---------------------------------------------------------------------------
- * Removes the key/value pair for key from dictionary.  Fails if no entry is
- * stored for key in dictionary.  Passes status back in status.
- * ------------------------------------------------------------------------ *)
-
-PROCEDURE RemoveEntry ( key : Key; VAR status : Status );
-
-VAR
-  newRoot : Node;
-  
-BEGIN
-  (* remove entry *)
-  newRoot := remove(dictionary.root, key, status);
-  
-  IF status = Success THEN
-    dictionary.root := newRoot;
-    dictionary.entries := dictionary.entries - 1
-  END (* IF *)
-END RemoveEntry;
+END lookup;
 
 
 (* ---------------------------------------------------------------------------
@@ -448,8 +567,6 @@ END RemoveAll;
  * the passed in visitor procedure for each node, passing its key and value.
  * ------------------------------------------------------------------------ *)
 
-TYPE VisitorProc = PROCEDURE ( ARRAY OF CHAR, StringT );
-
 PROCEDURE Traverse ( node : Node; visit : VisitorProc );
   
 BEGIN
@@ -476,6 +593,8 @@ END Traverse;
  * ------------------------------------------------------------------------ *)
 
 TYPE Comparison = (Equal, Less, Greater);
+
+(* TO DO : rework for keys of type String *)
 
 PROCEDURE keyComparison
   ( VAR (* CONST *) left, right : ARRAY OF CHAR) : Comparison;
@@ -533,10 +652,11 @@ BEGIN
   prevNode := NIL;
   candidate := NIL;
   
-  (* init bottom node *)
+  (* init sentinel node *)
   ALLOCATE(bottom, TSIZE(NodeDescriptor));
+  (* bottom^ := { 0, NIL, NIL, bottom, bottom } *)
   bottom^.level := 0;
-  bottom^.key := 0;
+  bottom^.key := NIL;
   bottom^.value := NIL;
   bottom^.left := bottom;
   bottom^.right := bottom;
@@ -544,4 +664,7 @@ BEGIN
   (* init dictionary *)
   dictionary.entries := 0;
   dictionary.root := bottom
+  dictionary.lastSearch.key := NIL;
+  dictionary.lastSearch.value := NIL;
+  dictionary.lastStatus := Success;
 END Dictionary.
