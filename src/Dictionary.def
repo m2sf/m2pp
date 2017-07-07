@@ -9,10 +9,6 @@ IMPORT String;
 FROM String IMPORT StringT; (* alias for String.String *)
 
 
-CONST SignificantCharsInKey = 32;
-(* Excess characters are ignored *)
-
-
 (* Key type *)
 
 TYPE Key = StringT;
