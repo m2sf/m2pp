@@ -9,53 +9,126 @@ IMPORT String;
 FROM String IMPORT StringT; (* alias for String.String *)
 
 
-CONST MaxKeyLength = 32;
+CONST SignificantCharsInKey = 32;
+(* Excess characters are ignored *)
+
+
+(* Key type *)
+
+TYPE Key = StringT;
+
+
+(* Value type *)
+
+TYPE Value = StringT;
+
+
+(* Status type *)
+
+TYPE Status =
+  ( Success,
+    KeyAlreadyPresent,
+    EntryNotFound,
+    NilNotPermitted,
+    AllocationFailed );
 
 
 (* Procedure type for passing to procedure WithKeyValuePairDo *)
 
-TYPE IterBodyProc = PROCEDURE ( ARRAY OF CHAR, StringT );
+TYPE VisitorProc = PROCEDURE ( Key, Value );
 
 
 (* Introspection *)
 
+(* ---------------------------------------------------------------------------
+ * function Dictionary.count()
+ * ---------------------------------------------------------------------------
+ * Returns the number of key/value pairs in the global dictionary.
+ * Does not set dictionary status.
+ * ------------------------------------------------------------------------ *)
+
 PROCEDURE count ( ) : CARDINAL;
-(* Returns the number of items in the global dictionary. *)
+
+
+(* ---------------------------------------------------------------------------
+ * function Dictionary.status()
+ * ---------------------------------------------------------------------------
+ * Returns the status of the last operation on the global dictionary.
+ * Does not set dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE status ( ) : Status;
 
 
 (* Lookup Operations *)
 
-PROCEDURE isPresent ( VAR (* CONST *) key : ARRAY OF CHAR ) : BOOLEAN;
-(* Returns TRUE if a value is stored for key in the global dictionary. *)
+(* ---------------------------------------------------------------------------
+ * function Dictionary.isPresent(key)
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if key is present in the global dictionary, else FALSE.
+ * Fails and returns NIL if key is NIL.  Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isPresent ( key : Key ) : BOOLEAN;
 
 
-PROCEDURE stringForKey ( VAR (* CONST *) key : ARRAY OF CHAR ) : StringT;
-(* Returns the string value stored for key, if key is present in the global
-   dictionary. Returns NIL if key is not present in the global dictionary. *)
+(* ---------------------------------------------------------------------------
+ * function Dictionary.valueForKey(key)
+ * ---------------------------------------------------------------------------
+ * Returns the value stored for key in the global dictionary, or NIL if no key 
+ * is present in the dictionary. Fails if key is NIL. Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE valueForKey ( key : Key ) : Value;
 
 
 (* Insert Operations *)
 
+(* ---------------------------------------------------------------------------
+ * procedure Dictionary.StoreValueForKey(key, value)
+ * ---------------------------------------------------------------------------
+ * Stores value for key in the global dictionary.  Fails if key or value or
+ * both are NIL.  Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE StoreValueForKey ( key : Key; value : Value );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure Dictionary.StoreArrayForKey(key, array)
+ * ---------------------------------------------------------------------------
+ * Obtains an interned string for array, then stores the string as value for
+ * key in the global dictionary.  Fails if key is NIL or if array produces a
+ * NIL string.  Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
 PROCEDURE StoreArrayForKey
-  ( VAR (* CONST *) key; VAR array : ARRAY OF CHAR );
-(* Obtains an interned string for array,
-   then stores the string for key in the global dictionary. *)
-
-
-PROCEDURE StoreStringForKey
-  ( VAR (* CONST *) key : ARRAY OF CHAR; string : StringT );
-(* Stores string for key in the global dictionary. *)
+  ( key : Key; VAR (* CONST *) array : ARRAY OF CHAR );
 
 
 (* Removal Operations *)
 
-PROCEDURE RemoveKey ( VAR (* CONST *) key );
-(* Removes key and its value in the global dictionary. *)
+(* ---------------------------------------------------------------------------
+ * procedure Dictionary.RemoveKey(key)
+ * ---------------------------------------------------------------------------
+ * Removes key and its value from the global dictionary.  Fails if key is NIL
+ * or if key is not present in the dictionary.  Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE RemoveKey ( key : Key );
 
 
 (* Iteration *)
 
-PROCEDURE WithKeyValuePairsDo ( p : IterBodyProc );
+(* ---------------------------------------------------------------------------
+ * procedure Dictionary.WithKeyValuePairsDo(p)
+ * ---------------------------------------------------------------------------
+ * Iterates over all key/value pairs in the global dictionary in key order
+ * and calls calls visitor procedure p for each pair, passing key and value.
+ * Keys are ordered in ASCII collation order.  Sets dictionary status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WithKeyValuePairsDo ( p : VisitorProc );
 
 
 END Dictionary.
