@@ -124,6 +124,9 @@ END isPresent;
 
 PROCEDURE valueForKey ( key : Key ) : Value;
 
+VAR
+  value : Value;
+  
 BEGIN
   (* bail out if key is NIL *)
   IF key = NIL THEN
@@ -139,20 +142,15 @@ BEGIN
   END; (* IF *)
   
   (* search key *)
-  value := lookup(dictionary.root, key);
+  value := lookup(dictionary.root, key, dictionary.lastStatus);
   
-  (* entry found *)
+  (* update cache if entry found *)
   IF value # NIL THEN
     dictionary.lastSearch.key := key;
-    dictionary.lastSearch.value := value;
-    dictionary.lastStatus := Success;
-    RETURN value
-    
-  (* entry not found *)
-  ELSE
-    dictionary.lastStatus := EntryNotFound;
-    RETURN NIL
-  END (* IF *)
+    dictionary.lastSearch.value := value
+  END; (* IF *)
+  
+  RETURN value
 END valueForKey;
 
 
@@ -169,7 +167,6 @@ PROCEDURE StoreValueForKey ( key : Key; value : Value );
 
 VAR
   newRoot : Node;
-  status : Status;
   
 BEGIN
   (* bail out if key or value or both are NIL *)
@@ -211,7 +208,7 @@ BEGIN
   END; (* IF *)
   
   (* check key before getting interned string for value *)  
-  IF lookup(dictionary.root, key) = NIL THEN
+  IF lookup(dictionary.root, key, dictionary.lastStatus) = NIL THEN
     value := String.fromArray(array);
     
     IF value = NIL THEN
@@ -220,10 +217,7 @@ BEGIN
       
     ELSE (* all clear *)
       StoreValueForKey(value, key)
-      
-  ELSE (* key already exists *)
-    dictionary.lastStatus := KeyAlreadyExists;
-    RETURN
+    END (* IF *)
   END (* IF *)
 END StoreArrayForKey;
 
@@ -239,6 +233,9 @@ END StoreArrayForKey;
 
 PROCEDURE RemoveKey ( key : Key );
 
+VAR
+  newRoot : Node;
+  
 BEGIN
   (* bail out if key is NIL *)
   IF key = NIL THEN
@@ -247,9 +244,10 @@ BEGIN
   END; (* IF *)
   
   (* remove *)
-  RemoveKey(key, dictionary.lastStatus);
+  newRoot := remove(dictionary.root, key, dictionary.lastStatus);
   
   IF dictionary.lastStatus = Success THEN
+    dictionary.root := newRoot;
     dictionary.entries := dictionary.entries - 1
     
     (* clear cache if removed key is in cache *)
@@ -306,20 +304,20 @@ END WithKeyValuePairsDo;
 PROCEDURE lookup ( thisNode : Node; key : Key; VAR status : Status ) : Value;
 
 VAR
-  searchKey : Comparison;
+  searchKey : String.Comparison;
   
 BEGIN
   (* set sentinel's key to search key *)
   bottom^.key := key;
     
   (* compare search key and key of current node *)
-  searchKey := keyComparison(key, thisNode^.key);
+  searchKey := String.comparison(key, thisNode^.key);
   
   (* search until key is found or bottom of tree is reached *)
-  WHILE searchKey # Equal DO
+  WHILE searchKey # String.Equal DO
         
     (* move down left if key is less than key of current node *)
-    IF searchKey = Less THEN (* key < thisNode^.key *)
+    IF searchKey = String.Less THEN (* key < thisNode^.key *)
       thisNode := thisNode^.left
       
     (* move down right if key is greater than key of current node *)
@@ -328,7 +326,7 @@ BEGIN
     END; (* IF *)
     
     (* compare search key and key of current node *)
-    searchKey := keyComparison(key, thisNode^.key)
+    searchKey := String.comparison(key, thisNode^.key)
   END; (* WHILE *)
   
   (* restore sentinel's key *)
@@ -437,19 +435,19 @@ BEGIN
     node := newNode
   
   ELSE
-    CASE keyComparison(key, node^.key) OF
+    CASE String.comparison(key, node^.key) OF
     (* key already exists *)
-      Equal :
+      String.Equal :
         status := KeyAlreadyPresent;
         RETURN NIL
     
     (* key < node^.key *)
-    | Less :
+    | String.Less :
         (* recursive insert left *)
         node := insert(node^.left, key, value, status)
         
     (* key > node^.key *)
-    | Greater :
+    | String.Greater :
         (* recursive insert right *)
         node := insert(node^.right, key, value, status)
         
@@ -535,32 +533,6 @@ END remove;
 
 
 (* ---------------------------------------------------------------------------
- * private procedure RemoveAll(node)
- * ---------------------------------------------------------------------------
- * Recursively  removes  all nodes  from the tree  whose root node  is <node>.
- * NIL must not be passed in for <node>.
- * ------------------------------------------------------------------------ *)
-
-PROCEDURE RemoveAll ( node : Node );
-
-BEGIN
-  (* bail out if already at the bottom *)
-  IF node = bottom THEN
-    RETURN
-  END; (* IF *)
-  
-  (* remove the left subtree *)
-  RemoveAll(node^left);
-  
-  (* remove the right subtree *)
-  RemoveAll(node^.right);
-  
-  (* deallocate the node *)
-  DEALLOCATE(node)
-END RemoveAll;
-
-
-(* ---------------------------------------------------------------------------
  * private procedure Traverse(node, visit)
  * ---------------------------------------------------------------------------
  * Recursively traverses the tree whose root node is node, in-order and calls
@@ -583,68 +555,6 @@ BEGIN
   (* traverse right subtree *)
   Traverse(node^.right, visit)
 END Traverse;
-
-
-(* ---------------------------------------------------------------------------
- * private function keyComparison(left, right)
- * ---------------------------------------------------------------------------
- * Compares keys left and right using ASCII collation order and returns Equal
- * if the keys match, Less if left < right, or Greater if left > right.
- * ------------------------------------------------------------------------ *)
-
-TYPE Comparison = (Equal, Less, Greater);
-
-(* TO DO : rework for keys of type String *)
-
-PROCEDURE keyComparison
-  ( VAR (* CONST *) left, right : ARRAY OF CHAR) : Comparison;
-
-VAR
-  index, maxIndex : CARDINAL;
-  
-BEGIN
-  index := 0;  
-  maxIndex := MaxKeyLength;
-  
-  IF HIGH(left) < maxIndex THEN
-    maxIndex := HIGH(left)
-  END; (* IF *)
-  
-  IF HIGH(right) < maxIndex THEN
-    maxIndex := HIGH(right)
-  END; (* IF *)
-  
-  (* find first mismatching character *)
-  WHILE (index <= maxIndex) AND (left[index] = right[index]) DO
-    index := index + 1
-  END; (* WHILE *)
-  
-  (* mismatch found -- mismatching char decides *)
-  IF index <= maxIndex THEN
-    IF left[index] < right[index] THEN
-      RETURN Less
-    ELSE
-      RETURN Greater
-    END (* IF *)
-  
-  (* all chars match to max key length *)
-  ELSIF index > MaxKeyLength THEN
-    RETURN Equal
-  
-  (* no mismatch found -- length decides *)
-  ELSE (* maxIndex < index <= MaxKeyLength *)
-    (* left is shorter than right *)
-    IF HIGH(left) < HIGH(right) THEN
-      RETURN Less
-    (* left is longer than right *)
-    ELSIF HIGH(left) > HIGH(right) THEN
-      RETURN Greater
-    (* left and right have same length *)
-    ELSE
-      RETURN Equal
-    END (* IF *)
-  END (* IF *)
-END keyComparison;
 
 
 BEGIN  
