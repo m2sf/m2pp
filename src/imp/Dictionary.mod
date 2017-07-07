@@ -34,9 +34,6 @@ TYPE NodeDescriptor = RECORD
 END; (* NodeDescriptor *)
 
 
-CONST MaxKeyLength = SignificantCharsInKey;
-
-
 VAR
   dictionary : Tree;
   prevNode,
@@ -105,7 +102,7 @@ BEGIN
   (* search key *)
   value := lookup(dictionary.root, key, dictionary.lastStatus);
   
-  (* entry found *)
+  (* update cache if entry found *)
   IF value # NIL THEN
     dictionary.lastSearch.key := key;
     dictionary.lastSearch.value := value;
@@ -336,6 +333,7 @@ BEGIN
   IF thisNode # bottom THEN
     status := Success;
     RETURN thisNode^.value
+    
   ELSE (* bottom reached -- key not found *)
     status := EntryNotFound;
     RETURN NIL
@@ -480,7 +478,7 @@ END insert;
 PROCEDURE remove ( node : Node; key : Key; VAR status : Status ) : Node;
 
 BEGIN
-  (* bail out if bottom has been reached *)
+  (* exit when bottom reached *)
   IF node = bottom THEN
     status := EntryNotFound;
     RETURN NIL;
@@ -542,6 +540,7 @@ END remove;
 PROCEDURE Traverse ( node : Node; visit : VisitorProc );
   
 BEGIN
+  (* exit when bottom reached *)
   IF node = bottom THEN
     RETURN
   END; (* IF *)
@@ -572,6 +571,7 @@ BEGIN
   bottom^.right := bottom;
 
   (* init dictionary *)
+  (* dictionary := { 0, bottom, NIL, NIL, Success } *)
   dictionary.entries := 0;
   dictionary.root := bottom
   dictionary.lastSearch.key := NIL;
