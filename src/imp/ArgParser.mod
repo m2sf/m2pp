@@ -2,7 +2,7 @@
 
 IMPLEMENTATION MODULE ArgParser;
 
-IMPORT ArgLexer, Newline;
+IMPORT ArgLexer, Newline, Tabulator;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -12,7 +12,6 @@ FROM String IMPORT StringT; (* alias for String.String *)
 VAR
   srcFile  : StringT;
   errCount : CARDINAL;
-  tabwidth : CARDINAL [0..8];
   
 
 (* Public Operations *)
@@ -267,8 +266,8 @@ BEGIN
     value := ArgLexer.digit();
     
     (* set tab width *)
-    IF value <= 8 THEN
-      tabWidth := value
+    IF value <= Tabulator.MaxTabWidth THEN
+      Tabulator.SetTabWidth(value)
     END; (* IF *)
     
     token := ArgLexer.nextToken()
