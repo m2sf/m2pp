@@ -442,6 +442,33 @@ END RemoveAll;
 
 
 (* ---------------------------------------------------------------------------
+ * private procedure Traverse(node, visit)
+ * ---------------------------------------------------------------------------
+ * Recursively traverses the tree whose root node is node, in-order and calls
+ * the passed in visitor procedure for each node, passing its key and value.
+ * ------------------------------------------------------------------------ *)
+
+TYPE VisitorProc = PROCEDURE ( ARRAY OF CHAR, StringT );
+
+PROCEDURE Traverse ( node : Node; visit : VisitorProc );
+  
+BEGIN
+  IF node = bottom THEN
+    RETURN
+  END; (* IF *)
+  
+  (* traverse left subtree *)
+  Traverse(node^.left, visit);
+  
+  (* call visitor proc passing key and value *)
+  visit(node^.key, node^.value);
+  
+  (* traverse right subtree *)
+  Traverse(node^.right, visit)
+END Traverse;
+
+
+(* ---------------------------------------------------------------------------
  * private function keyComparison(left, right)
  * ---------------------------------------------------------------------------
  * Compares keys left and right using ASCII collation order and returns Equal
