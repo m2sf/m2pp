@@ -23,4 +23,6 @@ BEGIN
 END mode;
 
 
+BEGIN
+  defaultMode := LF
 END Newline.
