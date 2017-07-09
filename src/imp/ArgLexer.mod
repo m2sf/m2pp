@@ -219,8 +219,8 @@ BEGIN
     next := Infile.consumeChar(args)
   END; (* IF *)
   
-  (* consume all characters until whitespace or end of input reached *)
-  WHILE NOT Infile.eof(args) AND (next # SPACE) DO
+  (* consume all characters until whitespace, '=' or end of input reached *)
+  WHILE NOT Infile.eof(args) AND (next # SPACE) AND (next # '=') DO
     next := Infile.consumeChar(args)
   END; (* WHILE *)
   
@@ -309,10 +309,10 @@ END tokenForOptionLexeme;
 (* ---------------------------------------------------------------------------
  * private procedure GetPath(next, token, lexeme)
  * ---------------------------------------------------------------------------
- * Reads a character sequence from args until an unescaped whitespace or end
- * of input is reached, ignoring any backslash escaped whitespace. Passes the
- * character sequence back in lexeme. Passes the new lookahead character in
- * next and FileOrPath in token.
+ * Reads a character sequence from args until an unescaped whitespace, '=' or
+ * end of input is reached, ignoring any backslash escaped whitespace. Passes
+ * the character sequence back in lexeme. Passes the new lookahead character
+ * in next and FileOrPath in token.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE GetPath
@@ -321,8 +321,8 @@ PROCEDURE GetPath
 BEGIN  
   Infile.MarkLexeme(args);
   
-  (* consume all characters until whitespace or end of input reached *)
-  WHILE NOT Infile.eof(args) AND (next # SPACE) DO
+  (* consume all characters until whitespace, '=' or end of input reached *)
+  WHILE NOT Infile.eof(args) AND (next # SPACE) AND (next # '=') DO
     (* check for escaped whitespace *) 
     IF (next = BACKSLASH) AND (Infile.la2Char(args) = SPACE) THEN
       (* consume backslash *)
@@ -346,10 +346,10 @@ END GetPath;
  * private procedure GetIdent(next, token, lexeme)
  * ---------------------------------------------------------------------------
  * Reads a character sequence starting with a letter from args until white-
- * space or end of input is reached. Passes the character sequence in lexeme.
- * Passes the new lookahead character in next. If any non-alphanumeric chars
- * are found in the character sequence, Invalid is passed in token, otherwise
- * Ident is passed in token.
+ * space, '=' or end of input is reached. Passes the character sequence in
+ * lexeme. Passes the new lookahead character in next. If any non-alphanumeric
+ * characters are found in the character sequence, Invalid is passed in token,
+ * otherwise Ident is passed in token.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE GetIdent
@@ -363,8 +363,8 @@ BEGIN
   
   Infile.MarkLexeme(args);
   
-  (* consume all characters until whitespace or end of input reached *)
-  WHILE NOT Infile.eof(args) AND (next # SPACE) DO
+  (* consume all characters until whitespace, '=' or end of input reached *)
+  WHILE NOT Infile.eof(args) AND (next # SPACE) AND (next # '=') DO
     (* check for illegal characters *) 
     IF (next < '0') OR
        ((next > '9') AND (next < 'A')) OR
@@ -392,11 +392,12 @@ END GetIdent;
  * private procedure GetValue(next, token, lexeme)
  * ---------------------------------------------------------------------------
  * Reads a character sequence starting with a single quote or double quote
- * from args until whitespace or end of input is reached. Passes the character
- * sequence in lexeme. Passes the new lookahead character in next.  If the
- * last character in the sequence does not match the first or if the quote
- * at the start occurs anywhere else than at the start and end, Invalid is
- * passed in token, otherwise Value is passed in token.
+ * from args until the first whitespace after a closing matching single or
+ * double quote or end of input is reached. Passes the character sequence in
+ * lexeme. Passes the new lookahead character in next.  If the last character
+ * in the sequence does not match the first or if the quote at the start
+ * occurs anywhere else than at the start and end, Invalid is passed in token,
+ * otherwise Value is passed in token.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE GetValue
@@ -415,8 +416,10 @@ BEGIN
   delimiter := next;
   next := Infile.consumeChar(args);
   
-  (* consume all characters until whitespace or end of input reached *)
-  WHILE NOT Infile.eof(args) AND (next # SPACE) DO
+  (* consume all characters until
+     first whitespace after closing delimiter or end of input reached *)
+  WHILE NOT Infile.eof(args) AND
+        NOT ((delimiterCount > 1) AND (next = SPACE)) DO
     (* count delimiters *) 
     IF next = delimiter THEN
       delimiterCount := delimiterCount + 1
@@ -459,8 +462,8 @@ BEGIN
   
   Infile.MarkLexeme(args);
   
-  (* consume all characters until whitespace or end of input reached *)
-  WHILE NOT Infile.eof(args) AND (next # SPACE) DO
+  (* consume all characters until whitespace, '=' or end of input reached *)
+  WHILE NOT Infile.eof(args) AND (next # SPACE) AND (next # '=') DO
     (* check for illegal characters *) 
     IF (next < '0') OR (next > '9') THEN
       illegalCharsFound := TRUE
@@ -483,4 +486,5 @@ END GetNumber;
 
 BEGIN
   (* TO DO : init args *)
+  lexeme := NIL
 END ArgLexer.
