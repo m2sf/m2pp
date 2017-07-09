@@ -11,5 +11,6 @@ This directory contains the launch scripts for different operating systems:
 
 * `m2pp.sh` for the bash shell used on Unix and Unix-like operating systems
 * `m2pp.bat` for the command interpreter on Windows, MS-DOS and OS/2
+* `m2pp.com` for the DCL command language on OpenVMS
 
-Launch scripts for AmigaOS and OpenVMS will be added in the future.
+A launch script for AmigaOS shall be added in the future.
