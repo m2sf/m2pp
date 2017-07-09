@@ -44,7 +44,7 @@ BEGIN
   
   (* skip any whitespace, tab and new line *)
   WHILE NOT Infile.eof(args) AND
-    (next = SPACE OR next = TAB OR next = NEWLINE) DO
+    ((next = SPACE) OR (next = TAB) OR (next = NEWLINE)) DO
     next := Infile.consumeChar(args)
   END; (* WHILE *)
   
