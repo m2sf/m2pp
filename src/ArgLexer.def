@@ -32,13 +32,10 @@ TYPE Token = (
   
   (* parameters *)
 
-  FileOrPath,           (* sourcefile or outfile *)
-  Key,                  (* dictionary key *)
-  Value,                (* dictionary value *)
-  Digit,                (* 0 .. 9 *)
-  LF,                   (* lf *)
-  CR,                   (* cr *)
-  CRLF,                 (* crlf *)
+  FileOrPath,           (* filename or pathname *)
+  Ident,                (* identifier *)
+  Value,                (* quoted value *)
+  Number,               (* decimal value *)
 
   (* punctuation *)
   
@@ -59,17 +56,18 @@ TYPE Token = (
  * Reads and consumes the next commmand line argument and returns its token.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE nextToken : Token;
+PROCEDURE nextToken () : Token;
 
 
 (* ---------------------------------------------------------------------------
  * function lastArg()
  * ---------------------------------------------------------------------------
- * Returns the argument string of the last consumed argument or NIL if the
- * end of input token has been returned by a prior call to nextToken().
+ * Returns the argument string of the last consumed argument, or NIL if the
+ * token returned by a prior call to nextToken() was Equals or EndOfInput,
+ * or if nextToken() has not been called before.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE lastArg : StringT;
+PROCEDURE lastArg () : StringT;
 
 
 (* ---------------------------------------------------------------------------
