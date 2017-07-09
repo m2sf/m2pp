@@ -1,3 +1,4 @@
 *.def linguist-language=modula-2
 *.bat linguist-vendored
+*.com linguist-vendored
 *.sh linguist-vendored
