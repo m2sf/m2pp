@@ -10,4 +10,4 @@ if p7 .nes. "" then write outfile p7
 if p8 .nes. "" then write outfile p8
 close outfile
 mcr m2pp.exe
-delete outfile
+delete m2ppargs.tmp;*
