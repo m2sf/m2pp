@@ -1,0 +1,120 @@
+(*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE ArgLexer;
+
+FROM String IMPORT StringT; (* alias for String.String *)
+
+
+(* ---------------------------------------------------------------------------
+ * Type Token
+ * ---------------------------------------------------------------------------
+ * Enumerated token values representing command line arguments.
+ * ------------------------------------------------------------------------ *)
+
+TYPE Token = (
+  
+  (* invalid argument *)
+  
+  Invalid,
+  
+  (* information options *)
+  
+  Help,                 (* --help, -h *)
+  Version,              (* --version, -V *)
+  License,              (* --license *)
+  
+  (* expansion options *)
+  
+  Outfile,              (* --outfile *)
+  Dict,                 (* --dict *)
+  TabWidth,             (* --tabwidth *)
+  Newline,              (* --newline *)
+  
+  (* parameters *)
+
+  FileOrPath,           (* sourcefile or outfile *)
+  Key,                  (* dictionary key *)
+  Value,                (* dictionary value *)
+  Digit,                (* 0 .. 9 *)
+  LF,                   (* lf *)
+  CR,                   (* cr *)
+  CRLF,                 (* crlf *)
+
+  (* punctuation *)
+  
+  Equals,               (* = *)
+
+  (* diagnostic option *)
+
+  Verbose,              (* --verbose, -v *)
+  
+  (* end of input sentinel *)
+  
+  EndOfInput);
+
+
+(* ---------------------------------------------------------------------------
+ * function nextToken()
+ * ---------------------------------------------------------------------------
+ * Reads and consumes the next commmand line argument and returns its token.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE nextToken : Token;
+
+
+(* ---------------------------------------------------------------------------
+ * function lastArg()
+ * ---------------------------------------------------------------------------
+ * Returns the argument string of the last consumed argument or NIL if the
+ * end of input token has been returned by a prior call to nextToken().
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE lastArg : StringT;
+
+
+(* ---------------------------------------------------------------------------
+ * function isInfoRequest(token)
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if token represents an information request, else FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isInfoRequest ( token : Token ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function isExpansionRequest(token)
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if token represents a compilation request, else FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isExpansionOption ( token : Token ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function isParameter(token)
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if token represents an option parameter, else FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isParameter ( token : Token ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function isNewlineParam(token)
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if token represents an newline option parameter, else FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isNewlineParam ( token : Token ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function isDiagnosticsOption(token)
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if token represents a diagnostics option, else FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isDiagnosticsOption ( token : Token ) : BOOLEAN;
+
+
+END ArgLexer.
