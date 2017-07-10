@@ -1,0 +1,20 @@
+(*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE Preprocessor;
+
+(* Modula-2 Preprocessor *)
+
+FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
+FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
+
+
+(* ---------------------------------------------------------------------------
+ * procedure Expand(infile, outfile)
+ * ---------------------------------------------------------------------------
+ * Expands template file infile to output file outfile.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE Expand ( infile : InfileT; outfile : OutfileT );
+
+
+END Preprocessor.
