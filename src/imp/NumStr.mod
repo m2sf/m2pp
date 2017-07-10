@@ -17,9 +17,9 @@ VAR
 BEGIN
   (* check sign *)
   ch := String.charAtIndex(numStr, 0);
-  minDigit := 0;
+  minIndex := 0;
   IF ch = '+' THEN
-    minDigit := 1
+    minIndex := 1
   ELSIF ch = '-' THEN
     status := Underflow;
     RETURN
@@ -86,12 +86,12 @@ VAR
 BEGIN
   (* check sign *)
   ch := String.charAtIndex(numStr, 0);
-  minDigit := 0;
+  minIndex := 0;
   negative := FALSE;
   IF ch = '+' THEN
-    minDigit := 1;
+    minIndex := 1;
   ELSIF ch = '-' THEN
-    minDigit := 1;
+    minIndex := 1;
     negative := TRUE
   END; (* IF *)
   
