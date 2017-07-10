@@ -65,7 +65,7 @@ BEGIN
       (* calculate index for next digit *)
       digitIndex := digitIndex - 1
     ELSE
-      status := Success
+      status := Success;
       EXIT
     END (* IF *)
   END; (* LOOP *)
@@ -143,7 +143,7 @@ BEGIN
       (* calculate index for next digit *)
       digitIndex := digitIndex - 1
     ELSE
-      status := Success
+      status := Success;
       EXIT
     END (* IF *)
   END; (* LOOP *)
