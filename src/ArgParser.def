@@ -12,7 +12,7 @@ TYPE Status = (
   HelpRequested,
   VersionRequested,
   LicenseRequested,
-  ErrorsEncountered);
+  ErrorsEncountered );
 
 
 (* ---------------------------------------------------------------------------
@@ -21,7 +21,7 @@ TYPE Status = (
  * Parses command line arguments and initalises dictionary accordingly.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE parseArgs : Status;
+PROCEDURE parseArgs () : Status;
 
 
 (* ---------------------------------------------------------------------------
@@ -30,7 +30,16 @@ PROCEDURE parseArgs : Status;
  * Returns a string with the source file argument.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE sourceFile : StringT;
+PROCEDURE sourceFile () : StringT;
+
+
+(* ---------------------------------------------------------------------------
+ * function targetFile()
+ * ---------------------------------------------------------------------------
+ * Returns a string with the outfile file argument.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE targetFile () : StringT;
 
 
 (* ---------------------------------------------------------------------------
@@ -39,7 +48,7 @@ PROCEDURE sourceFile : StringT;
  * Returns the count of errors encountered while parsing the arguments.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE errorCount : CARDINAL;
+PROCEDURE errorCount () : CARDINAL;
 
 
 END ArgParser.
