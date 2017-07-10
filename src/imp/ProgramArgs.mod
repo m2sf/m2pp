@@ -35,13 +35,8 @@ PROCEDURE Query;
 (* Queries program args and writes argument file. *)
 
 BEGIN
-  (* print message *)
-  Console.WriteChars
-    ("Please enter program arguments, press ENTER key when done");
-  Console.WriteLn;
-  
   (* prompt *)
-  Console.WriteChars("M2PP> ");
+  Console.WriteChars("args> ");
   
   (* read user input *)
   Console.ReadLine(argStr);
