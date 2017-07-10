@@ -1,0 +1,25 @@
+(*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE ProgramArgs;
+
+(* Program Argument Management *)
+
+FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
+
+
+CONST Filename = "m2ppargs.tmp";
+
+
+PROCEDURE Open;
+(* Opens the command line argument file. *)
+
+
+PROCEDURE Close;
+(* Closes the command line argument file. *)
+
+
+PROCEDURE file () : InfileT;
+(* Returns a file handle to the command line argument file, NIL if closed. *)
+
+
+END ProgramArgs.
