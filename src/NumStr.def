@@ -1,0 +1,23 @@
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE NumStr;
+
+(* Numeric String Conversion Library *)
+
+FROM String IMPORT StringT; (* alias for String.String *)
+
+
+TYPE Status = ( Success, Overflow, NaN );
+
+
+PROCEDURE ToCard
+  ( numStr : StringT; VAR value : CARDINAL; VAR status : Status );
+(* Converts the value represented by numStr to type CARDINAL. *)
+
+
+PROCEDURE ToInt
+  ( numStr : StringT; VAR value : INTEGER; VAR status : Status );
+(* Converts the value represented by numStr to type INTEGER. *)
+
+
+END NumStr.
