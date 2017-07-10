@@ -31,6 +31,14 @@ BEGIN
 END Close;
 
 
+PROCEDURE Query;
+(* Queries program args and writes argument file. *)
+
+BEGIN
+  (* TO DO *)
+END Query;
+
+
 PROCEDURE file () : InfileT;
 (* Returns a file handle to the command line argument file, NIL if closed. *)
 
