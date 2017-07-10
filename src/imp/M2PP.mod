@@ -4,7 +4,7 @@ MODULE M2PP;
 
 (* Modula-2 Preprocessor Driver *)
 
-IMPORT ProgramArgs, ArgParser, Infile, Outfile;
+IMPORT ProgramArgs, ArgParser, Infile, Outfile, Preprocessor;
 
 FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
 FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
