@@ -18,6 +18,10 @@ PROCEDURE Close;
 (* Closes the command line argument file. *)
 
 
+PROCEDURE Query;
+(* Queries program args and writes argument file. *)
+
+
 PROCEDURE file () : InfileT;
 (* Returns a file handle to the command line argument file, NIL if closed. *)
 
