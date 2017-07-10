@@ -40,8 +40,8 @@ BEGIN
   CASE argStatus OF
     Success :
       (* print banner *)
-      Console.WriteChars(ProgramId); Console.WriteChars(", ");
-      Console.WriteChars(ProgramId); Console.WriteLn;
+      Console.WriteChars(ProgTitle); Console.WriteChars(", ");
+      Console.WriteChars(Version);   Console.WriteLn;
       Console.WriteChars(Copyright); Console.WriteLn;
       
       infileName := ArgParser.sourceFile();
