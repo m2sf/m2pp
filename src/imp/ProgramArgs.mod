@@ -35,7 +35,7 @@ PROCEDURE file () : InfileT;
 (* Returns a file handle to the command line argument file, NIL if closed. *)
 
 BEGIN
- RETURN argsFile
+  RETURN argsFile
 END file;
 
 
