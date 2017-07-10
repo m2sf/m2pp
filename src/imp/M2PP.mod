@@ -9,6 +9,13 @@ IMPORT ProgramArgs, ArgParser, Infile, Outfile;
 FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
 FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
 
+
+CONST
+  ProgTitle = "M2PP - Modula-2 Preprocessor";
+  Version   = "Version 0.1";
+  Copyright = "Copyright (c) 2017 Modula-2 Software Foundation";
+  License   = "Licensed under the LGPL license version 2.1";
+
 VAR
   infileName,
   outfileName : StringT;
@@ -16,11 +23,10 @@ VAR
   outfile : OutfileT;
   inStatus : Infile.Status;
   outStatus : Outfile.Status;
-  
+  argStatus : ArgParser.Status;
 
-BEGIN
-  (* if verbose mode, print banner *)
 
+BEGIN  
   (* check if program argument file is present *)
   IF fileExists(ProgramArgs.Filename) THEN
     ProgramArgs.Open
@@ -28,27 +34,45 @@ BEGIN
     ProgramArgs.Query
   END; (* IF *)
   
-  ArgParser.parseArgs();
+  argStatus := ArgParser.parseArgs();
   ProgramArgs.Close;
   
-  (* TO DO : verify result *)
+  CASE argStatus OF
+    Success :
+      (* print banner *)
+      Console.WriteChars(ProgramId); Console.WriteChars(", ");
+      Console.WriteChars(ProgramId); Console.WriteLn;
+      Console.WriteChars(Copyright); Console.WriteLn;
+      
+      infileName := ArgParser.sourceFile();
+      outfileName := ArgParser.targetFile();
+      
+      IF outfileName = NIL THEN
+        (* generate outfile name from infile name *)
+      END; (* IF *)
+      
+      Infile.Open(infile, inStatus);
+      
+      (* TO DO : handle status *)
+      
+      Outfile.Open(outfile, outStatus);
+      
+      (* TO DO : handle status *)
+      
+      Preprocessor.Expand(infile, outfile);
+      
+      (* if verbose mode, print summary *)
+      
+  | HelpRequested :
+      (* TO DO : print help *)
+      
+  | VersionRequested :
+      Console.WriteChars(Version); WriteLn
   
-  infileName := ArgParser.sourceFile();
-  outfileName := ArgParser.targetFile();
-  
-  IF outfileName = NIL THEN
-    (* generate outfile name from infile name *)
-  END; (* IF *)
-  
-  Infile.Open(infile, inStatus);
-  
-  (* TO DO : handle status *)
-  
-  Outfile.Open(outfile, outStatus);
-  
-  (* TO DO : handle status *)
-  
-  Preprocessor.Expand(infile, outfile);
-  
-  (* if verbose mode, print summary *)
+  | LicenseRequested :
+      Console.WriteChars(License); WriteLn
+      
+  | ErrorsEncountered :
+      (* TO DO : print help *)
+  END (* CASE *)
 END M2PP.
