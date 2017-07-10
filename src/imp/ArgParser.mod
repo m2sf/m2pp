@@ -2,7 +2,7 @@
 
 IMPLEMENTATION MODULE ArgParser;
 
-IMPORT ArgLexer, Newline, Tabulator;
+IMPORT ArgLexer, String, NumStr, Newline, Tabulator;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -149,12 +149,19 @@ PROCEDURE parseOption ( token : ArgLexer.Token ) : ArgLexer.Token;
 BEGIN
   (* outfile | dictionary | tabWidth | newlineMode *)
   CASE token OF
+  (* outfile | *)
     ArgLexer.TokenOutfile :
       token := parseOutfile(token)
+      
+  (* dictionary | *)
   | ArgLexer.TokenDict :
       token := parseDictionary(token)
+      
+  (* tabWidth | *)
   | ArgLexer.TokenTabWidth :
       token := parseTabWidth(token)
+      
+  (* newlineMode *)
   | ArgLexer.TokenNewline :
       token := parseNewlineMode(token)
   END; (* CASE *)
@@ -247,26 +254,30 @@ END parseDictionary;
  * function parseTabWidth(token)
  * ---------------------------------------------------------------------------
  * tabWidth :=
- *   '--tabwidth' digit0to8
+ *   '--tabwidth' Number
  *   ;
  *
- * digit0to8 := '0' .. '8' ;
+ * Number := Digit+ ;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE parseTabWidth ( token : ArgLexer.Token ) : ArgLexer.Token;
 
 VAR
-  digit : CARDINAL;
+  value : CARDINAL;
+  numStr := StringT;
+  status : NumStr.Status;
   
 BEGIN
   token := ArgLexer.nextToken();
   
-  (* digit0to8 *)
-  IF token = ArgLexer.Digit THEN
-    value := ArgLexer.digit();
-    
+  (* Number *)
+  IF token = ArgLexer.Number THEN
+    (* get value *)
+    numStr := ArgLexer.lastArg();
+    NumStr.ToCard(numStr, value, status);
+        
     (* set tab width *)
-    IF value <= Tabulator.MaxTabWidth THEN
+    IF (status = NumStr.Success) AND (value <= Tabulator.MaxTabWidth) THEN
       Tabulator.SetTabWidth(value)
     END; (* IF *)
     
@@ -301,20 +312,23 @@ BEGIN
     mode := ArgLexer.lexeme
   END; (* IF *)
   
-  IF String.matchesArray(mode, "lf") THEN
-    Newline.SetMode(Newline.LF)
-    
-  ELSIF String.matchesArray(mode, "cr") THEN
-    Newline.SetMode(Newline.CR)
-  
-  ELSIF String.matchesArray(mode, "crlf") THEN
-    Newline.SetMode(Newline.CRLF)
-  
-  ELSE
-    (* error: unrecognised mode *)
-    
-    RETURN token
-  END; (* IF *)
+  CASE String.length(modeStr) OF
+    2 :
+      CASE String.charAtIndex(modeStr, 0) OF
+        'l' :
+          IF String.matchesArray(modeStr, "lf") THEN
+            Newline.SetMode(Newline.LF)
+          END (* IF *)
+      | 'c' :
+          IF String.matchesArray(modeStr, "cr") THEN
+            Newline.SetMode(Newline.CR)
+          END (* IF *)
+      END (* CASE *)
+  | 4 :
+      IF String.matchesArray(modeStr, "crlf") THEN
+        Newline.SetMode(Newline.CRLF)
+      END
+  END (* CASE *)
   
   token := ArgLexer.nextToken();
   RETURN token
@@ -324,7 +338,5 @@ END parseNewlineMode;
 BEGIN (* ArgParser *)
   (* init properties *)
   srcFile := NIL;
-  errCount := 0;
-  tabwidth := 0;
-  crlfMode := Newline.LF
+  errCount := 0
 END ArgParser.
