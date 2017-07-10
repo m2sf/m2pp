@@ -122,7 +122,6 @@ BEGIN
   (* --license *)
   | ArgLexer.License :
       status := Status.LicenseRequested
-  
   END; (* CASE *)
   
   RETURN ArgLexer.nextToken()
@@ -144,6 +143,7 @@ BEGIN
   IF token = ArgLexer.FileOrPath THEN
     srcFile := ArgLexer.lastArg();
     token := ArgLexer.nextToken()
+    
   ELSE
     ReportMissingSourceFile()
   END; (* IF *)
@@ -269,7 +269,7 @@ BEGIN
       key := NIL; value := NIL
     END; (* IF *)
     
-    token := ArgLexer.nextToken();
+    token := ArgLexer.nextToken()
   END; (* WHILE *)
 
   RETURN token  
@@ -350,12 +350,14 @@ BEGIN
               Newline.SetMode(Newline.LF);
               token := ArgLexer.nextToken()
             END (* IF *)
+            
         | 'c' :
             IF String.matchesArray(modeStr, "cr") THEN
               Newline.SetMode(Newline.CR);
               token := ArgLexer.nextToken()
             END (* IF *)
         END (* CASE *)
+        
     | 4 :
         IF String.matchesArray(modeStr, "crlf") THEN
           Newline.SetMode(Newline.CRLF);
