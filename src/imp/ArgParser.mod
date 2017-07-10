@@ -10,7 +10,8 @@ FROM String IMPORT StringT; (* alias for String.String *)
 (* Properties *)
 
 VAR
-  srcFile  : StringT;
+  srcFile,
+  tgtFile  : StringT;
   errCount : CARDINAL;
   
 
@@ -26,24 +27,27 @@ VAR
  *   ;
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE parseArgs : Status;
+PROCEDURE parseArgs () : Status;
 
-BEGIN
-  sym := ArgLexer.nextToken();
+VAR
+  token : ArgLexer.Token;
   
-  IF ArgLexer.isInfoRequest(sym) THEN
-    sym := parseInfoRequest(sym)
+BEGIN
+  token := ArgLexer.nextToken();
+  
+  IF ArgLexer.isInfoRequest(token) THEN
+    token := parseInfoRequest(token)
     
-  ELSIF ArgLexer.isExpansionRequest(sym) THEN
-    sym := parseExpansionRequest(sym)
+  ELSIF ArgLexer.isExpansionRequest(token) THEN
+    token := parseExpansionRequest(token)
     
-  ELSIF sym = ArgLexer.EndOfInput THEN
+  ELSIF token = ArgLexer.EndOfInput THEN
     ReportMissingSourceFile
   END; (* IF *)
   
-  WHILE sym # ArgLexer.EndOfInput DO
+  WHILE token # ArgLexer.EndOfInput DO
     ReportExcessArgument(ArgLexer.lastArg());
-    sym := ArgLexer.nextToken()
+    token := ArgLexer.nextToken()
   END; (* WHILE *)
   
   IF errCount > 0 THEN
@@ -60,11 +64,24 @@ END parseArgs;
  * Returns a string with the source file argument.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE sourceFile : StringT;
+PROCEDURE sourceFile () : StringT;
 
 BEGIN
   RETURN srcFile
 END sourceFile;
+
+
+(* ---------------------------------------------------------------------------
+ * function targetFile()
+ * ---------------------------------------------------------------------------
+ * Returns a string with the outfile file argument.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE targetFile () : StringT;
+
+BEGIN
+  RETURN tgtFile
+END targetFile;
 
 
 (* ---------------------------------------------------------------------------
@@ -73,7 +90,7 @@ END sourceFile;
  * Returns the count of errors encountered while parsing the arguments.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE errorCount : CARDINAL;
+PROCEDURE errorCount () : CARDINAL;
 
 BEGIN
   RETURN errCount
@@ -95,13 +112,16 @@ PROCEDURE parseInfoRequest ( token : ArgLexer.Token ) : ArgLexer.Token;
 BEGIN
   CASE token OF
   (* --help, -h *)
-    ArgLexer.Help : status := Status.HelpRequested
+    ArgLexer.Help :
+      status := Status.HelpRequested
   
   (* --version, -V *)  
-  | ArgLexer.Version : status := Status.VersionRequested
+  | ArgLexer.Version :
+      status := Status.VersionRequested
   
   (* --license *)
-  | ArgLexer.License : status := Status.LicenseRequested
+  | ArgLexer.License :
+      status := Status.LicenseRequested
   
   END; (* CASE *)
   
@@ -121,14 +141,15 @@ PROCEDURE parseExpansionRequest ( token : ArgLexer.Token ) : ArgLexer.Token;
 
 BEGIN
   (* sourceFile *)
-  IF token = ArgLexer.SourceFile THEN
-    token := parseCapabilities(token)
+  IF token = ArgLexer.FileOrPath THEN
+    srcFile := ArgLexer.lastArg();
+    token := ArgLexer.nextToken()
   ELSE
     ReportMissingSourceFile()
   END; (* IF *)
   
   (* option* *)
-  WHILE ArgLexer.isOption(token) DO
+  WHILE ArgLexer.isExpansionOption(token) DO
     token := parseOption(token)
   END; (* WHILE *)
   
@@ -150,19 +171,19 @@ BEGIN
   (* outfile | dictionary | tabWidth | newlineMode *)
   CASE token OF
   (* outfile | *)
-    ArgLexer.TokenOutfile :
+    ArgLexer.Outfile :
       token := parseOutfile(token)
       
   (* dictionary | *)
-  | ArgLexer.TokenDict :
+  | ArgLexer.Dict :
       token := parseDictionary(token)
       
   (* tabWidth | *)
-  | ArgLexer.TokenTabWidth :
+  | ArgLexer.TabWidth :
       token := parseTabWidth(token)
       
   (* newlineMode *)
-  | ArgLexer.TokenNewline :
+  | ArgLexer.Newline :
       token := parseNewlineMode(token)
   END; (* CASE *)
   
@@ -185,8 +206,11 @@ END parseOption;
 PROCEDURE parseOutfile ( token : ArgLexer.Token ) : ArgLexer.Token;
 
 BEGIN
-  (* TO DO *)
-  RETURN token
+  (* get lexeme of current symbol *)
+  tgtFile := ArgLexer.lastArg();
+  
+  (* consume current symbol and return next *)
+  RETURN ArgLexer.nextToken()
 END parseOutfile;
 
 
@@ -214,6 +238,8 @@ VAR
 BEGIN
   key := NIL;
   value := NIL;
+  
+  (* consume --dict, get next symbol *)
   token := ArgLexer.nextToken();
   
   (* ( key '=' value )+ *)
@@ -268,6 +294,7 @@ VAR
   status : NumStr.Status;
   
 BEGIN
+  (* consume --tabwidth, get next symbol *)
   token := ArgLexer.nextToken();
   
   (* Number *)
@@ -281,6 +308,7 @@ BEGIN
       Tabulator.SetTabWidth(value)
     END; (* IF *)
     
+    (* consume current symbol, get next *)
     token := ArgLexer.nextToken()
   END; (* END *)
   
@@ -305,32 +333,37 @@ VAR
   
 BEGIN
   mode := NIL;
+  
+  (* consume --newline, get next symbol *)
   token := ArgLexer.nextToken();
   
   (* mode *)
   IF token = ArgLexer.Identifier THEN
-    mode := ArgLexer.lexeme
+    mode := ArgLexer.lexeme();
+    
+    (* check lexeme and set mode *)
+    CASE String.length(modeStr) OF
+      2 :
+        CASE String.charAtIndex(modeStr, 0) OF
+          'l' :
+            IF String.matchesArray(modeStr, "lf") THEN
+              Newline.SetMode(Newline.LF);
+              token := ArgLexer.nextToken()
+            END (* IF *)
+        | 'c' :
+            IF String.matchesArray(modeStr, "cr") THEN
+              Newline.SetMode(Newline.CR);
+              token := ArgLexer.nextToken()
+            END (* IF *)
+        END (* CASE *)
+    | 4 :
+        IF String.matchesArray(modeStr, "crlf") THEN
+          Newline.SetMode(Newline.CRLF);
+          token := ArgLexer.nextToken()
+        END
+    END (* CASE *)
   END; (* IF *)
   
-  CASE String.length(modeStr) OF
-    2 :
-      CASE String.charAtIndex(modeStr, 0) OF
-        'l' :
-          IF String.matchesArray(modeStr, "lf") THEN
-            Newline.SetMode(Newline.LF)
-          END (* IF *)
-      | 'c' :
-          IF String.matchesArray(modeStr, "cr") THEN
-            Newline.SetMode(Newline.CR)
-          END (* IF *)
-      END (* CASE *)
-  | 4 :
-      IF String.matchesArray(modeStr, "crlf") THEN
-        Newline.SetMode(Newline.CRLF)
-      END
-  END (* CASE *)
-  
-  token := ArgLexer.nextToken();
   RETURN token
 END parseNewlineMode;
 
@@ -338,5 +371,6 @@ END parseNewlineMode;
 BEGIN (* ArgParser *)
   (* init properties *)
   srcFile := NIL;
+  tgtFile := NIL;
   errCount := 0
 END ArgParser.
