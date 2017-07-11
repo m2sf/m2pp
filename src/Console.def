@@ -1,0 +1,105 @@
+(*!m2pim*) (* Copyright (c) 2016 B.Kowarsch. All rights reserved. *)
+
+DEFINITION MODULE Console;
+
+(* Console I/O library *)
+
+FROM String IMPORT StringT; (* alias for String.String *)
+
+
+(* Read operations *)
+
+(* ---------------------------------------------------------------------------
+ * procedure ReadChar(ch)
+ * ---------------------------------------------------------------------------
+ * Reads one character from the console and passes it back in ch.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE ReadChar ( VAR ch : CHAR );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure ReadString(s)
+ * ---------------------------------------------------------------------------
+ * Reads a character sequence from the console and passes it back in s.
+ * Newline terminates the input and will not be copied into the string.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE ReadString ( VAR s : StringT );
+
+
+(* Write operations *)
+
+(* ---------------------------------------------------------------------------
+ * procedure WriteChar(chars)
+ * ---------------------------------------------------------------------------
+ * Prints the given character to the console.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WriteChar ( ch : CHAR );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure WriteChars(chars)
+ * ---------------------------------------------------------------------------
+ * Prints the given character array to the console.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WriteChars ( chars : ARRAY OF CHAR );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure WriteString(s)
+ * ---------------------------------------------------------------------------
+ * Prints the given string to the console.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WriteString ( s : StringT );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure WriteCharsAndString(chars, s)
+ * ---------------------------------------------------------------------------
+ * Prints the given character array and string to the console.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WriteCharsAndString ( VAR chars : ARRAY OF CHAR; s : StringT );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure WriteLn
+ * ---------------------------------------------------------------------------
+ * Prints newline to the console.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WriteLn;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure WriteBool(value)
+ * ---------------------------------------------------------------------------
+ * Prints the given value to the console. "TRUE" for TRUE, "FALSE" for FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WriteBool ( value : BOOLEAN );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure WriteCard(value)
+ * ---------------------------------------------------------------------------
+ * Prints the given cardinal value to the console.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WriteCard ( value : CARDINAL );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure WriteInt(value)
+ * ---------------------------------------------------------------------------
+ * Prints the given integer value to the console.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE WriteInt ( value : INTEGER );
+
+
+END Console.
