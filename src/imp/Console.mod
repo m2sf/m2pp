@@ -6,7 +6,7 @@ DEFINITION MODULE Console;
 
 IMPORT Terminal;
 
-FROM ISO646 IMPORT NUL, NEWLINE, US, DEL;
+FROM ISO646 IMPORT NUL, NEWLINE, SPACE, DEL;
 FROM String IMPORT StringT; (* alias for String.String *)
 FROM CardMath IMPORT abs, pow10, reqBits, maxDecimalDigits;
 
@@ -51,7 +51,7 @@ BEGIN
   WHILE (index < HIGH(chars)) AND (ch # NEWLINE) DO
     Terminal.Read(ch);
     (* copy to chars unless control char *)
-    IF (ch > US) AND (ch # DEL) THEN
+    IF (ch >= SPACE) AND (ch # DEL) THEN
       chars[index] := ch
     END; (* IF *)
     index := index + 1
@@ -74,7 +74,7 @@ PROCEDURE WriteChar ( ch : CHAR );
 
 BEGIN
   (* write unless control char *)
-  IF (ch > US) AND (ch # DEL) THEN
+  IF (ch >= SPACE) AND (ch # DEL) THEN
     Terminal.Write(char)
   END (* IF *)
 END WriteChar;
@@ -96,7 +96,7 @@ BEGIN
   FOR index := 0 TO HIGH(chars) DO
     ch := chars[index];
     (* write unless control char *)
-    IF (ch > US) AND (ch # DEL) THEN
+    IF (ch >= SPACE) AND (ch # DEL) THEN
       Terminal.Write(ch)
     ELSIF ch = NUL THEN
       RETURN
