@@ -4,8 +4,9 @@ DEFINITION MODULE Console;
 
 (* Console I/O library *)
 
-IMPORT ISO646, Terminal;
+IMPORT Terminal;
 
+FROM ISO646 IMPORT NUL, NEWLINE, US, DEL;
 FROM String IMPORT StringT; (* alias for String.String *)
 FROM CardMath IMPORT abs, pow10, reqBits, maxDecimalDigits;
 
@@ -43,20 +44,21 @@ VAR
   index : CARDINAL;
   
 BEGIN
+  ch := NUL;
   index := 0;
-  ch := ISO646.NUL;
   
   (* read characters *)
-  WHILE (index < HIGH(chars)) AND (ch # ISO646.NEWLINE) DO
+  WHILE (index < HIGH(chars)) AND (ch # NEWLINE) DO
     Terminal.Read(ch);
-    IF (ch > ISO646.US) AND (ch # ISO646.DEL) THEN
+    (* copy to chars unless control char *)
+    IF (ch > US) AND (ch # DEL) THEN
       chars[index] := ch
     END; (* IF *)
     index := index + 1
   END; (* WHILE *)
   
   (* terminate sequence *)
-  chars[index] := ISO646.NUL;
+  chars[index] := NUL;
 END ReadChars;
 
 
@@ -71,7 +73,8 @@ END ReadChars;
 PROCEDURE WriteChar ( ch : CHAR );
 
 BEGIN
-  IF (ch > ISO646.US) AND (ch # ISO646.DEL) THEN
+  (* write unless control char *)
+  IF (ch > US) AND (ch # DEL) THEN
     Terminal.Write(char)
   END (* IF *)
 END WriteChar;
@@ -92,7 +95,8 @@ VAR
 BEGIN
   FOR index := 0 TO HIGH(chars) DO
     ch := chars[index];
-    IF (ch > ISO646.US) AND (ch # ISO646.DEL) THEN
+    (* write unless control char *)
+    IF (ch > US) AND (ch # DEL) THEN
       Terminal.Write(ch)
     ELSIF ch = NUL THEN
       RETURN
@@ -216,5 +220,6 @@ END WriteInt;
 
 
 BEGIN
+  (* determine largest decimal exponent for type CARDINAL *)
   maxDecimalExponent := maxDecimalDigits(reqBits(MAX(CARDINAL)) DIV 8)
 END Console.
