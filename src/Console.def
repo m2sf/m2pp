@@ -1,4 +1,4 @@
-(*!m2pim*) (* Copyright (c) 2016 B.Kowarsch. All rights reserved. *)
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation. *)
 
 DEFINITION MODULE Console;
 
