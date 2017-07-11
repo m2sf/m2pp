@@ -6,18 +6,9 @@ IMPLEMENTATION MODULE Preprocessor;
 
 IMPORT Infile, Outfile, Dictionary, String;
 
+FROM ISO646 IMPORT
+  NUL, TAB, LF, CR, SPACE, DEL, SINGLEQUOTE, DOUBLEQUOTE;
 FROM String IMPORT StringT; (* alias for String.String *)
-
-
-CONST
-  NUL   = CHR(0);
-  TAB   = CHR(9);
-  LF    = CHR(10);
-  CR    = CHR(13);
-  SPACE = CHR(32);
-  DEL   = CHR(127);
-  SINGLEQUOTE = CHR(39);
-  DOUBLEQUOTE = CHR(34);
 
 
 (* ---------------------------------------------------------------------------
