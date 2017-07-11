@@ -277,10 +277,6 @@ END lexeme;
  * Stores length and up to MaxLineLength characters plus NUL terminator.
  * ------------------------------------------------------------------------ *)
 
-CONST
-  MaxLineLength = 255;
-
-
 TYPE LexemeBuffer = RECORD
   length : CARDINAL;
   array  : ARRAY [0..MaxLineLength] OF CHAR
