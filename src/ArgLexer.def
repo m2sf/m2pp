@@ -41,9 +41,10 @@ TYPE Token = (
   
   Equals,               (* = *)
 
-  (* diagnostic option *)
+  (* diagnostic options *)
 
   Verbose,              (* --verbose, -v *)
+  ShowSettings,         (* --show-settings *)
   
   (* end of input sentinel *)
   
@@ -95,15 +96,6 @@ PROCEDURE isExpansionOption ( token : Token ) : BOOLEAN;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE isParameter ( token : Token ) : BOOLEAN;
-
-
-(* ---------------------------------------------------------------------------
- * function isNewlineParam(token)
- * ---------------------------------------------------------------------------
- * Returns TRUE if token represents an newline option parameter, else FALSE.
- * ------------------------------------------------------------------------ *)
-
-PROCEDURE isNewlineParam ( token : Token ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
