@@ -19,6 +19,13 @@ TYPE OutfileT = Outfile; (* for unqualified use *)
 
 
 (* ---------------------------------------------------------------------------
+ * Invalid file sentinel
+ * ------------------------------------------------------------------------ *)
+
+CONST Nil = CAST(Outfile, NIL);
+
+
+(* ---------------------------------------------------------------------------
  * procedure Open(outfile, path, status )
  * ---------------------------------------------------------------------------
  * Opens the file at path and passes a newly allocated and initialised outfile

@@ -26,6 +26,13 @@ TYPE InfileT = Infile; (* for unqualified use *)
 
 
 (* ---------------------------------------------------------------------------
+ * Invalid file sentinel
+ * ------------------------------------------------------------------------ *)
+
+CONST Nil = CAST(Infile, NIL);
+
+
+(* ---------------------------------------------------------------------------
  * procedure Open(infile, path, status )
  * ---------------------------------------------------------------------------
  * Opens the file at path and passes a newly allocated and initialised infile
