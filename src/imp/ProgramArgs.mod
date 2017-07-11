@@ -4,7 +4,15 @@ IMPLEMENTATION MODULE ProgramArgs;
 
 (* Program Argument Management *)
 
+IMPORT ISO646, Console, Infile, Outfile, String;
 
+FROM String IMPORT StringT; (* alias for String.String *)
+
+
+CONST
+  QueryBufferSize = 255;
+  
+  
 VAR
   argsFile : InfileT;
   
@@ -34,25 +42,30 @@ END Close;
 PROCEDURE Query;
 (* Queries program args and writes argument file. *)
 
+VAR
+  argStr : ARRAY [0..QueryBufferSize] OF CHAR;
+  tmpFile : InfileT;
+  
 BEGIN
   (* prompt *)
   Console.WriteChars("args> ");
   
   (* read user input *)
-  Console.ReadLine(argStr);
+  argStr[0] := ISO646.NUL;
+  Console.ReadChars(argStr);
   
-  (* TO DO : check *)
-  
-  (* write args to argument file *)
-  Outfile.Open(tmpFile, Filename, status);
-  
-  (* TO DO : handle status *)
-  
-  Outfile.WriteChars(argStr);
-  Outfile.Close(tmpFile);
-  
-  (* open argument file for reading by argument parser *)
-  Infile.Open(argsFile, Filename, status)
+  IF argStr[0] # ISO646.NUL THEN
+    (* write argStr to argument file *)
+    Outfile.Open(tmpFile, Filename, status);
+    
+    (* TO DO : handle status *)
+    
+    Outfile.WriteChars(argStr);
+    Outfile.Close(tmpFile);
+    
+    (* open argument file for reading by argument parser *)
+    Infile.Open(argsFile, Filename, status)
+  END (* IF *)
 END Query;
 
 
