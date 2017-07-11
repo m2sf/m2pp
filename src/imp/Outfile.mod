@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE Outfile;
 
 (* I/O library for writing text files with tab expansion *)
 
-IMPORT BasicFileIO, Newline;
+IMPORT BasicFileIO, Tabulator, Newline;
 
 FROM ISO646 IMPORT NUL, TAB, LF, CR, SPACE, DEL;
 FROM String IMPORT StringT; (* alias for String.String *)
