@@ -4,9 +4,9 @@ IMPLEMENTATION MODULE ArgLexer;
 
 IMPORT Infile, String;
 
-FROM String IMPORT StringT; (* alias for String.String *)
 FROM ISO646 IMPORT
   NUL, TAB, NEWLINE, SPACE, SINGLEQUOTE, DOUBLEQUOTE, BACKSLASH;
+FROM String IMPORT StringT; (* alias for String.String *)
 
 
 VAR
@@ -164,19 +164,6 @@ END isParameter;
 
 
 (* ---------------------------------------------------------------------------
- * function ArgLexer.isNewlineParam(token)
- * ---------------------------------------------------------------------------
- * Returns TRUE if token represents an newline option parameter, else FALSE.
- * ------------------------------------------------------------------------ *)
-
-PROCEDURE isNewlineParam ( token : Token ) : BOOLEAN;
-
-BEGIN
-  RETURN (token >= LF) AND (token <= CRLF)
-END isNewlineParam;
-
-
-(* ---------------------------------------------------------------------------
  * function ArgLexer.isDiagnosticsOption(token)
  * ---------------------------------------------------------------------------
  * Returns TRUE if token represents a diagnostics option, else FALSE.
@@ -185,7 +172,7 @@ END isNewlineParam;
 PROCEDURE isDiagnosticsOption ( token : Token ) : BOOLEAN;
 
 BEGIN
-  RETURN token = Verbose
+  RETURN (token >= Verbose) AND (token <= ShowSettings)
 END isDiagnosticsOption;
 
 
@@ -294,6 +281,11 @@ BEGIN
   | 10 :
       IF String.matchesArray(lexeme, "--tabwidth") THEN
         RETURN TabWidth
+      END (* IF *)
+      
+  | 15 :
+      IF String.matchesArray(lexeme, "--show-settings") THEN
+        RETURN ShowSettings
       END (* IF *)
   END; (* CASE *)
   
