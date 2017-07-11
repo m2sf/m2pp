@@ -1,0 +1,24 @@
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE FileSystemAdapter;
+
+(* Filesystem interface *)
+
+
+PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if the file at the given path exists, else FALSE. *)
+
+
+PROCEDURE CreateFile ( path : ARRAY OF CHAR; VAR done : BOOLEAN );
+(* Creates a new file with the given pathname and passes status in done. *)
+
+
+PROCEDURE RenameFile ( path, newPath : ARRAY OF CHAR; VAR done : BOOLEAN );
+(* Renames the file at path to newPath and passes status in done. *)
+
+
+PROCEDURE DeleteFile ( path : ARRAY OF CHAR; VAR done : BOOLEAN );
+(* Deletes the file at path and passes status in done. *)
+
+
+END FileSystemAdapter.
