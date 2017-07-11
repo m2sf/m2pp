@@ -6,19 +6,9 @@ IMPLEMENTATION MODULE Outfile;
 
 IMPORT BasicFileIO, Newline;
 
+FROM ISO646 IMPORT NUL, TAB, LF, CR, SPACE, DEL;
 FROM String IMPORT StringT; (* alias for String.String *)
 
-
-CONST
-  NUL   = CHR(0);
-  TAB   = CHR(9);
-  LF    = CHR(10);
-  CR    = CHR(13);
-  SPACE = CHR(32);
-  DEL   = CHR(127);
-
-  DefaultTabWidth = 2;
-  
 
 (* ---------------------------------------------------------------------------
  * File type for reading
@@ -64,7 +54,7 @@ BEGIN
   outfile^.file := file;
   outfile^.line := 1;
   outfile^.column := 1;
-  outfile^.tabwidth := DefaultTabWidth;
+  outfile^.tabwidth := Tabulator.tabWidth();
   outfile^.newlineMode := Newline.mode()
 END Open;
 
