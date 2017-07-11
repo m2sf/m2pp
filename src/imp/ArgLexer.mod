@@ -2,7 +2,7 @@
 
 IMPLEMENTATION MODULE ArgLexer;
 
-IMPORT ISO646, Infile, String;
+IMPORT Infile, String;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 FROM ISO646 IMPORT
