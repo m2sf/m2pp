@@ -4,10 +4,10 @@ DEFINITION MODULE Console;
 
 (* Console I/O library *)
 
-IMPORT Terminal;
+IMPORT ISO646, Terminal;
 
 FROM String IMPORT StringT; (* alias for String.String *)
-FROM CardMath IMPORT abs, pow10, maxExponentBase10;
+FROM CardMath IMPORT abs, pow10, reqBits, maxDecimalDigits;
 
 
 CONST
@@ -15,6 +15,7 @@ CONST
 
 
 VAR
+  maxDecimalExponent : CARDINAL;
   buffer : ARRAY [0..BufferSize] OF CHAR;
   
 
@@ -36,8 +37,8 @@ END ReadChar;
 (* ---------------------------------------------------------------------------
  * procedure ReadString(s)
  * ---------------------------------------------------------------------------
- * Reads a character sequence from the console and passes it back in s.
- * Newline terminates the input and will not be copied into the string.
+ * Reads a sequence of up to 255 characters from the console and passes it
+ * back in s.  NEWLINE terminates input and will not be copied to s.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE ReadString ( VAR s : StringT );
@@ -50,14 +51,14 @@ BEGIN
   index := 0;
   
   (* read characters into buffer *)
-  WHILE (index < BufferSize) (ch # NEWLINE) DO
+  WHILE (index < BufferSize) (ch # ISO646.NEWLINE) DO
     Terminal.Read(ch);
     buffer[index] := ch;
     index := index + 1
   END; (* WHILE *)
   
   (* terminate buffer *)
-  buffer[index] := NUL;
+  buffer[index] := ISO646.NUL;
   
   (* get interned string and return it *)
   RETURN String.forArray(buffer)
@@ -75,7 +76,7 @@ END ReadString;
 PROCEDURE WriteChar ( ch : CHAR );
 
 BEGIN
-  IF char > US THEN
+  IF (ch > ISO646.US) AND (ch # ISO646.DEL) THEN
     Terminal.Write(char)
   END (* IF *)
 END WriteChar;
@@ -96,7 +97,7 @@ VAR
 BEGIN
   FOR index := 0 TO HIGH(chars) DO
     ch := chars[index];
-    IF ch > US THEN
+    IF (ch > ISO646.US) AND (ch # ISO646.DEL) THEN
       Terminal.Write(ch)
     ELSIF ch = NUL THEN
       RETURN
@@ -181,8 +182,8 @@ VAR
   m, n, weight, digit : CARDINAL;
 
 BEGIN
-  (* base-10 exponent of highest possible digit *)
-  m := maxExponentBase10(TSIZE(CARDINAL));
+  (* largest base-10 exponent *)
+  m := maxDecimalExponent;
   
   (* skip any leading zeroes *)
   WHILE value DIV pow10(m) = 0 DO
@@ -219,4 +220,6 @@ BEGIN
 END WriteInt;
 
 
+BEGIN
+  maxDecimalExponent := maxDecimalDigits(reqBits(MAX(CARDINAL)) DIV 8)
 END Console.
