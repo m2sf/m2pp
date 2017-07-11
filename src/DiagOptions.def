@@ -1,0 +1,39 @@
+(*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE DiagOptions;
+
+(* Diagnostic Option Settings *)
+
+TYPE Option =
+  ( Verbose,         (* --verbose *)
+    ShowSettings );  (* --show-settings *)
+
+
+(* ---------------------------------------------------------------------------
+ * procedure SetOption(option, value)
+ * ---------------------------------------------------------------------------
+ * Sets the given option to the given boolean FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE SetOption ( option : Option; value : BOOLEAN );
+
+
+(* ---------------------------------------------------------------------------
+ * function verbose()
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if option --verbose is turned on, else FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE verbose () : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function showSettings()
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if option --show-settings is turned on, else FALSE.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE showSettings () : BOOLEAN;
+
+
+END DiagOptions.
