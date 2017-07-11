@@ -2,19 +2,11 @@
 
 IMPLEMENTATION MODULE ArgLexer;
 
-IMPORT Infile, String;
+IMPORT ISO646, Infile, String;
 
 FROM String IMPORT StringT; (* alias for String.String *)
-
-
-CONST
-  NUL         = CHR(0);
-  TAB         = CHR(9);
-  NEWLINE     = CHR(10);
-  SPACE       = CHR(32);
-  SINGLEQUOTE = CHR(39);
-  DOUBLEQUOTE = CHR(34);
-  BACKSLASH   = CHR(92);
+FROM ISO646 IMPORT
+  NUL, TAB, NEWLINE, SPACE, SINGLEQUOTE, DOUBLEQUOTE, BACKSLASH;
 
 
 VAR
@@ -55,22 +47,25 @@ BEGIN
     
   ELSE
     CASE next OF
-    
     (* next symbol is option *)
     | '-' :
         GetOption(next, token, lexeme);
         
         CASE token OF
           Help .. License :
-            pathExpected := TRUE;
+            pathExpected := TRUE
+            
         | Outfile :
-            pathExpected := TRUE;
+            pathExpected := TRUE
+            
         | Dict .. Newline :
-            pathExpected := FALSE;
+            pathExpected := FALSE
+            
         | Verbose :
-            pathExpected := TRUE;
+            pathExpected := TRUE
+            
         ELSE
-          pathExpected := TRUE;
+          pathExpected := TRUE
         END (* CASE *)
             
     (* string *)
@@ -247,8 +242,10 @@ BEGIN
       CASE String.charAtIndex(lexeme, 1) OF
         'V' :
           RETURN Version
+          
       | 'h' :
           RETURN Help
+          
       | 'v' :
           RETURN Verbose
       END (* CASE *)
@@ -264,7 +261,6 @@ BEGIN
           IF String.matchesArray(lexeme, "--help") THEN
             RETURN Help
           END (* IF *)
-      
       END (* CASE *)
     
   | 9 :
@@ -293,7 +289,6 @@ BEGIN
           IF String.matchesArray(lexeme, "--version") THEN
             RETURN Version
           END (* IF *)
-          
       END (* CASE *)
   
   | 10 :
@@ -485,6 +480,6 @@ END GetNumber;
 
 
 BEGIN
-  (* TO DO : init args *)
+  (* set args to already opened file *)
   lexeme := NIL
 END ArgLexer.
