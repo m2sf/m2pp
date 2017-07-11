@@ -21,8 +21,8 @@ PROCEDURE ReadChar ( VAR ch : CHAR );
 (* ---------------------------------------------------------------------------
  * procedure ReadString(s)
  * ---------------------------------------------------------------------------
- * Reads a character sequence from the console and passes it back in s.
- * Newline terminates the input and will not be copied into the string.
+ * Reads a sequence of up to 255 characters from the console and passes it
+ * back in s.  NEWLINE terminates input and will not be copied to s.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE ReadString ( VAR s : StringT );
