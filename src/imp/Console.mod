@@ -10,13 +10,8 @@ FROM String IMPORT StringT; (* alias for String.String *)
 FROM CardMath IMPORT abs, pow10, reqBits, maxDecimalDigits;
 
 
-CONST
-  BufferSize = 255;
-
-
 VAR
   maxDecimalExponent : CARDINAL;
-  buffer : ARRAY [0..BufferSize] OF CHAR;
   
 
 (* Read operations *)
@@ -35,13 +30,13 @@ END ReadChar;
 
 
 (* ---------------------------------------------------------------------------
- * procedure ReadString(s)
+ * procedure ReadChars(chars)
  * ---------------------------------------------------------------------------
- * Reads a sequence of up to 255 characters from the console and passes it
- * back in s.  NEWLINE terminates input and will not be copied to s.
+ * Reads up to HIGH(chars)-1 characters from the console and passes them back
+ * in chars.  NEWLINE terminates input and will not be copied to chars.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE ReadString ( VAR s : StringT );
+PROCEDURE ReadChars ( VAR chars : ARRAY OF CHARS );
 
 VAR
   ch : CHAR;
@@ -49,19 +44,19 @@ VAR
   
 BEGIN
   index := 0;
+  ch := ISO646.NUL;
   
-  (* read characters into buffer *)
-  WHILE (index < BufferSize) (ch # ISO646.NEWLINE) DO
+  (* read characters *)
+  WHILE (index < HIGH(chars)) AND (ch # ISO646.NEWLINE) DO
     Terminal.Read(ch);
-    buffer[index] := ch;
+    IF (ch > ISO646.US) AND (ch # ISO646.DEL) THEN
+      chars[index] := ch
+    END; (* IF *)
     index := index + 1
   END; (* WHILE *)
   
-  (* terminate buffer *)
-  buffer[index] := ISO646.NUL;
-  
-  (* get interned string and return it *)
-  RETURN String.forArray(buffer)
+  (* terminate sequence *)
+  chars[index] := ISO646.NUL;
 END ReadString;
 
 
