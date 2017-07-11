@@ -9,13 +9,8 @@ IMPORT String, BasicFileIO;
 FROM String IMPORT StringT; (* alias for String.String *)
 
 FROM SYSTEM IMPORT TSIZE;
+FROM ISO646 IMPORT NUL, LF, CR;
 FROM Storage IMPORT ALLOCATE, DEALLOCATE;
-
-
-CONST
-  NUL   = CHR(0);
-  LF    = CHR(10);
-  CR    = CHR(13);
 
 
 (* ---------------------------------------------------------------------------
@@ -281,6 +276,10 @@ END lexeme;
  * ---------------------------------------------------------------------------
  * Stores length and up to MaxLineLength characters plus NUL terminator.
  * ------------------------------------------------------------------------ *)
+
+CONST
+  MaxLineLength = 255;
+
 
 TYPE LexemeBuffer = RECORD
   length : CARDINAL;
