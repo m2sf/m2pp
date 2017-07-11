@@ -57,7 +57,7 @@ BEGIN
   
   (* terminate sequence *)
   chars[index] := ISO646.NUL;
-END ReadString;
+END ReadChars;
 
 
 (* Write operations *)
