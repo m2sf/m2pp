@@ -1,4 +1,4 @@
-(*!m2pim*) (* Copyright (c) 2016 B.Kowarsch. All rights reserved. *)
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation. *)
 
 DEFINITION MODULE Console;
 
@@ -115,7 +115,7 @@ END WriteChars;
 PROCEDURE WriteString ( s : StringT );
 
 BEGIN
-  IF (s # NilString) AND (String.length(s) > 0) THEN
+  IF (s # String.Nil) AND (String.length(s) > 0) THEN
     String.WithCharsDo(s, Terminal.WriteString)
   END (* IF *)
 END WriteString;
@@ -134,7 +134,7 @@ BEGIN
   WriteChars(chars);
   
   (* print s *)
-  IF (s # NilString) AND (String.length(s) > 0) THEN
+  IF (s # String.Nil) AND (String.length(s) > 0) THEN
     String.WithCharsDo(s, Terminal.WriteString)
   END (* IF *)
 END WriteCharsAndString;
