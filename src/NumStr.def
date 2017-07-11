@@ -7,7 +7,7 @@ DEFINITION MODULE NumStr;
 FROM String IMPORT StringT; (* alias for String.String *)
 
 
-TYPE Status = ( Success, Overflow, NaN );
+TYPE Status = ( Success, Underflow, Overflow, NaN );
 
 
 PROCEDURE ToCard
