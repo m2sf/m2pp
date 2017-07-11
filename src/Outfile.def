@@ -4,7 +4,7 @@ DEFINITION MODULE Outfile;
 
 (* I/O library for writing text files with tab expansion *)
 
-IMPORT BasicFileIO, Newline;
+IMPORT SYSTEM, BasicFileIO, Newline;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -22,7 +22,7 @@ TYPE OutfileT = Outfile; (* for unqualified use *)
  * Invalid file sentinel
  * ------------------------------------------------------------------------ *)
 
-CONST Nil = CAST(Outfile, NIL);
+CONST Nil = SYSTEM.CAST(Outfile, NIL);
 
 
 (* ---------------------------------------------------------------------------

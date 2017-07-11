@@ -4,7 +4,7 @@ DEFINITION MODULE Infile;
 
 (* I/O library for reading text files with line and column counters *)
 
-IMPORT BasicFileIO;
+IMPORT SYSTEM, BasicFileIO;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -29,7 +29,7 @@ TYPE InfileT = Infile; (* for unqualified use *)
  * Invalid file sentinel
  * ------------------------------------------------------------------------ *)
 
-CONST Nil = CAST(Infile, NIL);
+CONST Nil = SYSTEM.CAST(Infile, NIL);
 
 
 (* ---------------------------------------------------------------------------
