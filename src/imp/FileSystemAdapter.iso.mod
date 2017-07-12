@@ -4,13 +4,14 @@ IMPLEMENTATION MODULE FileSystemAdapter; (* ISO version *)
 
 (* Clean file system interface to the junk that comes with ISO *)
 
-IMPORT ChanConsts, SeqFile; (* ISO's junk libraries *)
+IMPORT ChanConsts, StreamFile; (* ISO's junk libraries *)
 
 
 CONST
-  FileOpened = ChanConsts.opened;
-  FileAlreadyExists = ChanConsts.fileExists;
-  FileAlreadyOpen = ChanConsts.alreadyOpen;
+  Opened = ChanConsts.opened;
+  NotFound = ChanConsts.noSuchFile;
+  ExistsAlready = ChanConsts.fileExists;
+  OpenAlready = ChanConsts.alreadyOpen;
 
 
 PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
@@ -18,8 +19,8 @@ PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
 
 VAR
   found : BOOLEAN;
-  f : SeqFile.ChanId;
-  res : SeqFile.OpenResults;
+  f : StreamFile.ChanId;
+  res : StreamFile.OpenResults;
 
   (* The ISO library doesn't provide any file lookup function. So we have
      no choice but to open a file just to see if it exists, and if it does
@@ -29,19 +30,19 @@ BEGIN
   (* Why do we need to decide between sequential, stream and random access
      when all we want is check if a file exists? Incredibly bad design. *)
      
-  SeqFile.OpenRead(f, path, SeqFile.read+SeqFile.old, res);
+  StreamFile.OpenRead(f, path, StreamFile.read+StreamFile.old, res);
   
   (* There are plenty of failure result codes that do not actually tell us
      whether or not the file exists. We have no choice but to deem that it
      doesn't exist if any of these failure codes are reported back.
      The incompetence in the ISO I/O library design is staggering. *)
   found :=
-    (res = FileOpened) OR
-    (res = FileAlreadyExists) OR
-    (res = FileAlreadyOpen);
+    (res = Opened) OR
+    (res = ExistsAlready) OR
+    (res = OpenAlready);
     
-  IF res = FileOpened THEN
-    SeqFile.Close(f)
+  IF res = Opened THEN
+    StreamFile.Close(f)
   END; (* IF *)
   
   RETURN found
@@ -51,8 +52,22 @@ END fileExists;
 PROCEDURE CreateFile ( path : ARRAY OF CHAR; VAR status : Status );
 (* Creates a new file with the given pathname and passes back status. *)
 
+VAR
+  f : StreamFile.ChanId;
+  res : StreamFile.OpenResults;
+
 BEGIN
-  (* TO DO *)
+  StreamFile.Open(f, path, write, res);
+  
+  IF res = Opened THEN
+    status := Success;
+    StreamFile.Close(f)
+    
+  ELSIF (res = ExistsAlready) OR (res = OpenAlready) THEN
+    status := FileAlreadyExists
+  ELSE
+    status := Failure
+  END (* IF *)
 END CreateFile;
 
 
