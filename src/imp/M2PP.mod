@@ -33,7 +33,7 @@ BEGIN
   Console.WriteChars("Usage:"); Console.WriteLn;
   Console.WriteChars("$ m2pp infoRequest"); Console.WriteLn;
   Console.WriteChars("or"); Console.WriteLn;
-  Console.WriteChars("$ m2pp expansionRequest diagOption*"); Console.WriteLn;
+  Console.WriteChars("$ m2pp expansionRequest+ diagOption*"); Console.WriteLn;
   Console.WriteLn;
   Console.WriteChars("infoRequest:"); Console.WriteLn;
   Console.WriteChars(" --help, -h       : print help"); Console.WriteLn;
