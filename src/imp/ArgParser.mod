@@ -2,7 +2,7 @@
 
 IMPLEMENTATION MODULE ArgParser;
 
-IMPORT ArgLexer, String, NumStr, Newline, Tabulator;
+IMPORT ArgLexer, DiagOptions, String, NumStr, Newline, Tabulator;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -385,7 +385,15 @@ END parseNewlineMode;
 PROCEDURE parseDiagOption ( token : ArgLexer.Token ) : ArgLexer.Token;
 
 BEGIN
-  (* TO DO *)
+  CASE token OF
+    Verbose :
+      DiagOptions.SetOption(DiagOptions.Verbose, TRUE)
+      
+  | ShowSettings :
+      DiagOptions.SetOption(DiagOptions.ShowSettings, TRUE)
+  END; (* CASE *)
+  
+  RETURN ArgLexer.nextToken()
 END parseDiagOption;
 
 
