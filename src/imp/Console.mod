@@ -6,7 +6,7 @@ DEFINITION MODULE Console;
 
 IMPORT Terminal;
 
-FROM ISO646 IMPORT NUL, NEWLINE, SPACE, DEL;
+FROM ISO646 IMPORT NUL, TAB, NEWLINE, SPACE, BACKSLASH, DEL;
 FROM String IMPORT StringT; (* alias for String.String *)
 FROM CardMath IMPORT abs, pow10, reqBits, maxDecimalDigits;
 
@@ -83,7 +83,7 @@ END WriteChar;
 (* ---------------------------------------------------------------------------
  * procedure WriteChars(chars)
  * ---------------------------------------------------------------------------
- * Prints the given character array to the console.
+ * Prints the given character array to the console. Interprets \t and \n.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE WriteChars ( chars : ARRAY OF CHAR );
@@ -93,15 +93,32 @@ VAR
   index : CARDINAL;
   
 BEGIN
-  FOR index := 0 TO HIGH(chars) DO
+  index := 0;
+  WHILE index <= HIGH(chars) DO
     ch := chars[index];
-    (* write unless control char *)
-    IF (ch >= SPACE) AND (ch # DEL) THEN
+    
+    (* escape sequence *)
+    IF ch = BACKSLASH THEN
+      index := index + 1;
+      IF index <= HIGH(chars) THEN
+        ch := chars[index];
+        CASE ch OF
+          'n' : Terminal.WriteLn
+        | 't' : Terminal.Write(TAB)
+        ELSE
+          Terminal.Write(ch)
+        END (* CASE *)
+      END (* IF *)
+    
+    (* printable character *)
+    ELSIF (ch >= SPACE) AND (ch # DEL) THEN
       Terminal.Write(ch)
     ELSIF ch = NUL THEN
       RETURN
-    END (* IF *)
-  END (* FOR *)
+    END; (* IF *)
+    
+    index := index + 1
+  END (* WHILE *)
 END WriteChars;
 
 
@@ -115,7 +132,7 @@ PROCEDURE WriteString ( s : StringT );
 
 BEGIN
   IF (s # String.Nil) AND (String.length(s) > 0) THEN
-    String.WithCharsDo(s, Terminal.WriteString)
+    String.WithCharsDo(s, WriteChars)
   END (* IF *)
 END WriteString;
 
@@ -134,7 +151,7 @@ BEGIN
   
   (* print s *)
   IF (s # String.Nil) AND (String.length(s) > 0) THEN
-    String.WithCharsDo(s, Terminal.WriteString)
+    String.WithCharsDo(s, WriteChars)
   END (* IF *)
 END WriteCharsAndString;
 
