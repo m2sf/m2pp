@@ -370,6 +370,21 @@ BEGIN
 END parseNewlineMode;
 
 
+(* ---------------------------------------------------------------------------
+ * function parseDiagOption(token)
+ * ---------------------------------------------------------------------------
+ * options :=
+ *   outfile | dictionary | tabWidth | newlineMode
+ *   ;
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE parseDiagOption ( token : ArgLexer.Token ) : ArgLexer.Token;
+
+BEGIN
+  (* TO DO *)
+END parseDiagOption;
+
+
 BEGIN (* ArgParser *)
   (* init properties *)
   srcFile := NIL;
