@@ -42,7 +42,7 @@ PROCEDURE WriteChar ( ch : CHAR );
 (* ---------------------------------------------------------------------------
  * procedure WriteChars(chars)
  * ---------------------------------------------------------------------------
- * Prints the given character array to the console.
+ * Prints the given character array to the console. Interprets \t and \n.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE WriteChars ( chars : ARRAY OF CHAR );
