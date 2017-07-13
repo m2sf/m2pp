@@ -30,33 +30,23 @@ VAR
 PROCEDURE Usage;
 
 BEGIN
-  Console.WriteChars("Usage:"); Console.WriteLn;
-  Console.WriteChars("$ m2pp infoRequest"); Console.WriteLn;
-  Console.WriteChars("or"); Console.WriteLn;
-  Console.WriteChars("$ m2pp expansionRequest+ diagOption*"); Console.WriteLn;
-  Console.WriteLn;
-  Console.WriteChars("infoRequest:"); Console.WriteLn;
-  Console.WriteChars(" --help, -h       : print help"); Console.WriteLn;
-  Console.WriteChars(" --version, -V    : print version"); Console.WriteLn;
-  Console.WriteChars(" --license        : print license info"); Console.WriteLn;
-  Console.WriteLn;
-  Console.WriteChars("expansionRequest:"); Console.WriteLn;
-  Console.WriteChars(" --outfile path   : set outfile"); Console.WriteLn;
-  Console.WriteChars(" --dict keyValue+ : define key/value pairs");
-  Console.WriteLn;
-  Console.WriteChars(" --tabwidth 0..8  : set tab width"); Console.WriteLn;
-  Console.WriteChars(" --newline mode   : set newline mode"); Console.WriteLn;
-  Console.WriteLn;
-  Console.WriteChars("keyValue:"); Console.WriteLn;
-  Console.WriteChars(" key=value"); Console.WriteLn;
-  Console.WriteLn;
-  Console.WriteChars("mode:"); Console.WriteLn;
-  Console.WriteChars(" cr | lf | crlf"); Console.WriteLn;
-  Console.WriteLn;
-  Console.WriteChars("diagOption:"); Console.WriteLn;
-  Console.WriteChars(" --verbose, -v    : verbose output"); Console.WriteLn;
-  Console.WriteChars(" --show-settings  : print all settings");
-  Console.WriteLn  
+  Console.WriteChars("Usage:\n");
+  Console.WriteChars("$ m2pp infoRequest\n"); Console.WriteChars("or\n");
+  Console.WriteChars("$ m2pp expansionOption+ diagnosticOption*\n\n");
+  Console.WriteChars("infoRequest:\n");
+  Console.WriteChars(" --help, -h          : print help\n");
+  Console.WriteChars(" --version, -V       : print version\n");
+  Console.WriteChars(" --license           : print license info\n\n");
+  Console.WriteChars("expansionOption:\n");
+  Console.WriteChars(" --outfile path      : define outfile\n");
+  Console.WriteChars(" --dict (key=value)+ : define key/value pairs\n");
+  Console.WriteChars(" --tabwidth 0..8     : set tab width\n");
+  Console.WriteChars(" --newline mode      : set newline mode\n\n");
+  Console.WriteChars("mode:\n");
+  Console.WriteChars(" cr | lf | crlf\n\n");
+  Console.WriteChars("diagnosticOption:\n");
+  Console.WriteChars(" --verbose, -v       : verbose output\n");
+  Console.WriteChars(" --show-settings     : print all settings\n")
 END Usage;
 
 
