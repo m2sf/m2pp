@@ -374,7 +374,7 @@ END parseNewlineMode;
  * function parseDiagOption(token)
  * ---------------------------------------------------------------------------
  * options :=
- *   outfile | dictionary | tabWidth | newlineMode
+ *   '--verbose' | '-v' | '--show-settings'
  *   ;
  * ------------------------------------------------------------------------ *)
 
