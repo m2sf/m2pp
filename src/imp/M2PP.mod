@@ -42,7 +42,7 @@ BEGIN
   Console.WriteLn;
   Console.WriteChars("expansionRequest:"); Console.WriteLn;
   Console.WriteChars(" --outfile path   : set outfile"); Console.WriteLn;
-  Console.WriteChars(" --dict keyValue* : define key/value pairs");
+  Console.WriteChars(" --dict keyValue+ : define key/value pairs");
   Console.WriteLn;
   Console.WriteChars(" --tabwidth 0..8  : set tab width"); Console.WriteLn;
   Console.WriteChars(" --newline mode   : set newline mode"); Console.WriteLn;
