@@ -23,7 +23,7 @@ VAR
  * Parses command line arguments and initalises dictionary accordingly.
  *
  * args :
- *   infoRequest | expansionRequest
+ *   infoRequest | expansionRequest diagOption*
  *   ;
  * ------------------------------------------------------------------------ *)
 
@@ -39,7 +39,11 @@ BEGIN
     token := parseInfoRequest(token)
     
   ELSIF ArgLexer.isExpansionRequest(token) THEN
-    token := parseExpansionRequest(token)
+    token := parseExpansionRequest(token);
+    
+    WHILE ArgLexer.isDiagnosticsOption(token) THEN
+      token := parseDiagOption(token)
+    END (* IF *)
     
   ELSIF token = ArgLexer.EndOfInput THEN
     ReportMissingSourceFile
