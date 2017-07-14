@@ -4,17 +4,19 @@ DEFINITION MODULE Tabulator;
 
 (* Tabulator management *)
 
-CONST MaxTabWidth = 8;
+CONST
+  Default = 0;
+  MaxTabWidth = 8;
 
 TYPE TabWidth = CARDINAL [0..MaxTabWidth];
 
 
 PROCEDURE SetTabWidth ( value : TabWidth );
-(* Sets the default tab width. Zero leaves tabs in place. *)
+(* Sets the tab width. Zero leaves tabs in place. *)
 
 
 PROCEDURE tabWidth ( ) : TabWidth;
-(* Returns the default tab width. *)
+(* Returns the tab width. *)
 
 
 END Tabulator.
