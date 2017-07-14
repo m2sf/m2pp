@@ -13,44 +13,118 @@ FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
 
 CONST
   ProgTitle = "M2PP - Modula-2 Preprocessor";
-  Version   = "Version 0.1";
-  Copyright = "Copyright (c) 2017 Modula-2 Software Foundation";
-  License   = "Licensed under the LGPL license version 2.1";
-
-VAR
-  infileName,
-  outfileName : StringT;
-  infile : InfileT;
-  outfile : OutfileT;
-  inStatus : Infile.Status;
-  outStatus : Outfile.Status;
-  argStatus : ArgParser.Status;
+  Version   = "Version 0.1\n";
+  Copyright = "Copyright (c) 2017 Modula-2 Software Foundation\n";
+  License   = "Licensed under the LGPL license version 2.1\n";
 
 
-PROCEDURE Usage;
+PROCEDURE PrintBanner;
+
+BEGIN
+  Console.WriteChars(ProgTitle); Console.WriteChars(", ");
+  Console.WriteChars(Version);
+  Console.WriteChars(Copyright)
+END PrintBanner;
+
+
+PROCEDURE PrintUsage;
 
 BEGIN
   Console.WriteChars("Usage:\n");
   Console.WriteChars("$ m2pp infoRequest\n"); Console.WriteChars("or\n");
-  Console.WriteChars("$ m2pp expansionOption+ diagnosticOption*\n\n");
+  Console.WriteChars("$ m2pp sourceFile option* diagnostic*\n\n");
+  
   Console.WriteChars("infoRequest:\n");
-  Console.WriteChars(" --help, -h          : print help\n");
-  Console.WriteChars(" --version, -V       : print version\n");
-  Console.WriteChars(" --license           : print license info\n\n");
-  Console.WriteChars("expansionOption:\n");
-  Console.WriteChars(" --outfile path      : define outfile\n");
-  Console.WriteChars(" --dict (key=value)+ : define key/value pairs\n");
-  Console.WriteChars(" --tabwidth 0..8     : set tab width\n");
-  Console.WriteChars(" --newline mode      : set newline mode\n\n");
+  Console.WriteChars(" --help, -h           : print help\n");
+  Console.WriteChars(" --version, -V        : print version\n");
+  Console.WriteChars(" --license            : print license info\n\n");
+  
+  Console.WriteChars("option:\n");  
+  Console.WriteChars(" --outfile targetFile : define outfile\n");
+  Console.WriteChars(" --dict keyValuePair+ : define key/value pairs\n");
+  Console.WriteChars(" --tabwidth number    : set tab width\n");
+  Console.WriteChars(" --newline mode       : set newline mode\n\n");
+  
+  Console.WriteChars("diagnostic:\n");
+  Console.WriteChars(" --verbose, -v        : verbose output\n");
+  Console.WriteChars(" --show-settings      : print all settings\n\n");
+  
+  Console.WriteChars("keyValuePair:\n");
+  Console.WriteChars(" key=value\n\n");
+  
+  Console.WriteChars("key:\n");
+  Console.WriteChars(" identifier\n\n");
+  
+  Console.WriteChars("value:\n");
+  Console.WriteChars
+    (" identifier | number | singleQuotedString | doubleQuotedString\n\n");
+  
   Console.WriteChars("mode:\n");
-  Console.WriteChars(" cr | lf | crlf\n\n");
-  Console.WriteChars("diagnosticOption:\n");
-  Console.WriteChars(" --verbose, -v       : verbose output\n");
-  Console.WriteChars(" --show-settings     : print all settings\n")
-END Usage;
+  Console.WriteChars(" cr | lf | crlf\n\n")
+END PrintUsage;
 
 
-BEGIN  (* M2PP *)
+PROCEDURE PreflightCheck
+  ( VAR infile : InfileT; VAR outfile : OutfileT; VAR passed : BOOLEAN );
+
+VAR
+  infileName,
+  outfileName : StringT;
+  status : BasicFileIO.Status;
+
+BEGIN
+  infileName := Settings.infile();
+  
+  (* bail out if infile does not exist *)
+  IF NOT fileExists(infileName) THEN
+    Console.WriteChars("sourcefile not found.\n");
+    passed := FALSE;
+    RETURN
+  END; (* IF *)
+    
+  IF NOT Settings.alreadySet(Settings.Outfile) THEN
+    (* generate outfile name from infile name *)
+  ELSE
+    outfileName := Settings.outfile()
+  END; (* IF *)
+  
+  Infile.Open(infile, status);
+  
+  IF status # Success THEN
+    Console.WriteChars("unable to open sourcefile.\n");
+    infile := Infile.Nil;
+    passed := FALSE;
+    RETURN
+  END; (* IF *)
+  
+  IF fileExists(outfileName) THEN
+    (* rename existing file *)
+  END; (* IF *)
+  
+  Outfile.Open(outfile, status);
+  
+  IF status # Success THEN
+    Console.WriteChars("unable to create targetfile.\n");
+    Infile.Close(infile);
+    infile := Infile.Nil;
+    outfile := Outfile.Nil;
+    passed := FALSE;
+    RETURN
+  END; (* IF *)
+  
+  (* all preflight checks passed *)
+  passed := TRUE;
+END PreflightCheck;
+
+
+VAR
+  passed : BOOLEAN;
+  infile : InfileT;
+  outfile : OutfileT;
+  argStatus : ArgParser.Status;
+  
+
+BEGIN (* M2PP *)
   (* check if program argument file is present *)
   IF fileExists(ProgramArgs.Filename) THEN
     ProgramArgs.Open
@@ -63,40 +137,29 @@ BEGIN  (* M2PP *)
   
   CASE argStatus OF
     Success :
-      (* print banner *)
-      Console.WriteChars(ProgTitle); Console.WriteChars(", ");
-      Console.WriteChars(Version);   Console.WriteLn;
-      Console.WriteChars(Copyright); Console.WriteLn;
+      PrintBanner;
       
-      infileName := ArgParser.sourceFile();
-      outfileName := ArgParser.targetFile();
+      PreflightCheck(infile, outfile, passed);
       
-      IF outfileName = NIL THEN
-        (* generate outfile name from infile name *)
-      END; (* IF *)
-      
-      Infile.Open(infile, inStatus);
-      
-      (* TO DO : handle status *)
-      
-      Outfile.Open(outfile, outStatus);
-      
-      (* TO DO : handle status *)
-      
-      Preprocessor.Expand(infile, outfile);
-      
-      (* if verbose mode, print summary *)
-      
+      IF passed THEN
+        Preprocessor.Expand(infile, outfile);
+        Infile.Close(infile);
+        Outfile.Close(outfile)
+      ELSE
+        (* unable to proceed *)
+      END (* IF *)
+            
   | HelpRequested :
-      (* TO DO : print help *)
+      PrintUsage
       
   | VersionRequested :
-      Console.WriteChars(Version); WriteLn
+      Console.WriteChars(Version)
   
   | LicenseRequested :
-      Console.WriteChars(License); WriteLn
+      Console.WriteChars(Copyright);
+      Console.WriteChars(License)
       
   | ErrorsEncountered :
-      (* TO DO : print help *)
+      (* TO DO *)
   END (* CASE *)
 END M2PP.
