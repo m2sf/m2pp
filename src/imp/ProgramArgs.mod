@@ -14,6 +14,7 @@ CONST
   
   
 VAR
+  isOpen : BOOLEAN;
   argsFile : InfileT;
   
 
@@ -25,8 +26,7 @@ VAR
   
 BEGIN
   Infile.Open(argsFile, Filename, status);
-  
-  (* TO DO : handle status *)
+  isOpen := (status = Infile.Success)
 END Open;
 
 
@@ -35,15 +35,21 @@ PROCEDURE Close;
 
 BEGIN
   Infile.Close(argsFile);
-  argsFile := NIL
+  argsFile := Infile.Nil;
+  isOpen := FALSE
 END Close;
 
 
 PROCEDURE Delete;
 (* Deletes the command line argument file. *)
 
+VAR
+  status : FileSystemAdapter.Status;
+  
 BEGIN
-  (* TO DO *)
+  IF NOT isOpen THEN
+    FileSystemAdapter.DeleteFile(Filename, status)
+  END (* IF *)
 END Delete;
 
 
@@ -53,6 +59,7 @@ PROCEDURE Query;
 VAR
   argStr : ARRAY [0..QueryBufferSize] OF CHAR;
   tmpFile : InfileT;
+  status : Infile.Status;
   
 BEGIN
   (* prompt *)
@@ -86,5 +93,6 @@ END file;
 
 
 BEGIN
-  argsFile := NIL
+  isOpen := FALSE;
+  argsFile := Infile.Nil
 END ProgramArgs.
