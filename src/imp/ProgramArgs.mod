@@ -69,24 +69,38 @@ BEGIN
   argStr[0] := ISO646.NUL;
   Console.ReadChars(argStr);
   
-  IF argStr[0] # ISO646.NUL THEN
-    (* write argStr to argument file *)
-    Outfile.Open(tmpFile, Filename, status);
-    
-    IF status = Success THEN
-      Outfile.WriteChars(argStr);
-      Outfile.Close(tmpFile);
-    
-      (* open argument file for reading by argument parser *)
-      Infile.Open(argsFile, Filename, status);
-      isOpen := (status = Infile.Success)
-      
-    ELSE
-      Console.WriteChars("unable to open/create ");
-      Console.WriteChars(Filename);
-      Console.WriteChars(".\n")
-    END (* IF *)
-  END (* IF *)
+  (* bail out if user input is empty *)
+  IF argStr[0] = ISO646.NUL THEN
+    RETURN
+  END; (* IF *)
+  
+  (* open/create argument file *)
+  Outfile.Open(tmpFile, Filename, status);
+  
+  (* bail out if file couldn't be opened/created *)
+  IF status # Outfile.Success THEN
+    Console.WriteChars("unable to open/create ");
+    Console.WriteChars(Filename);
+    Console.WriteChars(".\n");
+    RETURN
+  END; (* IF *)
+  
+  (* write argStr to argument file *)
+  Outfile.WriteChars(argStr);
+  Outfile.Close(tmpFile);
+  
+  (* open argument file for argument parser *)
+  Infile.Open(argsFile, Filename, status);
+  
+  (* bail out if file couldn't be opened *)
+  IF status # Infile.Success THEN
+    Console.WriteChars("unable to open ");
+    Console.WriteChars(Filename);
+    Console.WriteChars(".\n");
+    RETURN
+  END; (* IF *)
+  
+  isOpen := TRUE
 END Query;
 
 
