@@ -12,6 +12,7 @@ FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
 
 
 CONST
+  MaxPathLen = 255;
   ProgTitle = "M2PP - Modula-2 Preprocessor";
   Version   = "Version 0.1\n";
   Copyright = "Copyright (c) 2017 Modula-2 Software Foundation\n";
@@ -68,26 +69,28 @@ PROCEDURE PreflightCheck
   ( VAR infile : InfileT; VAR outfile : OutfileT; VAR passed : BOOLEAN );
 
 VAR
-  infileName,
-  outfileName : StringT;
+  len : CARDINAL;
+  pathStr : StringT;
   status : BasicFileIO.Status;
+  path : ARRAY [0..MaxPathLen] OF CHAR;
 
 BEGIN
-  infileName := Settings.infile();
+  pathStr := Settings.infile();
+  String.CopyToArray(pathStr, path, len);
+  
+  IF len = 0 THEN
+    Console.WriteChars("source path too long.\n");
+    passed := FALSE;
+    RETURN
+  END; (* IF *)
   
   (* bail out if infile does not exist *)
-  IF NOT fileExists(infileName) THEN
+  IF NOT fileExists(path) THEN
     Console.WriteChars("sourcefile not found.\n");
     passed := FALSE;
     RETURN
   END; (* IF *)
     
-  IF NOT Settings.alreadySet(Settings.Outfile) THEN
-    (* generate outfile name from infile name *)
-  ELSE
-    outfileName := Settings.outfile()
-  END; (* IF *)
-  
   Infile.Open(infile, status);
   
   IF status # Success THEN
@@ -97,7 +100,21 @@ BEGIN
     RETURN
   END; (* IF *)
   
-  IF fileExists(outfileName) THEN
+  IF NOT Settings.alreadySet(Settings.Outfile) THEN
+    (* generate outfile name from infile name *)
+  ELSE
+    pathStr := Settings.outfile()
+  END; (* IF *)
+  
+  String.CopyToArray(pathStr, path, len);
+  
+  IF len = 0 THEN
+    Console.WriteChars("target path too long.\n");
+    passed := FALSE;
+    RETURN
+  END; (* IF *)
+  
+  IF fileExists(path) THEN
     (* rename existing file *)
   END; (* IF *)
   
