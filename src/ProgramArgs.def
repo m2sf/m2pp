@@ -18,6 +18,10 @@ PROCEDURE Close;
 (* Closes the command line argument file. *)
 
 
+PROCEDURE Delete;
+(* Deletes the command line argument file. *)
+
+
 PROCEDURE Query;
 (* Queries program args and writes argument file. *)
 
