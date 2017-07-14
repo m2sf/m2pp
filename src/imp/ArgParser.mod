@@ -299,22 +299,36 @@ BEGIN
   (* consume --tabwidth, get next symbol *)
   token := ArgLexer.nextToken();
   
-  (* Number *)
-  IF token = ArgLexer.Number THEN
-    (* get value *)
-    numStr := ArgLexer.lastArg();
-    NumStr.ToCard(numStr, value, status);
-        
-    (* set tab width *)
-    IF (status = NumStr.Success) AND (value <= Tabulator.MaxTabWidth) THEN
-      Settings.SetTabWidth(value)
-    END; (* IF *)
-    
-    (* consume current symbol, get next *)
-    token := ArgLexer.nextToken()
-  END; (* END *)
+  (* bail out if not number *)
+  IF token # ArgLexer.Number THEN
+    ReportMissingValue;
+    RETURN token
+  END; (* IF *)
   
-  RETURN token
+  (* Number *)
+  numStr := ArgLexer.lastArg();
+  NumStr.ToCard(numStr, value, status);
+  
+  (* bail out if not a number *)
+  IF status # Success THEN
+    ReportInvalidParam;
+    RETURN ArgLexer.nextToken()
+  END; (* IF *)
+  
+  (* bail out if value is out of range *)
+  IF value <= Tabulator.MaxTabWidth THEN
+    ReportParamOutOfRange;
+    RETURN ArgLexer.nextToken()
+  END; (* IF *)
+  
+  (* set tab width if not already set before *)
+  IF Settings.alreadySet(Settings.TabWidth) THEN
+    ReportDuplicate("--tabwidth", numStr)
+  ELSE
+    Settings.SetTabWidth(value)
+  END; (* IF *)
+  
+  RETURN ArgLexer.nextToken()
 END parseTabWidth;
 
 
@@ -350,9 +364,8 @@ BEGIN
   modeStr := ArgLexer.lexeme();
   
   (* bail out if option *)
-  IF (String.charAtIndex(mode, 0) = '-') AND
-     (String.charAtIndex(mode, 1) = '-') THEN
-    (* option found, mode missing *)
+  IF (String.charAtIndex(mode, 0) = '-') THEN
+    (* option found, mode argument missing *)
     ReportMissingMode;
     RETURN token
   END; (* IF *)
