@@ -331,44 +331,64 @@ END parseTabWidth;
 PROCEDURE parseNewlineMode ( token : ArgLexer.Token ) : ArgLexer.Token;
 
 VAR
-  mode : StringT;
+  modeStr : StringT;
+  mode : Newline.Mode;
   
 BEGIN
-  mode := NIL;
+  modeStr := NIL;
   
   (* consume --newline, get next symbol *)
-  token := ArgLexer.nextToken();
+  token := ArgLexer.nextToken();  
   
-  (* mode *)
-  IF token = ArgLexer.Identifier THEN
-    mode := ArgLexer.lexeme();
-    
-    (* check lexeme and set mode *)
-    CASE String.length(modeStr) OF
-      2 :
-        CASE String.charAtIndex(modeStr, 0) OF
-          'l' :
-            IF String.matchesArray(modeStr, "lf") THEN
-              Settings.SetNewlineMode(Newline.LF);
-              token := ArgLexer.nextToken()
-            END (* IF *)
-            
-        | 'c' :
-            IF String.matchesArray(modeStr, "cr") THEN
-              Settings.SetNewlineMode(Newline.CR);
-              token := ArgLexer.nextToken()
-            END (* IF *)
-        END (* CASE *)
-        
-    | 4 :
-        IF String.matchesArray(modeStr, "crlf") THEN
-          Settings.SetNewlineMode(Newline.CRLF);
-          token := ArgLexer.nextToken()
-        END
-    END (* CASE *)
+  
+  IF token # ArgLexer.Identifier THEN
+    ReportMissingMode;
+    RETURN token
   END; (* IF *)
   
-  RETURN token
+  (* mode *)
+  modeStr := ArgLexer.lexeme();
+  
+  IF (String.charAtIndex(mode, 0) = '-') AND
+     (String.charAtIndex(mode, 1) = '-') THEN
+    (* option found, mode missing *)
+    ReportMissingMode;
+    RETURN token
+  END; (* IF *)
+  
+  (* get mode from modeStr *)
+  CASE String.length(modeStr) OF
+    2 :
+      CASE String.charAtIndex(modeStr, 0) OF
+        'l' :
+          IF String.matchesArray(modeStr, "lf") THEN
+            mode := Newline.LF
+          END (* IF *)
+          
+      | 'c' :
+          IF String.matchesArray(modeStr, "cr") THEN
+            mode := Newline.CR
+          END (* IF *)
+      END (* CASE *)
+      
+  | 4 :
+      IF String.matchesArray(modeStr, "crlf") THEN
+        mode := Newline.CRLF
+      END
+      
+  ELSE (* unknown mode *)
+    ReportUnknownParam(modeStr);
+    RETURN ArgLexer.nextToken()
+  END (* CASE *)
+  
+  (* set mode if not already set before *)
+  IF Settings.alreadySet(Settings.NewlineMode) THEN
+    ReportDuplicate("--newline", modeStr)
+  ELSE
+    Settings.SetNewlineMode(mode)
+  END; (* IF *)
+  
+  RETURN ArgLexer.nextToken()
 END parseNewlineMode;
 
 
@@ -385,10 +405,18 @@ PROCEDURE parseDiagOption ( token : ArgLexer.Token ) : ArgLexer.Token;
 BEGIN
   CASE token OF
     Verbose :
-      Settings.SetVerbose(TRUE)
+      IF Settings.alreadySet(Settings.Verbose) THEN
+        ReportDuplicate
+      ELSE
+        Settings.SetVerbose(TRUE)
+      END (* IF *)
       
   | ShowSettings :
-      Settings.SetShowSettings(TRUE)
+      IF Settings.alreadySet(Settings.ShowSettings) THEN
+        ReportDuplicate
+      ELSE
+        Settings.SetShowSettings(TRUE)
+      END (* IF *)
   END; (* CASE *)
   
   RETURN ArgLexer.nextToken()
