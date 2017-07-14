@@ -8,7 +8,7 @@ VAR defaultTabWidth : TabWidth;
 
 
 PROCEDURE SetTabWidth ( value : TabWidth );
-(* Sets the default tab width. Zero leaves tabs in place. *)
+(* Sets the tab width. Zero leaves tabs in place. *)
 
 BEGIN
   defaultTabWidth := value
@@ -16,7 +16,7 @@ END SetTabWidth;
 
 
 PROCEDURE tabWidth ( ) : TabWidth;
-(* Returns the default tab width. *)
+(* Returns the tab width. *)
 
 BEGIN
   RETURN defaultTabWidth;
@@ -24,5 +24,5 @@ END tabWidth;
 
 
 BEGIN
-  defaultTabWidth := 0
+  defaultTabWidth := Default
 END Tabulator.

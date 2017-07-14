@@ -8,7 +8,7 @@ VAR defaultMode : Mode;
 
 
 PROCEDURE SetMode ( mode : Mode );
-(* Sets the default newline mode. *)
+(* Sets the newline mode. *)
 
 BEGIN
   defaultMode := mode
@@ -16,7 +16,7 @@ END SetMode;
 
 
 PROCEDURE mode ( ) : Mode;
-(* Returns the default newline mode. *)
+(* Returns the newline mode. *)
 
 BEGIN
   RETURN defaultMode;
@@ -24,5 +24,5 @@ END mode;
 
 
 BEGIN
-  defaultMode := LF
+  defaultMode := Default
 END Newline.
