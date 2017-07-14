@@ -340,7 +340,7 @@ BEGIN
   (* consume --newline, get next symbol *)
   token := ArgLexer.nextToken();  
   
-  
+  (* bail out if not identifier *)
   IF token # ArgLexer.Identifier THEN
     ReportMissingMode;
     RETURN token
@@ -349,6 +349,7 @@ BEGIN
   (* mode *)
   modeStr := ArgLexer.lexeme();
   
+  (* bail out if option *)
   IF (String.charAtIndex(mode, 0) = '-') AND
      (String.charAtIndex(mode, 1) = '-') THEN
     (* option found, mode missing *)
@@ -376,7 +377,8 @@ BEGIN
         mode := Newline.CRLF
       END
       
-  ELSE (* unknown mode *)
+  (* bail out if unknown mode *)
+  ELSE
     ReportUnknownParam(modeStr);
     RETURN ArgLexer.nextToken()
   END (* CASE *)
