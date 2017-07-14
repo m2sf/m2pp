@@ -1,0 +1,15 @@
+Authors:
+
+* Benjamin Kowarsch
+
+
+Special thanks to:
+
+* Guenter Dotzel
+  for providing info how to delete and rename files with ModulaWare Modula-2
+
+* Rick Sutcliffe
+  for providing info and examples for interfacing to C API's with p1 Modula-2
+
+* Fons De Wolf
+  for providing info how to delete and rename files with ADW Modula-2
