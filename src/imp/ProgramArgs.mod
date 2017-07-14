@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE ProgramArgs;
 
 (* Program Argument Management *)
 
-IMPORT ISO646, Console, Infile, Outfile, String;
+IMPORT ISO646, Console, FileSystemAdapter, Infile, Outfile, String;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
