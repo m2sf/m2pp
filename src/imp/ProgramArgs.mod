@@ -73,13 +73,19 @@ BEGIN
     (* write argStr to argument file *)
     Outfile.Open(tmpFile, Filename, status);
     
-    (* TO DO : handle status *)
+    IF status = Success THEN
+      Outfile.WriteChars(argStr);
+      Outfile.Close(tmpFile);
     
-    Outfile.WriteChars(argStr);
-    Outfile.Close(tmpFile);
-    
-    (* open argument file for reading by argument parser *)
-    Infile.Open(argsFile, Filename, status)
+      (* open argument file for reading by argument parser *)
+      Infile.Open(argsFile, Filename, status);
+      isOpen := (status = Infile.Success)
+      
+    ELSE
+      Console.WriteChars("unable to open/create ");
+      Console.WriteChars(Filename);
+      Console.WriteChars(".\n")
+    END (* IF *)
   END (* IF *)
 END Query;
 
