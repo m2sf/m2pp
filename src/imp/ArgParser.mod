@@ -207,9 +207,19 @@ END parseOption;
 
 PROCEDURE parseOutfile ( token : ArgLexer.Token ) : ArgLexer.Token;
 
+VAR
+  outfileStr : StringT;
+  
 BEGIN
   (* get lexeme of current symbol *)
-  Settings.SetOutfile(ArgLexer.lastArg());
+  outfileStr := ArgLexer.lastArg();
+  
+  (* set outfile if not already set before *)
+  IF Settings.alreadySet(Settings.Outfile) THEN
+    ReportDuplicate("--outfile", outfileStr)
+  ELSE
+    Settings.SetOutfile(outfileStr)
+  END; (* IF *)
   
   (* consume current symbol and return next *)
   RETURN ArgLexer.nextToken()
@@ -244,34 +254,53 @@ BEGIN
   (* consume --dict, get next symbol *)
   token := ArgLexer.nextToken();
   
-  (* ( key '=' value )+ *)
-  IF token # ArgLexer.Identifier THEN
-    (* error: missing key *)
+  (* bail out if option *)
+  IF ArgLexer.isOption(token) THEN
+    (* key/value pair missing *)
+    ReportMissingKeyValuePair;
+    RETURN token
   END; (* IF *)
   
-  WHILE token = ArgLexer.Identifier DO
+  (* check for missing key *)
+  IF token = ArgLexer.Equals THEN
+    (* key missing *)
+    ReportMissingKey;
+    
+    (* skip '=' *)
+    token := ArgLexer.nextToken();
+    
+    (* skip following value *)
+    IF ArgLexer.isParameter(token) THEN
+      token := ArgLexer.nextToken()
+    END (* IF *)
+  END; (* IF *)  
+    
+  WHILE ArgLexer.isParameter(token) DO
     (* key *)
-    key := ArgLexer.lexeme()
+    key := ArgLexer.lastArg()
     
     (* '=' *)
     token := ArgLexer.nextToken();
-    IF token # ArgLexer.Equals THEN
-      (* error: missing '=' *)
-    END; (* IF *)
+    IF token = ArgLexer.Equals THEN
+      (* value *)
+      token := ArgLexer.nextToken();
+      IF ArgLexer.isParameter(token) THEN
+        value := ArgLexer.lastArg();
+        
+        (* store key/value pair in dictionary *)
+        IF (key # String.Nil) AND (value # String.Nil) THEN
+          Dictionary.StoreValueForKey(key, value);
+          key := String.Nil; value := String.Nil
+        END (* IF *)
+      END; (* IF *)
+      
+      (* get next symbol *)
+      token := ArgLexer.nextToken()
     
-    (* value *)
-    token := ArgLexer.nextToken();
-    IF token = ArgLexer.Identifier THEN
-      value := ArgLexer.lexeme()
-    END; (* IF *)
-    
-    (* store key/value pair in dictionary *)
-    IF (key # NIL) AND (value # NIL) THEN
-      Dictionary.StoreValueForKey(key, value);
-      key := NIL; value := NIL
-    END; (* IF *)
-    
-    token := ArgLexer.nextToken()
+    (* '=' is missing *)
+    ELSE
+      ReportMissingPunctuation
+    END (* IF *)
   END; (* WHILE *)
 
   RETURN token  
