@@ -1,0 +1,71 @@
+(*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE Settings;
+
+(* Program wide settings management *)
+
+TYPE Setting =
+  ( Infile, Outfile, TabWidth, NewlineMode, Verbose, ShowSettings );
+
+
+PROCEDURE Reset ( setting : Setting );
+(* Resets setting to its default. *)
+
+
+PROCEDURE alreadySet ( setting : Setting );
+(* Returns TRUE if setting has been modified since last reset, else FALSE. *)
+
+
+PROCEDURE SetInfile ( path : StringT );
+(* Sets the infile setting to path. *)
+
+
+PROCEDURE infile ( ) : StringT;
+(* Returns the infile setting. *)
+
+
+PROCEDURE SetOutfile ( path : StringT );
+(* Sets the outfile setting to path. *)
+
+
+PROCEDURE outfile ( ) : StringT;
+(* Returns the outfile setting. *)
+
+
+PROCEDURE SetTabWidth ( value : Tabulator.TabWidth );
+(* Sets the tabwidth setting to value. *)
+
+
+PROCEDURE tabWidth ( ) : Tabluator.TabWidth;
+(* Returns the tabwidth setting. *)
+
+
+PROCEDURE SetNewlineMode ( mode : Newline.Mode );
+(* Sets the newline mode setting to mode. *)
+
+
+PROCEDURE newlineMode ( ) : Newline.Mode;
+(* Returns the newline mode setting. *)
+
+
+PROCEDURE SetVerbose ( value : BOOLEAN );
+(* Sets the verbose setting. *)
+
+
+PROCEDURE verbose ( ) : BOOLEAN;
+(* Returns the verbose setting. *)
+
+
+PROCEDURE SetShowSettings ( value : BOOLEAN );
+(* Sets the show-settings setting. *)
+
+
+PROCEDURE showSettings ( ) : BOOLEAN;
+(* Returns the show-settings setting. *)
+
+
+PROCEDURE ResetAll;
+(* Resets all settings to their defaults. *)
+
+
+END Settings.
