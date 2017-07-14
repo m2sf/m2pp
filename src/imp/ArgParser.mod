@@ -2,7 +2,7 @@
 
 IMPLEMENTATION MODULE ArgParser;
 
-IMPORT ArgLexer, DiagOptions, String, NumStr, Newline, Tabulator;
+IMPORT ArgLexer, Settings, String, NumStr, Newline, Tabulator;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -10,11 +10,9 @@ FROM String IMPORT StringT; (* alias for String.String *)
 (* Properties *)
 
 VAR
-  srcFile,
-  tgtFile  : StringT;
   errCount : CARDINAL;
   
-
+  
 (* Public Operations *)
 
 (* ---------------------------------------------------------------------------
@@ -71,7 +69,7 @@ END parseArgs;
 PROCEDURE sourceFile () : StringT;
 
 BEGIN
-  RETURN srcFile
+  RETURN Settings.infile()
 END sourceFile;
 
 
@@ -84,7 +82,7 @@ END sourceFile;
 PROCEDURE targetFile () : StringT;
 
 BEGIN
-  RETURN tgtFile
+  RETURN Settings.outfile()
 END targetFile;
 
 
@@ -145,7 +143,7 @@ PROCEDURE parseExpansionRequest ( token : ArgLexer.Token ) : ArgLexer.Token;
 BEGIN
   (* sourceFile *)
   IF token = ArgLexer.FileOrPath THEN
-    srcFile := ArgLexer.lastArg();
+    Settings.SetInfile(ArgLexer.lastArg());
     token := ArgLexer.nextToken()
     
   ELSE
@@ -211,7 +209,7 @@ PROCEDURE parseOutfile ( token : ArgLexer.Token ) : ArgLexer.Token;
 
 BEGIN
   (* get lexeme of current symbol *)
-  tgtFile := ArgLexer.lastArg();
+  Settings.SetOutfile(ArgLexer.lastArg());
   
   (* consume current symbol and return next *)
   RETURN ArgLexer.nextToken()
@@ -309,7 +307,7 @@ BEGIN
         
     (* set tab width *)
     IF (status = NumStr.Success) AND (value <= Tabulator.MaxTabWidth) THEN
-      Tabulator.SetTabWidth(value)
+      Settings.SetTabWidth(value)
     END; (* IF *)
     
     (* consume current symbol, get next *)
@@ -351,20 +349,20 @@ BEGIN
         CASE String.charAtIndex(modeStr, 0) OF
           'l' :
             IF String.matchesArray(modeStr, "lf") THEN
-              Newline.SetMode(Newline.LF);
+              Settings.SetNewlineMode(Newline.LF);
               token := ArgLexer.nextToken()
             END (* IF *)
             
         | 'c' :
             IF String.matchesArray(modeStr, "cr") THEN
-              Newline.SetMode(Newline.CR);
+              Settings.SetNewlineMode(Newline.CR);
               token := ArgLexer.nextToken()
             END (* IF *)
         END (* CASE *)
         
     | 4 :
         IF String.matchesArray(modeStr, "crlf") THEN
-          Newline.SetMode(Newline.CRLF);
+          Settings.SetNewlineMode(Newline.CRLF);
           token := ArgLexer.nextToken()
         END
     END (* CASE *)
@@ -387,10 +385,10 @@ PROCEDURE parseDiagOption ( token : ArgLexer.Token ) : ArgLexer.Token;
 BEGIN
   CASE token OF
     Verbose :
-      DiagOptions.SetOption(DiagOptions.Verbose, TRUE)
+      Settings.SetVerbose(TRUE)
       
   | ShowSettings :
-      DiagOptions.SetOption(DiagOptions.ShowSettings, TRUE)
+      Settings.SetShowSettings(TRUE)
   END; (* CASE *)
   
   RETURN ArgLexer.nextToken()
@@ -398,8 +396,5 @@ END parseDiagOption;
 
 
 BEGIN (* ArgParser *)
-  (* init properties *)
-  srcFile := NIL;
-  tgtFile := NIL;
   errCount := 0
 END ArgParser.
