@@ -5,7 +5,7 @@ MODULE M2PP;
 (* Modula-2 Preprocessor Driver *)
 
 IMPORT ProgramArgs, ArgParser, Infile, Outfile, Preprocessor;
-FROM FileSystemAdapter IMPORT fileExists, DeleteFile;
+FROM FileSystemAdapter IMPORT fileExists, RenameFile;
 
 FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
 FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
@@ -139,6 +139,7 @@ VAR
   infile : InfileT;
   outfile : OutfileT;
   argStatus : ArgParser.Status;
+  fsStatus : FileSystemAdapter.Status;
   
 
 BEGIN (* M2PP *)
@@ -151,6 +152,7 @@ BEGIN (* M2PP *)
   
   argStatus := ArgParser.parseArgs();
   ProgramArgs.Close;
+  ProgramArgs.Delete;
   
   CASE argStatus OF
     Success :
