@@ -39,6 +39,14 @@ BEGIN
 END Close;
 
 
+PROCEDURE Delete;
+(* Deletes the command line argument file. *)
+
+BEGIN
+  (* TO DO *)
+END Delete;
+
+
 PROCEDURE Query;
 (* Queries program args and writes argument file. *)
 
