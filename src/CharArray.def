@@ -98,6 +98,29 @@ PROCEDURE CopyQuotedArray
 (* Copies source to target, while enclosing contents in quotes. *)
 
 
+(* Insert and Replace Operations *)
+
+PROCEDURE CanInsertChars
+  ( VAR (* CONST *) target, source : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if source can be inserted into target. *)
+
+
+PROCEDURE InsertCharsAtIndex
+  ( VAR (* CONST *) target, source : ARRAY OF CHAR; index : CARDINAL );
+(* Inserts source into target starting at index. *)
+
+
+PROCEDURE CanReplaceCharsAtIndex
+  ( VAR (* CONST *) target, source : ARRAY OF CHAR;
+    index : CARDINAL ) : BOOLEAN;
+(* Returns TRUE if index+length(source) does not exceed length of target. *)
+
+
+PROCEDURE ReplaceCharsAtIndex
+  ( VAR (* CONST *) target, source : ARRAY OF CHAR; index : CARDINAL );
+(* Replaces slice target[index..index+length(source) with source. *)
+
+
 (* Slice Operations *)
 
 PROCEDURE canCopySlice
