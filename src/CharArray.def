@@ -69,32 +69,32 @@ PROCEDURE ToTitle ( VAR array : ARRAY OF CHAR );
 (* Copy Operations *)
 
 PROCEDURE canCopyArray
-  ( VAR (* CONST *) source, target : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (* CONST *) target, source : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if target can store the contents of source. *)
 
 
 PROCEDURE CopyArray
-  (  VAR (* CONST *) source, target : ARRAY OF CHAR );
+  (  VAR target, (* CONST *) source : ARRAY OF CHAR );
 (* Copies source to target. *)
 
 
 PROCEDURE canAppendArray
-  ( VAR (* CONST *) source, target : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (* CONST *) target, source : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if source can be appended to target. *)
 
 
 PROCEDURE AppendArray
-  (  VAR (* CONST *) source, target : ARRAY OF CHAR );
+  (  VAR target, (* CONST *) source : ARRAY OF CHAR );
 (* Appends source to target. *)
 
 
 PROCEDURE canCopyQuotedArray
-  ( VAR (* CONST *) source, target : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (* CONST *) target, source : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if target can store the quoted contents of source. *)
 
 
 PROCEDURE CopyQuotedArray
-  (  VAR (* CONST *) source, target : ARRAY OF CHAR );
+  (  VAR target, (* CONST *) source : ARRAY OF CHAR );
 (* Copies source to target, while enclosing contents in quotes. *)
 
 
@@ -124,54 +124,54 @@ PROCEDURE ReplaceCharsAtIndex
 (* Slice Operations *)
 
 PROCEDURE canCopySlice
-  ( start, end : CARDINAL; VAR (* CONST *) target : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (* CONST *) target : ARRAY OF CHAR; start, end : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if target can store (end-start+1) characters. *)
 
 
 PROCEDURE CopySlice
-  (  start, end : CARDINAL; VAR (* CONST *) source, target : ARRAY OF CHAR );
+  ( VAR target, (* CONST *) source : ARRAY OF CHAR; start, end : CARDINAL );
 (* Copies slice source[start..end] to target. *)
 
 
 PROCEDURE canAppendSlice
-  ( start, end : CARDINAL; VAR (* CONST *) target : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (* CONST *) target : ARRAY OF CHAR; start, end : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if target can store (end-start+1) additional characters. *)
 
 
 PROCEDURE AppendSlice
-  (  start, end : CARDINAL; VAR (* CONST *) source, target : ARRAY OF CHAR );
+  ( VAR target, (* CONST *) source : ARRAY OF CHAR; start, end : CARDINAL );
 (* Appends slice source[start..end] to target. *)
 
 
 PROCEDURE RemoveSlice
-  (  start, end : CARDINAL; VAR (* CONST *) array : ARRAY OF CHAR );
+  ( VAR (* CONST *) array : ARRAY OF CHAR; start, end : CARDINAL );
 (* Removes slice source[start..end] from array. *)
 
 
 (* Word Operations *)
 
 PROCEDURE canCopyWordAtIndex
-  (  n : CARDINAL; VAR (* CONST *) source, target : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (* CONST *) target, source : ARRAY OF CHAR; n : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if target can store the n-th word of source. *)
 
 
 PROCEDURE CopyWordAtIndex
-  (  n : CARDINAL; VAR (* CONST *) source, target : ARRAY OF CHAR );
+  ( VAR target, (* CONST *) source : ARRAY OF CHAR; n : CARDINAL );
 (* Copies the n-th word in source array to target array. *)
 
 
 PROCEDURE canAppendWordAtIndex
-  (  n : CARDINAL; VAR (* CONST *) source, target : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (* CONST *) target, source : ARRAY OF CHAR; n : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if target can be appended the n-th word of source. *)
 
 
 PROCEDURE AppendWordAtIndex
-  (  n : CARDINAL; VAR (* CONST *) source, target : ARRAY OF CHAR );
+  ( VAR target, (* CONST *) source : ARRAY OF CHAR; n : CARDINAL );
 (* Appends the n-th word in source array to target array. *)
 
 
 PROCEDURE RemoveWordAtIndex
-  (  n : CARDINAL; VAR (* CONST *) array : ARRAY OF CHAR );
+  ( VAR (* CONST *) array : ARRAY OF CHAR; n : CARDINAL );
 (* Removes the n-th word in array from array. *)
 
 
