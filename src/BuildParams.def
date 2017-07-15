@@ -1,0 +1,12 @@
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE BuildParams;
+
+(* M2PP Build Parameters *)
+
+CONST
+  MaxPathLen = 255;
+  InfileMaxLineLength = 255;
+  DefaultBackupVersionLimit = 3;
+
+END BuildParams.
