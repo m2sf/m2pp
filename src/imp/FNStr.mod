@@ -6,7 +6,7 @@ DEFINITION MODULE FNStr;
 
 IMPORT CharArray;
 
-FROM ISO646 IMPORT NUL;
+FROM ISO646 IMPORT NUL, BACKSLASH;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -43,7 +43,7 @@ VAR
 PROCEDURE targetName ( sourceName : StringT ) : StringT;
 
 VAR
-  found, hasGen, hasExt : BOOLEAN;
+  found, genFound, extFound : BOOLEAN;
   fnPos, genPos, extPos, srcIndex, tgtIndex, len, count : CARDINAL;
   target : ARRAY [0..MaxPathLen] OF CHAR;
 
@@ -69,10 +69,10 @@ BEGIN
     RETURN String.Nil
   END; (* IF *)
   
-  FindExtension(target, hasGen, genPos, hasExt, extPos);
+  FindExtension(target, genFound, genPos, extFound, extPos);
   
-  IF hasExt THEN
-    IF hasGen THEN
+  IF extFound THEN
+    IF genFound THEN
       (* remove '.gen' from target *)
       CharArray.RemoveSlice(target, genPos, genPos+3)
     ELSE (* no '.gen' *)
@@ -81,7 +81,7 @@ BEGIN
     END (* IF *)
     
   ELSE (* no extension *)
-    IF hasGen THEN
+    IF genFound THEN
       CharArray.RemoveSlice(target, genPos, genPos+3)
     END; (* IF *)
     CharArray.AppendArray(target, outExt)
@@ -175,11 +175,13 @@ BEGIN
   genFound := FALSE;
   extFound := FALSE;
   len := CharArray.length(target);
-
+  
+  (* bail out if array is empty *)
   IF len = 0 THEN
     RETURN
   END; (* IF *)
   
+  (* look for rightmost period *)
   FindPeriodR2L(array, found, index);
   
   IF (NOT found) OR (index + 1 >= len) THEN
@@ -220,6 +222,7 @@ VAR
 BEGIN
   len := CharArray.length(array);
   
+  (* bail out if array is empty *)
   IF len := 0 THEN
     found := FALSE;
     RETURN
