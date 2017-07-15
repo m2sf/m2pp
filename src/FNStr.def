@@ -20,17 +20,19 @@ TYPE BackupVersionRange = CARDINAL [0..MaxBackupVersionLimit];
  * ---------------------------------------------------------------------------
  * Returns a target pathname for a given source pathname. The target path is
  * derived from the source path as follows. (1) If the source path does not
- * contain any extension, '.out' is appended to it. (2) If the source path
- * contains an extension preceded by '.gen', then the '.gen' part is removed.
+ * contain any extension, '.out' is appended to it. Otherwise, (2a) if its
+ * extension is '.gen', the extension is replaced with '.out'; or (2b) if
+ * its extension is preceded by '.gen', then the '.gen' part is removed.
  * (3) In any other case '.out' is inserted before the extension.
  *
  * Examples:
  *
  * case | source string     | returned string
  * -----+-------------------+------------------
- *  (1) | FooBarBaz         | FooBarBaz.out
- *  (2) | FooBarBaz.gen.def | FooBarBaz.def
- *  (3) | FooBarBaz.def     | FooBarBaz.out.def
+ * (1)  | FooBarBaz         | FooBarBaz.out
+ * (2a) | FooBarBaz.gen     | FooBarBaz.out
+ * (2b) | FooBarBaz.gen.def | FooBarBaz.def
+ * (3)  | FooBarBaz.def     | FooBarBaz.out.def
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE targetName ( sourceName : StringT ) : StringT;
