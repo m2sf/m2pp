@@ -163,15 +163,15 @@ END backupVersionLimit;
 
 PROCEDURE FindExtension
   ( VAR (* CONST *) target : ARRAY OF CHAR; 
-    VAR hasGen : BOOLEAN; VAR genPos : CARDINAL;
-    VAR hasExt : BOOLEAN; VAR extPos : CARDINAL );
+    VAR genFound : BOOLEAN; VAR genPos : CARDINAL;
+    VAR extFound : BOOLEAN; VAR extPos : CARDINAL );
 
 VAR
   len, index : CARDINAL;
   
 BEGIN
-  hasGen := FALSE;
-  hasExt := FALSE;
+  genFound := FALSE;
+  extFound := FALSE;
   len := CharArray.length(target);
 
   IF len = 0 THEN
