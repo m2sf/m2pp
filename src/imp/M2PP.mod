@@ -4,7 +4,7 @@ MODULE M2PP;
 
 (* Modula-2 Preprocessor Driver *)
 
-IMPORT ProgramArgs, ArgParser, Infile, Outfile, Preprocessor;
+IMPORT ProgramArgs, ArgParser, FNStr, Infile, Outfile, Preprocessor;
 FROM FileSystemAdapter IMPORT fileExists, RenameFile;
 
 FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
@@ -101,7 +101,8 @@ BEGIN
   END; (* IF *)
   
   IF NOT Settings.alreadySet(Settings.Outfile) THEN
-    (* generate outfile name from infile name *)
+    (* derive target name from source name *)
+    pathStr := FNStr.targetName(pathStr)
   ELSE
     pathStr := Settings.outfile()
   END; (* IF *)
