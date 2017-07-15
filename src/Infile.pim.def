@@ -13,7 +13,7 @@ FROM String IMPORT StringT; (* alias for String.String *)
  * Maximum line length
  * ------------------------------------------------------------------------ *)
 
-CONST MaxLineLength = 255;
+CONST MaxLineLength = BuildParams.InfileMaxLineLength;
 
 
 (* ---------------------------------------------------------------------------
