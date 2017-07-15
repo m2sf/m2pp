@@ -6,6 +6,8 @@ DEFINITION MODULE FNStr;
 
 IMPORT CharArray;
 
+FROM ISO646 IMPORT NUL;
+
 FROM String IMPORT StringT; (* alias for String.String *)
 
 
