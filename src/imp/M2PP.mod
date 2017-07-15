@@ -4,7 +4,9 @@ MODULE M2PP;
 
 (* Modula-2 Preprocessor Driver *)
 
-IMPORT ProgramArgs, ArgParser, FNStr, Infile, Outfile, Preprocessor;
+IMPORT
+ ProgramArgs, ArgParser, BuildParams, FNStr, Infile, Outfile, Preprocessor;
+ 
 FROM FileSystemAdapter IMPORT fileExists, RenameFile;
 
 FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
@@ -12,7 +14,6 @@ FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
 
 
 CONST
-  MaxPathLen = 255;
   ProgTitle = "M2PP - Modula-2 Preprocessor";
   Version   = "Version 0.1\n";
   Copyright = "Copyright (c) 2017 Modula-2 Software Foundation\n";
@@ -72,7 +73,7 @@ VAR
   len : CARDINAL;
   pathStr : StringT;
   status : BasicFileIO.Status;
-  path : ARRAY [0..MaxPathLen] OF CHAR;
+  path : ARRAY [0..BuildParams.MaxPathLen] OF CHAR;
 
 BEGIN
   pathStr := Settings.infile();
