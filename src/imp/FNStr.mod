@@ -142,6 +142,128 @@ BEGIN
 END backupVersionLimit;
 
 
+(* ************************************************************************ *
+ * Private Operations                                                       *
+ * ************************************************************************ *)
+
+(* ---------------------------------------------------------------------------
+ * function FindExtension(target, genFound, genPos, extFound, extPos)
+ * ---------------------------------------------------------------------------
+ * Searches from right to left for an extension in array before any directory
+ * delimiter ('/', '\', ':' or ']') is reached. If no extension is found,
+ * FALSE is passed back in both genFound and extFound and genPos and extPos
+ * remain unmodified. If an extension is found and it is '.gen', TRUE is
+ * passed in genFound and FALSE is passed in extFound. The index of the
+ * period is passed in genPos and extPos remains unmodified. If any other
+ * extension is found, TRUE is passed in extFound and the index of the
+ * period is passed in extPos. If the extension is preceded by '.gen',
+ * TRUE is also passed in genPos and the index of the the start of the
+ * character sequence '.gen' is passed in genPos.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE FindExtension
+  ( VAR (* CONST *) target : ARRAY OF CHAR; 
+    VAR hasGen : BOOLEAN; VAR genPos : CARDINAL;
+    VAR hasExt : BOOLEAN; VAR extPos : CARDINAL );
+
+VAR
+  len, index : CARDINAL;
+  
 BEGIN
+  hasGen := FALSE;
+  hasExt := FALSE;
+  len := CharArray.length(target);
+
+  IF len = 0 THEN
+    RETURN
+  END; (* IF *)
+  
+  FindPeriodR2L(array, found, index);
+  
+  IF (NOT found) OR (index + 1 >= len) THEN
+    genFound := FALSE;
+    extFound := FALSE;
+    RETURN
+  END; (* IF *)
+  
+  IF (index + 4 = len) AND matchesGenAtIndex(array, index) THEN
+    genFound := TRUE; genPos := index;
+    extFound := FALSE;
+    RETURN
+  END; (* IF *)
+  
+  extFound := TRUE; extPos := index;
+  
+  IF (index > 4) AND matchesGenAtIndex(array, index-4) THEN
+    genFound := TRUE; genPos := index - 4
+  END (* IF *)
+END FindExtension;
+
+
+(* ---------------------------------------------------------------------------
+ * function FindPeriodR2L(array, found, pos)
+ * ---------------------------------------------------------------------------
+ * Searches from right to left for the rightmost period in array before any
+ * directory delimiter ('/', '\', ':' or ']') is reached. If a period is
+ * found, TRUE is passed back in found and the index in pos. Otherwise,
+ * FALSE is passed back in found and pos remains unmodified.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE FindPeriodR2L
+  ( VAR (* CONST *) array : ARRAY OF CHAR;
+    VAR found : BOOLEAN; VAR pos : CARDINAL );
+
+VAR
+  ch : CHAR;
+  len, index : CARDINAL;
+  
+BEGIN
+  len := CharArray.length(array);
+  
+  IF len := 0 THEN
+    found := FALSE;
+    RETURN
+  END; (* IF *)
+  
+  FOR index := len-1 TO 0 BY -1 DO
+    ch = array[index];
+    
+    (* dirpath delimiter reached *)
+    IF (ch = '/') OR (ch = BACKSLASH) OR (ch = ':') OR (ch = ']') THEN
+      found := FALSE;
+      RETURN
+    
+    (* period found *)
+    ELSIF ch = '.' THEN
+      found := TRUE;
+      pos := index;
+      RETURN
+    END (* IF *)
+  END; (* FOR *)
+  
+  found := FALSE
+END FindPeriodR2L;
+
+
+(* ---------------------------------------------------------------------------
+ * function matchesGenAtIndex(array, index)
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if slice array[index..index+4] matches the character sequence
+ * '.gen.' or '.gen' followed by ASCII NUL. Returns FALSE otherwise.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE matchesGenAtIndex
+  ( VAR array : ARRAY OF CHAR; index : CARDINAL ) : BOOLEAN;
+
+BEGIN
+  RETURN
+    (target + 4 <= HIGH(array)) AND
+    (target[index] = '.') AND (target[index+1] = 'g') AND
+    (target[index+2] = 'e') AND(target[index+3] = 'n') AND
+    ((target[index+4] = '.') OR (target[index+4] = NUL))
+END matchesGenAtIndex;
+
+
+BEGIN (* FNStr *)
   bvl := DefaultBackupVersionLimit
 END FNStr.
