@@ -4,7 +4,7 @@ DEFINITION MODULE Infile; (* ISO version *)
 
 (* I/O library for reading text files with line and column counters *)
 
-IMPORT SYSTEM, BasicFileIO;
+IMPORT SYSTEM, BuildParams, BasicFileIO;
 
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -13,7 +13,7 @@ FROM String IMPORT StringT; (* alias for String.String *)
  * Maximum line length
  * ------------------------------------------------------------------------ *)
 
-CONST MaxLineLength = 255;
+CONST MaxLineLength = BuildParams.InfileMaxLineLength;
 
 
 (* ---------------------------------------------------------------------------
