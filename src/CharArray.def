@@ -100,7 +100,7 @@ PROCEDURE CopyQuotedArray
 
 (* Insert and Replace Operations *)
 
-PROCEDURE CanInsertChars
+PROCEDURE canInsertChars
   ( VAR (* CONST *) target, source : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if source can be inserted into target. *)
 
@@ -110,7 +110,7 @@ PROCEDURE InsertCharsAtIndex
 (* Inserts source into target starting at index. *)
 
 
-PROCEDURE CanReplaceCharsAtIndex
+PROCEDURE canReplaceCharsAtIndex
   ( VAR (* CONST *) target, source : ARRAY OF CHAR;
     index : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if index+length(source) does not exceed length of target. *)
