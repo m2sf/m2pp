@@ -4,12 +4,14 @@ DEFINITION MODULE FNStr;
 
 (* Filename string operations *)
 
+IMPORT BuildParams;
+
 FROM String IMPORT StringT; (* alias for String.String *)
 
 
 CONST
   MaxBackupVersionLimit = 32;
-  DefaultBackupVersionLimit = 3;
+  DefaultBackupVersionLimit = BuildParams.DefaultBackupVersionLimit;
 
 
 TYPE BackupVersionRange = CARDINAL [0..MaxBackupVersionLimit];
