@@ -7,6 +7,6 @@ DEFINITION MODULE BuildParams;
 CONST
   MaxPathLen = 255;
   InfileMaxLineLength = 255;
-  DefaultBackupVersionLimit = 3;
+  DefaultBackupVersionLimit = 3; (* must not exceed 32 *)
 
 END BuildParams.
