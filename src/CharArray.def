@@ -106,7 +106,7 @@ PROCEDURE canInsertChars
 
 
 PROCEDURE InsertCharsAtIndex
-  ( VAR (* CONST *) target, source : ARRAY OF CHAR; index : CARDINAL );
+  ( VAR target, (* CONST *) source : ARRAY OF CHAR; index : CARDINAL );
 (* Inserts source into target starting at index. *)
 
 
@@ -117,7 +117,7 @@ PROCEDURE canReplaceCharsAtIndex
 
 
 PROCEDURE ReplaceCharsAtIndex
-  ( VAR (* CONST *) target, source : ARRAY OF CHAR; index : CARDINAL );
+  ( VAR target, (* CONST *) source : ARRAY OF CHAR; index : CARDINAL );
 (* Replaces slice target[index..index+length(source) with source. *)
 
 
