@@ -181,8 +181,6 @@ BEGIN
   FindPeriodR2L(array, found, index);
   
   IF (NOT found) OR (index + 1 >= len) THEN
-    genFound := FALSE;
-    extFound := FALSE;
     RETURN
   END; (* IF *)
   
