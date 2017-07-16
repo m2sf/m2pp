@@ -72,7 +72,7 @@ BEGIN
     RETURN
   END; (* IF *)
   
-  (* copy array[index..len] to array[0..] *)
+  (* copy array[startIndex..len] to array[0..] *)
   tgtIndex := 0;
   FOR srcIndex := startIndex TO len DO
     array[tgtIndex] := array[srcIndex];
