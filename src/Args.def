@@ -1,6 +1,6 @@
 (*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-DEFINITION MODULE ProgramArgs;
+DEFINITION MODULE Args;
 
 (* Program Argument Management *)
 
@@ -30,4 +30,4 @@ PROCEDURE file () : InfileT;
 (* Returns a file handle to the command line argument file, NIL if closed. *)
 
 
-END ProgramArgs.
+END Args.
