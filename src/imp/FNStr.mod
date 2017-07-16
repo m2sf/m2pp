@@ -451,5 +451,5 @@ END AppendChar;
 
 
 BEGIN (* FNStr *)
-  bvl := DefaultBackupVersionLimit
+  verLimit := DefaultBackupVersionLimit
 END FNStr.
