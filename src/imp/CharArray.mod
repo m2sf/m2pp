@@ -592,8 +592,36 @@ PROCEDURE matches
   ( VAR (* CONST *) array1, array2 : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if the content of array1 matches that of array2. *)
 
+VAR
+  maxIndex : CARDINAL;
+  
 BEGIN
-  (* TO DO *)
+  (* limit iteration to range of shorter array *)
+  IF HIGH(array1) > HIGH(array2) THEN
+    maxIndex := HIGH(array2)
+  ELSE
+    maxIndex := HIGH(array1)
+  END; (* IF *)
+  
+  (* check for mismatching characters in range [0..maxIndex] *)
+  FOR index := 0 TO maxIndex DO
+    IF array1[index] # array2[index] THEN
+      RETURN FALSE
+    END
+  END; (* WHILE *)
+  
+  (* case 1 : array1 has reached HIGH, but not array2 *)
+  IF (HIGH(array2) > maxIndex) THEN
+    RETURN (array2[maxIndex+1] = NUL)
+  END; (* IF *)
+
+  (* case 2 : array2 has reached HIGH, but not array1 *)
+  IF (HIGH(array1) > maxIndex) THEN
+    RETURN (array1[maxIndex+1] = NUL)
+  END; (* IF *)
+  
+  (* case 3 : both array1 and array2 have reached HIGH *)
+  RETURN TRUE
 END matches;
 
 
