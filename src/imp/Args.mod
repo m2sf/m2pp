@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE Args;
 
 (* Program Argument Management *)
 
-IMPORT ISO646, Console, FileSystemAdapter, Infile, Outfile, String;
+IMPORT ISO646, CharArray, Console, FileSystemAdapter, Infile, Outfile, String;
 
 FROM BuildParams IMPORT ArgQueryBufferSize;
 FROM String IMPORT StringT; (* alias for String.String *)
@@ -65,6 +65,9 @@ BEGIN
   (* read user input *)
   argStr[0] := ISO646.NUL;
   Console.ReadChars(argStr);
+  
+  (* remove leading and trailing space *)
+  CharArray.Trim(argStr);
   
   (* bail out if user input is empty *)
   IF argStr[0] = ISO646.NUL THEN
