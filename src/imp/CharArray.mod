@@ -46,7 +46,7 @@ PROCEDURE Trim ( VAR array : ARRAY OF CHAR );
 (* Removes leading and trailing whitespace from array. *)
 
 VAR
-  len, index, tgtIndex, srcIndex : CARDINAL;
+  len, startIndex, tgtIndex, srcIndex : CARDINAL;
   
 BEGIN
   len := length(array);
