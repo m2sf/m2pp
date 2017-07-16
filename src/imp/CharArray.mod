@@ -608,7 +608,7 @@ BEGIN
     IF array1[index] # array2[index] THEN
       RETURN FALSE
     END
-  END; (* WHILE *)
+  END; (* FOR *)
   
   (* case 1 : array1 has reached HIGH, but not array2 *)
   IF (HIGH(array2) > maxIndex) THEN
@@ -650,7 +650,7 @@ BEGIN
     ELSIF ch1 > ch2 THEN
       RETURN FALSE
     END
-  END; (* LOOP *)
+  END; (* FOR *)
     
   (* case 1 : array1 has reached HIGH, but not array2 *)
   IF (HIGH(array2) > maxIndex) THEN
@@ -700,7 +700,7 @@ BEGIN
     ELSIF ch1 > ch2 THEN
       RETURN FALSE
     END
-  END; (* LOOP *)
+  END; (* FOR *)
     
   (* case 1 : array1 has reached HIGH, but not array2 *)
   IF (HIGH(array2) > maxIndex) THEN
