@@ -4,8 +4,7 @@ MODULE M2PP;
 
 (* Modula-2 Preprocessor Driver *)
 
-IMPORT
- ProgramArgs, ArgParser, BuildParams, FNStr, Infile, Outfile, Preprocessor;
+IMPORT Args, ArgParser, BuildParams, FNStr, Infile, Outfile, Preprocessor;
  
 FROM FileSystemAdapter IMPORT fileExists, RenameFile;
 
@@ -15,7 +14,7 @@ FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
 
 CONST
   ProgTitle = "M2PP - Modula-2 Preprocessor";
-  Version   = "Version 0.1\n";
+  Version   = "Version 0.1.0\n";
   Copyright = "Copyright (c) 2017 Modula-2 Software Foundation\n";
   License   = "Licensed under the LGPL license version 2.1\n";
 
@@ -146,15 +145,15 @@ VAR
 
 BEGIN (* M2PP *)
   (* check if program argument file is present *)
-  IF fileExists(ProgramArgs.Filename) THEN
-    ProgramArgs.Open
+  IF fileExists(Args.Filename) THEN
+    Args.Open
   ELSE (* query user and write file *)
-    ProgramArgs.Query
+    Args.Query
   END; (* IF *)
   
   argStatus := ArgParser.parseArgs();
-  ProgramArgs.Close;
-  ProgramArgs.Delete;
+  Args.Close;
+  Args.Delete;
   
   CASE argStatus OF
     Success :
