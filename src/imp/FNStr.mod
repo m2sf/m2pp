@@ -1,10 +1,10 @@
 (*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-DEFINITION MODULE FNStr;
+IMPLEMENTATION MODULE FNStr;
 
 (* Filename string operations *)
 
-IMPORT CharArray;
+IMPORT CharArray, FileSystemAdapter;
 
 FROM ISO646 IMPORT NUL, BACKSLASH;
 
@@ -48,11 +48,12 @@ VAR
   target : ARRAY [0..MaxPathLen] OF CHAR;
 
 BEGIN
-  (* bail out of source is *)
+  (* bail out if source is NIL *)
   IF (sourceName = String.Nil) THEN
     RETURN String.Nil
   END; (* IF *)
   
+  (* bail out if source is empty *)
   len := String.length(sourceName);
   IF (len = 0) THEN
     RETURN String.Nil
@@ -113,8 +114,46 @@ END targetName;
 
 PROCEDURE backupName ( origName : StringT ) : StringT;
 
+VAR
+  len, index : CARDINAL;
+  target : ARRAY [0..MaxPathLen] OF CHAR;
+  
 BEGIN
-  (* TO DO *)
+  (* bail out if original is NIL *)
+  IF (origName = String.Nil) THEN
+    RETURN String.Nil
+  END; (* IF *)
+  
+  (* bail out if original is empty *)
+  len := String.length(origName);
+  IF (len = 0) THEN
+    RETURN String.Nil
+  END; (* IF *)
+  
+  (* target := original *)
+  String.CopyToArray(origName, target, charsCopied);
+  IF charsCopied = 0 THEN
+    RETURN String.Nil
+  END; (* IF *)
+  
+  RemoveTrailingPeriods(target, len);
+  
+  (* bail out if resulting name is empty *)
+  IF len = 0 THEN
+    RETURN String.Nil
+  END; (* IF *)
+  
+  CharArray.AppendArray(target, bakExt);
+  
+  IF FileSystemAdapter.fileExists(target) THEN
+    AddVersionSuffix(target, status);
+  END; (* IF *)
+  
+  IF status # Success THEN
+    RETURN String.Nil
+  ELSE
+    RETURN String.forArray(target)
+  END (* IF *)
 END backupName;
 
 
@@ -203,6 +242,33 @@ END FindExtension;
 
 
 (* ---------------------------------------------------------------------------
+ * function RemoveTrailingPeriods(array, len)
+ * ---------------------------------------------------------------------------
+ * Removes any trailing '.' in array and passes the new length back in len.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE RemoveTrailingPeriods
+  ( VAR array : ARRAY OF CHAR; VAR len : CARDINAL );
+
+BEGIN
+  len := CharArray.length(array);
+  
+  IF len = 0 THEN
+    RETURN
+  END; (* IF *)
+  
+  WHILE len > 0 DO
+    IF array[len-1] = '.' THEN
+      array[len-1] := NUL;
+      len := len - 1
+    ELSE
+      RETURN
+    END (* IF *)
+  END (* WHILE *)
+END RemoveTrailingPeriods;
+
+
+(* ---------------------------------------------------------------------------
  * function FindPeriodR2L(array, found, pos)
  * ---------------------------------------------------------------------------
  * Searches from right to left for the rightmost period in array before any
@@ -265,6 +331,24 @@ BEGIN
     (target[index+2] = 'e') AND(target[index+3] = 'n') AND
     ((target[index+4] = '.') OR (target[index+4] = NUL))
 END matchesGenAtIndex;
+
+
+(* ---------------------------------------------------------------------------
+ * function AddVersionSuffix(path, status)
+ * ---------------------------------------------------------------------------
+ * Appends a version suffix comprised of ';' following a non-negative integer
+ * starting with 1 to path and checks if a file at path exists. If a file of
+ * that name exists, increments the version number by one, replaces the
+ * appended version number with the incremented number until either the
+ * maximum version limit is reached or no file exists at the resulting path.
+ * The status of the operation is passed back in status.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE AddVersionSuffix ( VAR array : ARRAY OF CHAR; VAR status : Status );
+
+BEGIN
+  (* TO DO *)
+END AddVersionSuffix;
 
 
 BEGIN (* FNStr *)
