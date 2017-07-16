@@ -7,7 +7,7 @@ IMPLEMENTATION MODULE FNStr;
 IMPORT CharArray, FileSystemAdapter;
 
 FROM ISO646 IMPORT NUL, BACKSLASH;
-
+FROM CardMath IMPORT pow10, log10;
 FROM String IMPORT StringT; (* alias for String.String *)
 
 
@@ -17,7 +17,7 @@ CONST
 
 
 VAR
-  bvl : BackupVersionRange;
+  verLimit : BackupVersionRange;
 
 
 (* ---------------------------------------------------------------------------
@@ -146,13 +146,25 @@ BEGIN
   CharArray.AppendArray(target, bakExt);
   
   IF FileSystemAdapter.fileExists(target) THEN
-    AddVersionSuffix(target, status);
-  END; (* IF *)
-  
-  IF status = Success THEN
-    RETURN String.forArray(target)
-  ELSE
-    RETURN String.Nil
+    version := 1;
+    WHILE version < verLimit DO
+      AppendVersionSuffix(target, version, done);
+      
+      (* bail out if capacity is insufficient *)
+      IF NOT done THEN
+        (* path too long *)
+        RETURN String.Nil
+      END; (* IF *)
+      
+      (* return backup name if no such file exists *)
+      IF NOT FileSystemAdapter.fileExist(target) THEN
+        RETURN String.forArray(target)
+      END; (* IF *)
+      
+      (* else remove suffix and increment version *)
+      RemoveVersionSuffix(target);
+      version := version + 1
+    END (* WHILE *)
   END (* IF *)
 END backupName;
 
@@ -166,7 +178,7 @@ END backupName;
 PROCEDURE SetBackupVersionLimit ( value : BackupVersionRange );
 
 BEGIN
-  bvl := value
+  verLimit := value
 END SetBackupVersionLimit;
 
 
@@ -179,7 +191,7 @@ END SetBackupVersionLimit;
 PROCEDURE backupVersionLimit () : CARDINAL;
 
 BEGIN
-  RETURN bvl
+  RETURN verLimit
 END backupVersionLimit;
 
 
@@ -188,7 +200,7 @@ END backupVersionLimit;
  * ************************************************************************ *)
 
 (* ---------------------------------------------------------------------------
- * function FindExtension(target, genFound, genPos, extFound, extPos)
+ * procedure FindExtension(target, genFound, genPos, extFound, extPos)
  * ---------------------------------------------------------------------------
  * Searches from right to left for an extension in array before any directory
  * delimiter ('/', '\', ':' or ']') is reached. If no extension is found,
@@ -242,7 +254,7 @@ END FindExtension;
 
 
 (* ---------------------------------------------------------------------------
- * function RemoveTrailingPeriods(array, len)
+ * procedure RemoveTrailingPeriods(array, len)
  * ---------------------------------------------------------------------------
  * Removes any trailing '.' in array and passes the new length back in len.
  * ------------------------------------------------------------------------ *)
@@ -269,7 +281,7 @@ END RemoveTrailingPeriods;
 
 
 (* ---------------------------------------------------------------------------
- * function FindPeriodR2L(array, found, pos)
+ * procedure FindPeriodR2L(array, found, pos)
  * ---------------------------------------------------------------------------
  * Searches from right to left for the rightmost period in array before any
  * directory delimiter ('/', '\', ':' or ']') is reached. If a period is
@@ -334,21 +346,108 @@ END matchesGenAtIndex;
 
 
 (* ---------------------------------------------------------------------------
- * function AddVersionSuffix(path, status)
+ * procedure AppendVersionSuffix(path, version, done)
  * ---------------------------------------------------------------------------
- * Appends a version suffix comprised of ';' following a non-negative integer
- * starting with 1 to path and checks if a file at path exists. If a file of
- * that name exists, increments the version number by one, replaces the
- * appended version number with the incremented number until either the
- * maximum version limit is reached or no file exists at the resulting path.
- * The status of the operation is passed back in status.
+ * Appends a version suffix to path. The version suffix is comprised of ';'
+ * and the digits of the given version. The array passed in for path must have
+ * sufficient capacity to append the suffix. If there is sufficient capacity,
+ * the suffix is appended to path and TRUE is passed in done. Otherwise, path
+ * remains unmodified and FALSE is passed in done.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE AddVersionSuffix ( VAR array : ARRAY OF CHAR; VAR status : Status );
+PROCEDURE AppendVersionSuffix
+  ( VAR path : ARRAY OF CHAR;
+    version  : BackupVersionRange;
+    VAR done : BOOLEAN );
 
 BEGIN
-  (* TO DO *)
-END AddVersionSuffix;
+  capacity := HIGH(path);
+  IF capacity = 0 THEN
+    done := FALSE;
+    RETURN
+  END; (* IF *)
+  
+  (* adjust for NUL terminator *)
+  capacity := capacity - 1;
+  
+  (* get current length *)
+  len := CharArray.length(path);
+  
+  (* highest decimal exponent of version *)
+  verLog10 := log10(version);
+  
+  (* calculate length of version suffix including semicolon *)
+  suffixLen := (* digits *) verLog10 + 1 (* + semicolon *) + 1;
+  
+  (* check if array has capacity for version suffix *)
+  IF len + suffixLen > capacity THEN
+    done := FALSE;
+    RETURN
+  END; (* IF *)
+  
+  (* append semicolon *)
+  AppendChar(path, ';');
+  
+  (* append version digits *)
+  weight := pow10(verLog10);
+  WHILE weight > 0 DO
+    digit := version DIV weight;
+    AppendChar(path, CHR(digit + 48));
+    version := version MOD weight;
+    weight := weight DIV 10
+  END; (* WHILE *)
+  
+  done := TRUE
+END AppendVersionSuffix;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure RemoveVersionSuffix(path)
+ * ---------------------------------------------------------------------------
+ * Removes a version suffix from path.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE RemoveVersionSuffix ( VAR path : ARRAY OF CHAR );
+
+VAR
+  ch : CHAR;
+  len, index : CARDINAL;
+  
+BEGIN
+  len := CharArray.length(array);
+  
+  (* bail out if array is empty *)
+  IF len := 0 THEN
+    RETURN
+  END; (* IF *)
+  
+  FOR index := len - 1 TO 0 BY -1 DO
+    ch := path[index];
+    IF ch = ';' THEN
+      path[index] := NUL
+      RETURN
+    ELSIF (ch = '/') OR (ch = BACKSLASH) OR (ch = ':') OR (ch = ']') THEN
+      RETURN     
+    END (* IF *)
+  END (* FOR *)
+END RemoveVersionSuffix;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure AppendChar(array, ch)
+ * ---------------------------------------------------------------------------
+ * Appends ch to array if array has sufficient capacity.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE AppendChar ( VAR array : ARRAY OF CHAR; ch : CHAR );
+
+BEGIN
+  len := CharArray.length(array);
+  IF len < HIGH(array) THEN
+    array[len] := ch;
+    array[len+1] := NUL
+  END (* IF *)
+END AppendChar;
 
 
 BEGIN (* FNStr *)
