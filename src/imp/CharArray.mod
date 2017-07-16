@@ -45,8 +45,42 @@ END lengthOfWordAtIndex;
 PROCEDURE Trim ( VAR array : ARRAY OF CHAR );
 (* Removes leading and trailing whitespace from array. *)
 
+VAR
+  len, index, tgtIndex, srcIndex : CARDINAL;
+  
 BEGIN
-  (* TO DO *)
+  len := length(array);
+  
+  IF len = 0 THEN
+    RETURN
+  END; (* IF *)
+  
+  (* remove trailing space *)
+  WHILE len > 0 DO
+    IF array[len-1] = SPACE THEN
+      array[len-1] := NUL;
+      len := len - 1
+    ELSE
+      RETURN
+    END (* IF *)
+  END; (* WHILE *)
+  
+  (* find left-most non-space character *)
+  startIndex := 0;
+  WHILE (startIndex < len) AND (array[startIndex] = SPACE) DO
+    startIndex := startIndex + 1
+  END; (* WHILE *)
+  
+  IF index = 0 THEN
+    RETURN
+  END; (* IF *)
+  
+  (* copy array[index..len] to array[0..] *)
+  tgtIndex := 0;
+  FOR srcIndex := startIndex TO len DO
+    array[tgtIndex] := array[srcIndex];
+    tgtIndex := tgtIndex + 1
+  END (* FOR *)
 END Trim;
 
 
