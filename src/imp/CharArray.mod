@@ -67,7 +67,8 @@ BEGIN
     startIndex := startIndex + 1
   END; (* WHILE *)
   
-  IF index = 0 THEN
+  (* no leading space, nothing further to do *)
+  IF startIndex = 0 THEN
     RETURN
   END; (* IF *)
   
