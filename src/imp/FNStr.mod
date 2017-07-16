@@ -386,13 +386,13 @@ BEGIN
   END; (* IF *)
   
   (* append semicolon *)
-  AppendChar(path, ';');
+  AppendChar(path, len, ';');
   
   (* append version digits *)
   weight := pow10(verLog10);
   WHILE weight > 0 DO
     digit := version DIV weight;
-    AppendChar(path, CHR(digit + 48));
+    AppendChar(path, len, CHR(digit + 48));
     version := version MOD weight;
     weight := weight DIV 10
   END; (* WHILE *)
@@ -434,21 +434,19 @@ END RemoveVersionSuffix;
 
 
 (* ---------------------------------------------------------------------------
- * procedure AppendChar(array, ch)
+ * procedure AppendChar(array, len, ch)
  * ---------------------------------------------------------------------------
  * Appends ch to array if array has sufficient capacity.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE AppendChar ( VAR array : ARRAY OF CHAR; ch : CHAR );
+PROCEDURE AppendChar
+  ( VAR array : ARRAY OF CHAR; VAR len : CARDINAL; ch : CHAR );
 
-VAR
-  len : CHAR;
-  
 BEGIN
-  len := CharArray.length(array);
   IF len < HIGH(array) THEN
     array[len] := ch;
-    array[len+1] := NUL
+    len := len + 1;
+    array[len] := NUL
   END (* IF *)
 END AppendChar;
 
