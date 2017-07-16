@@ -360,6 +360,9 @@ PROCEDURE AppendVersionSuffix
     version  : BackupVersionRange;
     VAR done : BOOLEAN );
 
+VAR
+  capacity, len, verLog10, suffixLen, weight, digit : CARDINAL;
+  
 BEGIN
   capacity := HIGH(path);
   IF capacity = 0 THEN
