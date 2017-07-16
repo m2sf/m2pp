@@ -1,0 +1,1 @@
+Module Terminal is part of PIM. It should be included in any PIM Modula-2 compiler's library.
