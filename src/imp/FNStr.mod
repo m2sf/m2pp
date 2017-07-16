@@ -149,10 +149,10 @@ BEGIN
     AddVersionSuffix(target, status);
   END; (* IF *)
   
-  IF status # Success THEN
-    RETURN String.Nil
-  ELSE
+  IF status = Success THEN
     RETURN String.forArray(target)
+  ELSE
+    RETURN String.Nil
   END (* IF *)
 END backupName;
 
