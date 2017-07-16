@@ -441,6 +441,9 @@ END RemoveVersionSuffix;
 
 PROCEDURE AppendChar ( VAR array : ARRAY OF CHAR; ch : CHAR );
 
+VAR
+  len : CHAR;
+  
 BEGIN
   len := CharArray.length(array);
   IF len < HIGH(array) THEN
