@@ -61,32 +61,6 @@ END parseArgs;
 
 
 (* ---------------------------------------------------------------------------
- * function sourceFile()
- * ---------------------------------------------------------------------------
- * Returns a string with the source file argument.
- * ------------------------------------------------------------------------ *)
-
-PROCEDURE sourceFile () : StringT;
-
-BEGIN
-  RETURN Settings.infile()
-END sourceFile;
-
-
-(* ---------------------------------------------------------------------------
- * function targetFile()
- * ---------------------------------------------------------------------------
- * Returns a string with the outfile file argument.
- * ------------------------------------------------------------------------ *)
-
-PROCEDURE targetFile () : StringT;
-
-BEGIN
-  RETURN Settings.outfile()
-END targetFile;
-
-
-(* ---------------------------------------------------------------------------
  * function errorCount()
  * ---------------------------------------------------------------------------
  * Returns the count of errors encountered while parsing the arguments.
@@ -248,8 +222,8 @@ VAR
   key, value : StringT;
   
 BEGIN
-  key := NIL;
-  value := NIL;
+  key := String.Nil;
+  value := String.Nil;
   
   (* consume --dict, get next symbol *)
   token := ArgLexer.nextToken();
