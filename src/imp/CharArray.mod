@@ -4,6 +4,8 @@ IMPLEMENTATION MODULE CharArray;
 
 (* Character Array Operations *)
 
+FROM ISO646 IMPORT NUL;
+
 
 (* Introspection *)
 
