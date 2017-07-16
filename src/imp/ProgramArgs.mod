@@ -6,13 +6,10 @@ IMPLEMENTATION MODULE ProgramArgs;
 
 IMPORT ISO646, Console, FileSystemAdapter, Infile, Outfile, String;
 
+FROM BuildParams IMPORT ArgQueryBufferSize;
 FROM String IMPORT StringT; (* alias for String.String *)
 
 
-CONST
-  QueryBufferSize = 255;
-  
-  
 VAR
   isOpen : BOOLEAN;
   argsFile : InfileT;
@@ -57,7 +54,7 @@ PROCEDURE Query;
 (* Queries program args and writes argument file. *)
 
 VAR
-  argStr : ARRAY [0..QueryBufferSize] OF CHAR;
+  argStr : ARRAY [0..ArgQueryBufferSize] OF CHAR;
   tmpFile : InfileT;
   status : Infile.Status;
   
