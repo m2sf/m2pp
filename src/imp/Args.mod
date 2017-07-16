@@ -1,6 +1,6 @@
 (*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-IMPLEMENTATION MODULE ProgramArgs;
+IMPLEMENTATION MODULE Args;
 
 (* Program Argument Management *)
 
@@ -112,4 +112,4 @@ END file;
 BEGIN
   isOpen := FALSE;
   argsFile := Infile.Nil
-END ProgramArgs.
+END Args.
