@@ -51,6 +51,7 @@ VAR
 BEGIN
   len := length(array);
   
+  (* nothing to do if empty *)
   IF len = 0 THEN
     RETURN
   END; (* IF *)
@@ -85,14 +86,15 @@ PROCEDURE Collapse ( VAR array : ARRAY OF CHAR );
 (* Replaces consecutive whitespace in array with single whitespace. *)
 
 VAR
+  found : BOOLEAN;
   ch, nextChar : CHAR;
   len, index, srcIndex, tgtIndex : CARDINAL;
 
 BEGIN
   Trim(array);
-  
   len := length(array);
   
+  (* nothing further to do if empty *)
   IF len = 0 THEN
     RETURN
   END; (* IF *)
@@ -101,7 +103,7 @@ BEGIN
   tgtIndex := 0;
   FindFirstConsecutiveSpace(array, found, tgtIndex);
   
-  (* nothing to do if no consecutive space found *)
+  (* nothing further to do if no consecutive space found *)
   IF NOT found THEN
     RETURN
   END; (* IF *)
