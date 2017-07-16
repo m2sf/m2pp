@@ -629,8 +629,49 @@ PROCEDURE collatesBefore
   ( VAR (* CONST *) array1, array2 : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if array1 comes before array2 in ASCII collation order. *)
 
+VAR
+  ch1, ch2 : CHAR;
+  maxIndex : CARDINAL;
+  
 BEGIN
-  (* TO DO *)
+  (* limit iteration to range of shorter array *)
+  IF HIGH(array1) > HIGH(array2) THEN
+    maxIndex := HIGH(array2)
+  ELSE
+    maxIndex := HIGH(array1)
+  END; (* IF *)
+  
+  (* check for mismatching characters in range [0..maxIndex] *)
+  FOR index := 0 TO maxIndex DO
+    ch1 := array1[index];
+    ch2 := array2[index];
+    IF ch1 < ch2 THEN
+      RETURN TRUE
+    ELSIF ch1 > ch2 THEN
+      RETURN FALSE
+    END
+  END; (* LOOP *)
+    
+  (* case 1 : array1 has reached HIGH, but not array2 *)
+  IF (HIGH(array2) > maxIndex) THEN
+    (* if equal, return FALSE
+         because array1 doesn't collate before array2,
+       if not equal, return TRUE
+         because the shorter (array1) collates before the longer *)
+    RETURN (array2[maxIndex+1] # NUL)
+  END; (* IF *)
+
+  (* case 2 : array2 has reached HIGH, but not array1 *)
+  IF (HIGH(array1) > maxIndex) THEN
+    (* if equal, return FALSE
+         because array1 doesn't collate before array2,
+       if not equal, also return FALSE
+         because the longer (array1) doens't collate before the shorter *)
+    RETURN FALSE
+  END; (* IF *)
+  
+  (* case 3 : both array1 and array2 have reached HIGH *)
+  RETURN FALSE (* equal, but array1 does not collate before array2 *)
 END collatesBefore;
 
 
@@ -638,8 +679,49 @@ PROCEDURE collatesBeforeOrMatches
   ( VAR (* CONST *) array1, array2 : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if array1 comes before array2 in ASCII collation order. *)
 
+VAR
+  ch1, ch2 : CHAR;
+  maxIndex : CARDINAL;
+  
 BEGIN
-  (* TO DO *)
+  (* limit iteration to range of shorter array *)
+  IF HIGH(array1) > HIGH(array2) THEN
+    maxIndex := HIGH(array2)
+  ELSE
+    maxIndex := HIGH(array1)
+  END; (* IF *)
+  
+  (* check for mismatching characters in range [0..maxIndex] *)
+  FOR index := 0 TO maxIndex DO
+    ch1 := array1[index];
+    ch2 := array2[index];
+    IF ch1 < ch2 THEN
+      RETURN TRUE
+    ELSIF ch1 > ch2 THEN
+      RETURN FALSE
+    END
+  END; (* LOOP *)
+    
+  (* case 1 : array1 has reached HIGH, but not array2 *)
+  IF (HIGH(array2) > maxIndex) THEN
+    (* if equal, return TRUE
+         because they match,
+       if not equal, also TRUE
+         because the shorter (array1) collates before the longer *)
+    RETURN TRUE
+  END; (* IF *)
+
+  (* case 2 : array2 has reached HIGH, but not array1 *)
+  IF (HIGH(array1) > maxIndex) THEN
+    (* if equal, return TRUE
+         because they match
+       if not equal, return FALSE
+         because the shorter (array2) collates before the longer *)
+    RETURN (array1[maxIndex+1] = NUL)
+  END; (* IF *)
+  
+  (* case 3 : both array1 and array2 have reached HIGH *)
+  RETURN TRUE (* because they match *)
 END collatesBeforeOrMatches;
 
 
