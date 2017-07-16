@@ -396,8 +396,29 @@ PROCEDURE RemoveSlice
   ( VAR (* CONST *) array : ARRAY OF CHAR; start, end : CARDINAL );
 (* Removes slice source[start..end] from array. *)
 
+VAR
+  len, srcIndex, tgtIndex : CARDINAL;
+  
 BEGIN
-  (* TO DO *)
+  len := length(array);
+  
+  (* bail out if start and end do not specify a valid slice in array *)
+  IF (len = 0) OR (start > end) OR (end >= len) THEN
+    RETURN
+  END; (* IF *)
+  
+  (* truncate at start if slice is at the end of the array *)
+  IF end + 1 = len THEN
+    array[start] := NUL;
+    RETURN
+  END; (* IF *)
+  
+  (* else copy array[end+1..len] to array[start..] *)
+  tgtIndex := start;
+  FOR srcIndex := end+1 TO len DO
+    array[tgtIndex] := array[srcIndex];
+    tgtIndex := tgtIndex + 1
+  END (* FOR *)
 END RemoveSlice;
 
 
