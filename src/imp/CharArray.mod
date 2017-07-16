@@ -84,8 +84,48 @@ END Trim;
 PROCEDURE Collapse ( VAR array : ARRAY OF CHAR );
 (* Replaces consecutive whitespace in array with single whitespace. *)
 
+VAR
+  ch, nextChar : CHAR;
+  len, index, srcIndex, tgtIndex : CARDINAL;
+
 BEGIN
-  (* TO DO *)
+  Trim(array);
+  
+  len := length(array);
+  
+  IF len = 0 THEN
+    RETURN
+  END; (* IF *)
+  
+  (* find first consecutive space *)
+  tgtIndex := 0;
+  FindFirstConsecutiveSpace(array, found, tgtIndex);
+  
+  (* nothing to do if no consecutive space found *)
+  IF NOT found THEN
+    RETURN
+  END; (* IF *)
+  
+  REPEAT
+    (* find first non-space to the right *)
+    WHILE (srcIndex <= HIGH(array)) AND (array[srcIndex] = SPACE) DO
+      srcIndex := srcIndex + 1
+    END; (* WHILE *)
+    
+    (* copy following characters up to next consecutive space *)
+    found := FALSE;
+    ch := array[srcIndex];
+    WHILE NOT found AND (ch # NUL) AND (srcIndex < HIGH(array)) DO
+      array[tgtIndex] := ch;
+      srcIndex := srcIndex + 1;
+      nextCh := array[srcIndex];
+      found := ((ch = SPACE) AND (array[srcIndex] = SPACE));
+      tgtIndex := tgtIndex + 1;
+      ch := nextCh
+    END (* WHILE *)
+  UNTIL NOT found;
+  
+  array[tgtIndex] := NUL
 END Collapse;
 
 
@@ -220,7 +260,7 @@ PROCEDURE canAppendArray
 (* Returns TRUE if source can be appended to target. *)
 
 BEGIN
-  RETURN (HIGH(array)-length(target) > length(source))
+  RETURN (HIGH(array) > length(source) + length(target))
 END canAppendArray;
 
 
@@ -238,7 +278,7 @@ BEGIN
   END; (* IF *)
   
   tgtLen := length(target);
-  IF HIGH(array)-tgtLen <= srcLen THEN
+  IF HIGH(array) <= srcLen + tgtLen THEN
     RETURN
   END; (* IF *)
   
@@ -300,7 +340,7 @@ PROCEDURE canInsertChars
 (* Returns TRUE if source can be inserted into target. *)
 
 BEGIN
-  RETURN (HIGH(array)-length(target) > length(source))
+  RETURN (HIGH(array) > length(source) + length(target))
 END canInsertChars;
 
 
@@ -318,7 +358,7 @@ BEGIN
   END; (* IF *)
   
   tgtLen := length(target);
-  IF HIGH(array)-tgtLen <= srcLen THEN
+  IF HIGH(array) <= srcLen + tgtLen THEN
     RETURN
   END; (* IF *)
   
@@ -446,7 +486,7 @@ BEGIN
   tgtLen := length(target);
   
   (* bail out if target capacity is insufficient to append slice *)
-  IF tgtLen + (end - start + 1) >= HIGH(target) THEN
+  IF HIGH(target) <= tgtLen + (end - start + 1) THEN
     RETURN
   END; (* IF *)
   
@@ -571,6 +611,106 @@ PROCEDURE collatesBeforeOrMatches
 BEGIN
   (* TO DO *)
 END collatesBeforeOrMatches;
+
+
+(* ************************************************************************ *
+ * Private Operations                                                       *
+ * ************************************************************************ *)
+
+(* ---------------------------------------------------------------------------
+ * procedure FindFirstConsecutiveSpace(array, found, index)
+ * ---------------------------------------------------------------------------
+ * Searches array, starting at index, from left to right for the first space
+ * following a space. If found then TRUE is passed in found and its index in
+ * index. Otherwise, FALSE is passed in found and index remains unmodified.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE FindFirstConsecutiveSpace
+  ( VAR (* CONST *) array : ARRAY OF CHAR;
+    VAR found : BOOLEAN; VAR index : CARDINAL );
+
+VAR
+  ch, nextChar : CHAR;
+  searchIndex : CARDINAL
+
+BEGIN
+  (* bail out if index out of bounds *)
+  IF index >= HIGH(array) THEN
+    RETURN
+  END; (* IF *)
+  
+  (* search for consecutive spaces *)
+  searchIndex := index;
+  REPEAT
+    ch := array[searchIndex];
+    searchIndex := searchIndex + 1;
+    nextChar := array[searchIndex];
+    found := ((ch = SPACE) AND (nextChar = SPACE))
+  UNTIL found OR (searchIndex > HIGH(array)) OR (ch = NUL));
+  
+  IF found THEN
+    index := searchIndex
+  END (* IF *)
+END FindFirstConsecutiveSpace;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure FindCharL2R(array, ch, index)
+ * ---------------------------------------------------------------------------
+ * Searches array, starting at index, from left to right for the first
+ * occurrence of ch. Upon return, index contains the index of ch if found,
+ * or the index of the NUL terminator or last index of array if not found.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE FindCharL2R
+  ( VAR (* CONST *) array : ARRAY OF CHAR;
+    ch : CHAR; VAR index : CARDINAL );
+
+VAR
+  thisChar : CHAR;
+  
+BEGIN
+  (* bail out if index out of bounds *)
+  IF index >= HIGH(array) THEN
+    RETURN
+  END; (* IF *)
+  
+  (* search for ch *)
+  REPEAT
+    thisChar := array[index];
+    index := index + 1
+  UNTIL (index > HIGH(array)) OR (thisChar = NUL) OR (thisChar = ch);
+END FindCharL2R;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure FindCharR2L(array, ch, index)
+ * ---------------------------------------------------------------------------
+ * Searches array, starting at index, from right to left for the first
+ * occurrence of ch. Upon return, index contains the index of ch if found,
+ * or zero if not found.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE FindCharR2L
+  ( VAR (* CONST *) array : ARRAY OF CHAR;
+    ch : CHAR; VAR index : CARDINAL );
+
+VAR
+  thisChar : CHAR;
+  
+BEGIN
+  (* bail out if index out of bounds *)
+  IF index >= HIGH(array) THEN
+    RETURN
+  END; (* IF *)
+  
+  (* search for ch *)
+  thisChar := array[index];
+  WHILE (index > 0) AND (thisChar # ch) DO
+    thisChar := array[index-1];
+    index := index - 1
+  END (* WHILE *)
+END FindCharL2R;
 
 
 END CharArray.
