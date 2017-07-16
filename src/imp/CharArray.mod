@@ -361,7 +361,7 @@ PROCEDURE canCopySlice
 (* Returns TRUE if target can store (end-start+1) characters. *)
 
 BEGIN
-  (* TO DO *)
+  RETURN (HIGH(target) > (end - start + 1))
 END canCopySlice;
 
 
@@ -369,8 +369,29 @@ PROCEDURE CopySlice
   ( VAR target, (* CONST *) source : ARRAY OF CHAR; start, end : CARDINAL );
 (* Copies slice source[start..end] to target. *)
 
+VAR
+  srcLen, srcIndex, tgtIndex : CARDINAL;
+  
 BEGIN
-  (* TO DO *)
+  (* bail out if target capacity is insufficient to append slice *)
+  IF (end - start + 1) >= HIGH(target) THEN
+    RETURN
+  END; (* IF *)
+  
+  srcLen := length(source);
+  
+  (* bail out if start and end do not specify a valid slice in source *)
+  IF (srcLen = 0) OR (start > end) OR (end >= len) THEN
+    RETURN
+  END; (* IF *)
+  
+  tgtIndex := 0;
+  FOR srcIndex := start TO end DO
+    target[tgtIndex] := source[srcIndex];
+    tgtIndex := tgtIndex + 1
+  END; (* FOR *)
+  
+  target[tgtIndex] := NUL
 END CopySlice;
 
 
@@ -379,7 +400,7 @@ PROCEDURE canAppendSlice
 (* Returns TRUE if target can store (end-start+1) additional characters. *)
 
 BEGIN
-  (* TO DO *)
+  RETURN (HIGH(target) > length(target) + (end - start + 1))
 END canAppendSlice;
 
 
@@ -387,8 +408,31 @@ PROCEDURE AppendSlice
   ( VAR target, (* CONST *) source : ARRAY OF CHAR; start, end : CARDINAL );
 (* Appends slice source[start..end] to target. *)
 
+VAR
+  srcLen, tgtLen, srcIndex, tgtIndex : CARDINAL;
+
 BEGIN
-  (* TO DO *)
+  tgtLen := length(target);
+  
+  (* bail out if target capacity is insufficient to append slice *)
+  IF tgtLen + (end - start + 1) >= HIGH(target) THEN
+    RETURN
+  END; (* IF *)
+  
+  srcLen := length(source);
+  
+  (* bail out if start and end do not specify a valid slice in source *)
+  IF (srcLen = 0) OR (start > end) OR (end >= len) THEN
+    RETURN
+  END; (* IF *)
+  
+  tgtIndex := tgtLen;
+  FOR srcIndex := start TO end DO
+    target[tgtIndex] := source[srcIndex];
+    tgtIndex := tgtIndex + 1
+  END; (* FOR *)
+  
+  target[tgtIndex] := NUL
 END AppendSlice;
 
 
