@@ -56,13 +56,9 @@ BEGIN
   END; (* IF *)
   
   (* remove trailing space *)
-  WHILE len > 0 DO
-    IF array[len-1] = SPACE THEN
-      array[len-1] := NUL;
-      len := len - 1
-    ELSE
-      RETURN
-    END (* IF *)
+  WHILE (len > 0) AND (array[len-1] = SPACE) DO
+    array[len-1] := NUL;
+    len := len - 1
   END; (* WHILE *)
   
   (* find left-most non-space character *)
