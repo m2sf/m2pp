@@ -2,3 +2,4 @@
 *.bat linguist-vendored
 *.com linguist-vendored
 *.sh linguist-vendored
+*.txt linguist-vendored
