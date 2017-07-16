@@ -264,18 +264,9 @@ PROCEDURE RemoveTrailingPeriods
 
 BEGIN
   len := CharArray.length(array);
-  
-  IF len = 0 THEN
-    RETURN
-  END; (* IF *)
-  
-  WHILE len > 0 DO
-    IF array[len-1] = '.' THEN
-      array[len-1] := NUL;
-      len := len - 1
-    ELSE
-      RETURN
-    END (* IF *)
+  WHILE (len > 0) AND (array[len-1] = '.') DO
+    array[len-1] := NUL;
+    len := len -1
   END (* WHILE *)
 END RemoveTrailingPeriods;
 
