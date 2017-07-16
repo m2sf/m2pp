@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE CharArray;
 
 (* Character Array Operations *)
 
-FROM ISO646 IMPORT NUL, SPACE;
+FROM ISO646 IMPORT NUL, SPACE, DOUBLEQUOTE;
 
 
 (* Introspection *)
