@@ -8,17 +8,105 @@ IMPORT Terminal; (* for abort message *)
 
 
 CONST
-  HashBitwidth = 32;
-  Pow2Max = 2*1024*1024*1024; (* pow2(HashBitwidth-1) = pow2(31) *)
+  KeyBitwidth = 32; (* must not exceed bit width of type CARDINAL *)
+
+
+(* ---------------------------------------------------------------------------
+ * weight of MSB of type Hash.Key = pow2(KeyBitwidth-1)
+ * ------------------------------------------------------------------------ *)
+
+  KeyMSBWeight =
+    ORD(KeyBitwidth=1) * 1 +
+    ORD(KeyBitwidth=2) * 2 +
+    ORD(KeyBitwidth=3) * 4 +
+    ORD(KeyBitwidth=4) * 8 +
+    ORD(KeyBitwidth=5) * 32 +
+    ORD(KeyBitwidth=6) * 64 +
+    ORD(KeyBitwidth=7) * 128 +
+    ORD(KeyBitwidth=8) * 256 +
+    ORD(KeyBitwidth=9) * 256 * 2 +
+    ORD(KeyBitwidth=10) * 256 * 4 +
+    ORD(KeyBitwidth=11) * 256 * 8 +
+    ORD(KeyBitwidth=12) * 256 * 16 +
+    ORD(KeyBitwidth=13) * 256 * 32 +
+    ORD(KeyBitwidth=14) * 256 * 64 +
+    ORD(KeyBitwidth=15) * 256 * 128 +
+    ORD(KeyBitwidth=16) * 256 * 256 +
+    ORD(KeyBitwidth=17) * 256 * 256 * 2 +
+    ORD(KeyBitwidth=18) * 256 * 256 * 4 +
+    ORD(KeyBitwidth=19) * 256 * 256 * 8 +
+    ORD(KeyBitwidth=20) * 256 * 256 * 16 +
+    ORD(KeyBitwidth=21) * 256 * 256 * 32 +
+    ORD(KeyBitwidth=22) * 256 * 256 * 64 +
+    ORD(KeyBitwidth=23) * 256 * 256 * 128 +
+    ORD(KeyBitwidth=24) * 256 * 256 * 256 +
+    ORD(KeyBitwidth=25) * 256 * 256 * 256 * 2 +
+    ORD(KeyBitwidth=26) * 256 * 256 * 256 * 4 +
+    ORD(KeyBitwidth=27) * 256 * 256 * 256 * 8 +
+    ORD(KeyBitwidth=28) * 256 * 256 * 256 * 16 +
+    ORD(KeyBitwidth=29) * 256 * 256 * 256 * 32 +
+    ORD(KeyBitwidth=30) * 256 * 256 * 256 * 64 +
+    ORD(KeyBitwidth=31) * 256 * 256 * 256 * 128 +
+    ORD(KeyBitwidth=32) * 256 * 256 * 256 * 256 +
+    ORD(KeyBitwidth=33) * 256 * 256 * 256 * 256 * 2 +
+    ORD(KeyBitwidth=34) * 256 * 256 * 256 * 256 * 4 +
+    ORD(KeyBitwidth=35) * 256 * 256 * 256 * 256 * 8 +
+    ORD(KeyBitwidth=36) * 256 * 256 * 256 * 256 * 16 +
+    ORD(KeyBitwidth=37) * 256 * 256 * 256 * 256 * 32 +
+    ORD(KeyBitwidth=38) * 256 * 256 * 256 * 256 * 64 +
+    ORD(KeyBitwidth=39) * 256 * 256 * 256 * 256 * 128 +
+    ORD(KeyBitwidth=40) * 256 * 256 * 256 * 256 * 256 +
+    ORD(KeyBitwidth=41) * 256 * 256 * 256 * 256 * 256 * 2 +
+    ORD(KeyBitwidth=42) * 256 * 256 * 256 * 256 * 256 * 4 +
+    ORD(KeyBitwidth=43) * 256 * 256 * 256 * 256 * 256 * 8 +
+    ORD(KeyBitwidth=44) * 256 * 256 * 256 * 256 * 256 * 16 +
+    ORD(KeyBitwidth=45) * 256 * 256 * 256 * 256 * 256 * 32 +
+    ORD(KeyBitwidth=46) * 256 * 256 * 256 * 256 * 256 * 64 +
+    ORD(KeyBitwidth=47) * 256 * 256 * 256 * 256 * 256 * 128 +
+    ORD(KeyBitwidth=48) * 256 * 256 * 256 * 256 * 256 * 256 +
+    ORD(KeyBitwidth=49) * 256 * 256 * 256 * 256 * 256 * 256 * 2 +
+    ORD(KeyBitwidth=50) * 256 * 256 * 256 * 256 * 256 * 256 * 4 +
+    ORD(KeyBitwidth=51) * 256 * 256 * 256 * 256 * 256 * 256 * 8 +
+    ORD(KeyBitwidth=52) * 256 * 256 * 256 * 256 * 256 * 256 * 16 +
+    ORD(KeyBitwidth=53) * 256 * 256 * 256 * 256 * 256 * 256 * 32 +
+    ORD(KeyBitwidth=54) * 256 * 256 * 256 * 256 * 256 * 256 * 64 +
+    ORD(KeyBitwidth=55) * 256 * 256 * 256 * 256 * 256 * 256 * 128 +
+    ORD(KeyBitwidth=56) * 256 * 256 * 256 * 256 * 256 * 256 * 256 +
+    ORD(KeyBitwidth=57) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 2 +
+    ORD(KeyBitwidth=58) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 4 +
+    ORD(KeyBitwidth=59) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 8 +
+    ORD(KeyBitwidth=60) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 16 +
+    ORD(KeyBitwidth=61) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 32 +
+    ORD(KeyBitwidth=62) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 64 +
+    ORD(KeyBitwidth=63) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 128 +
+    ORD(KeyBitwidth=64) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 256;
 
 
 (* ---------------------------------------------------------------------------
  * compile time calculation of the bit width of type CARDINAL
  * ------------------------------------------------------------------------ *)
 
-  CardBitwidth = (* CARDINAL must be at least 32 bits wide *)
+  CardBitwidth =
     8*ORD(BW8) + 16*ORD(BW16) + 24*ORD(BW24) + 32*ORD(BW32) +
     40*ORD(BW40) + 48*ORD(BW48) + 56*ORD(BW56) + 64*ORD(BW64);
+
+
+(* ---------------------------------------------------------------------------
+ * index type for bit addressing
+ * ------------------------------------------------------------------------ *)
+
+TYPE BitIndex = CARDINAL [0..CardBitwidth-1];
+
+
+(* ---------------------------------------------------------------------------
+ * function Hash.initialValue()
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE initialValue ( ) : Key;
+
+BEGIN
+  RETURN 0
+END initalValue;
 
 
 (* ---------------------------------------------------------------------------
@@ -28,7 +116,7 @@ CONST
 PROCEDURE valueForNextChar ( hash : Key; ch : CHAR ) : Key;
 
 BEGIN
-  RETURN Key(ORD(ch) + SHL(hash, 6) + SHL(hash, 16) - hash
+  RETURN ORD(ch) + SHL(hash, 6) + SHL(hash, 16) - hash
 END valueForNextChar;
 
 
@@ -38,16 +126,13 @@ END valueForNextChar;
 
 PROCEDURE finalValue ( hash : Key ) : Key;
 
-VAR
-  pow2max : CARDINAL;
-  
 BEGIN
-  (* Clear bit 31 and above in hash value *)
-  IF hash >= Pow2Max THEN
-    IF CardBitwidth > HashBitwidth THEN
-      ClearBitsInclAndAbove(hash, HashBitwidth-1)
+  (* Clear bits [MSB..KeyBitwidth-1] in hash value *)
+  IF hash >= KeyMSBWeight THEN
+    IF CardBitwidth > KeyBitwidth THEN
+      ClearBitsInclAndAbove(hash, KeyBitwidth-1)
     ELSE
-      hash := hash - Pow2Max
+      hash := hash - KeyMSBWeight
   END; (* IF *)
   
   RETURN hash
@@ -66,25 +151,25 @@ CONST
 VAR
   ch : CHAR;
   hash : Key;
-  index : CARDINAL;
+  index : CARDINAL; (* char index *)
   
 BEGIN
   index := 0;
-  hash := initialValue;
+  hash := initialValue();
   
   ch := array[index]
   WHILE (ch # NUL) AND (index < HIGH(array)) DO
-    hash := Key(ORD(ch)) + SHL(hash, 6) + SHL(hash, 16) - hash;
+    hash := ORD(ch) + SHL(hash, 6) + SHL(hash, 16) - hash;
     index := index + 1;
     ch := array[index]
   END; (* WHILE *)
   
-  (* Clear bit 31 and above in hash value *)
-  IF hash >= Pow2Max THEN
-    IF CardBitwidth > HashBitwidth THEN
-      ClearBitsInclAndAbove(hash, HashBitwidth-1)
+  (* Clear bits [MSB..KeyBitwidth-1] in hash value *)
+  IF hash >= KeyMSBWeight THEN
+    IF CardBitwidth > KeyBitwidth THEN
+      ClearBitsInclAndAbove(hash, KeyBitwidth-1)
     ELSE
-      hash := hash - Pow2Max
+      hash := hash - KeyMSBWeight
   END; (* IF *)
   
   RETURN hash
@@ -121,14 +206,14 @@ CONST
  * Returns the value of hash shifted left by shiftFactor.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE SHL ( hash : Key; shiftFactor : CARDINAL ) : Key;
+PROCEDURE SHL ( hash : Key; shiftFactor : BitIndex ) : Key;
 
 VAR
-  pivotalBit : CARDINAL;
+  pivotalBit : BitIndex;
   
 BEGIN
-  (* shifting by HashBitwidth and more produces all zeroes *)
-  IF shiftFactor > HashBitwidth-1 THEN
+  (* shifting by KeyBitwidth and more produces all zeroes *)
+  IF shiftFactor > KeyBitwidth-1 THEN
     RETURN 0
   END; (* IF *)
   
@@ -136,7 +221,7 @@ BEGIN
   pivotalBit := CardBitwidth - shiftFactor;
   
   (* clear bits including and above pivotal bit to avoid overflow *)
-  IF hash >= pow2(pivotalBit) THEN
+  IF hash >= pow2[pivotalBit] THEN
     ClearBitsInclAndAbove(hash, pivotalBit)
   END; (* IF *)
   
@@ -151,14 +236,12 @@ END SHL;
  * Clears all bits including and above bit at position lowestBitToClear.
  * ------------------------------------------------------------------------ *)
 
-TYPE BitIndex = CARDINAL [0..HashBitwidth-1];
-
 PROCEDURE ClearBitsInclAndAbove
   ( VAR hash : Key; lowestBitToClear : BitIndex );
 
 VAR
   mask : Key;
-  bitToClear : CARDINAL;
+  bitToClear : BitIndex;
   
 BEGIN
   (* shift lower bits out to the right *)
@@ -173,22 +256,23 @@ END ClearBitsInclAndAbove;
 
 
 (* ---------------------------------------------------------------------------
- * array pow2[0..31]
+ * array pow2[]
  * ---------------------------------------------------------------------------
- * Pre-calculated powers of 2 for n in [0..31]
+ * Pre-calculated powers of 2 for n in [0..CardBitwidth-1]
  * ------------------------------------------------------------------------ *)
 
 VAR
-  pow2 : ARRAY [0..HashBitwidth-1] OF CARDINAL;
+  pow2 : ARRAY [0..MAX(BitIndex)] OF CARDINAL;
+
 
 PROCEDURE InitPow2Table;
 
 VAR
-  index : CARDINAL;
+  index : BitIndex;
 
 BEGIN
   pow2[0] := 1;
-  FOR index := 1 TO HashBitwidth-1 DO
+  FOR index := 1 TO MAX(BitIndex) DO
     pow2[index] := 2 * pow2[index-1]
   END (* FOR *)
 END InitPow2Table;
@@ -196,7 +280,7 @@ END InitPow2Table;
 
 BEGIN (* Hash *)
   (* abort if CARDINAL is not at least 32 bits wide *)
-  IF CardBitwidth < HashBitwidth THEN
+  IF CardBitwidth < KeyBitwidth THEN
     Terminal.WriteString
       ("Library Hash requires CARDINALs of at least 32 bits.");
     Terminal.WriteLn;
