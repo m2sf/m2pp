@@ -74,12 +74,12 @@ PROCEDURE twosComplement ( n : CARDINAL ) : CARDINAL;
 
 
 (* --------------------------------------------------------------------------
- * function addOverflows(n, m)
+ * function addWouldOverflow(n, m)
  * --------------------------------------------------------------------------
  * Returns TRUE if operation n + m overflows, else FALSE.
  * ----------------------------------------------------------------------- *)
 
-PROCEDURE addOverflows ( n, m : CARDINAL ) : BOOLEAN;
+PROCEDURE addWouldOverflow ( n, m : CARDINAL ) : BOOLEAN;
 
 
 (* Bit operations *)
