@@ -4,7 +4,7 @@ DEFINITION MODULE Hash; (* LONGINT version *)
 
 (* General Purpose 31-bit Hash Function *)
 
-TYPE Key = LONGINT [0..MAX(LONGINT)]; (* must be at least 32 bits wide *)
+TYPE Key = LONGINT [0..MAX(LONGINT)]; (* must be at least 31 bits wide *)
 
 (* Library will abort the client program if LONGINT is less than 32-bit. *)
 
