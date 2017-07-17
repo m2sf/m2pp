@@ -19,7 +19,7 @@ TYPE StringDescriptor = RECORD
   (* common field : length *)
   CASE length : CARDINAL OF
   (* variant field : intern *)
-  |             1 : intern : StrPtr.AOC1
+                1 : intern : StrPtr.AOC1
   |             2 : intern : StrPtr.AOC2
   |             3 : intern : StrPtr.AOC3
   |             4 : intern : StrPtr.AOC4
@@ -506,7 +506,7 @@ BEGIN
   
   (* cast addr to target field type and link it *)
   CASE size OF
-  |             1 : string^.intern := CAST(StrPtr.AOC1, addr)
+                1 : string^.intern := CAST(StrPtr.AOC1, addr)
   |             2 : string^.intern := CAST(StrPtr.AOC2, addr)
   |             3 : string^.intern := CAST(StrPtr.AOC3, addr)
   |             4 : string^.intern := CAST(StrPtr.AOC4, addr)
@@ -638,7 +638,7 @@ BEGIN
   
   (* allocate space for intern *)
   CASE size OF
-  |     1 ..   80 : ALLOCATE(addr, size + 1);
+        1 ..   80 : ALLOCATE(addr, size + 1);
   |    81 ..   96 : ALLOCATE(addr, 96 + 1)
   |    97 ..  112 : ALLOCATE(addr, 112 + 1)
   |   113 ..  128 : ALLOCATE(addr, 128 + 1)
