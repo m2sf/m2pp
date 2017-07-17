@@ -39,7 +39,7 @@ PROCEDURE finalValue ( hash : Key ) : Key;
 (* ---------------------------------------------------------------------------
  * function Hash.valueForArray( array )
  * ---------------------------------------------------------------------------
- * Returns the next hash value for the given character array.
+ * Returns the final hash value for the given character array.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE valueForArray ( VAR (* CONST *) array : ARRAY OF CHAR ) : Key;
