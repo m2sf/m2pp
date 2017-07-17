@@ -201,9 +201,9 @@ CONST
   
 
 (* ---------------------------------------------------------------------------
- * function: SHL( hash, shiftFactor )
+ * function: shl( hash, shiftFactor )
  * ---------------------------------------------------------------------------
- * Returns the value of hash shifted left by shiftFactor.
+ * Returns the value of hash shifted left by shiftFactor. Ensures no overflow.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE SHL ( hash : Key; shiftFactor : BitIndex ) : Key;
@@ -251,7 +251,7 @@ BEGIN
   mask := mask * pow2[lowestBitToClear+1];
   
   (* subtract the mask, thereby clearing the high bits *)
-  hash := hash - mask;
+  hash := hash - mask
 END ClearBitsInclAndAbove;
 
 
