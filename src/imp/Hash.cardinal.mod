@@ -83,6 +83,17 @@ CONST
 
 
 (* ---------------------------------------------------------------------------
+ * shift factors of hash function
+ * ---------------------------------------------------------------------------
+ * For Keys > 16 bits, use A = 6 and B = 16,
+ * For Keys <= 16 bits, use A = 3 and B = 8. (experimental)
+ * ------------------------------------------------------------------------ *)
+
+  A = ORD(KeyBitwidth<=16) * 3 + ORD(KeyBitwidth>16) * 8;
+  B = ORD(KeyBitwidth<=16) * 8 + ORD(KeyBitwidth>16) * 16;
+  
+
+(* ---------------------------------------------------------------------------
  * compile time calculation of the bit width of type CARDINAL
  * ------------------------------------------------------------------------ *)
 
@@ -116,7 +127,7 @@ END initalValue;
 PROCEDURE valueForNextChar ( hash : Key; ch : CHAR ) : Key;
 
 BEGIN
-  RETURN ORD(ch) + SHL(hash, 6) + SHL(hash, 16) - hash
+  RETURN ORD(ch) + SHL(hash, A) + SHL(hash, B) - hash
 END valueForNextChar;
 
 
@@ -159,7 +170,7 @@ BEGIN
   
   ch := array[index]
   WHILE (ch # NUL) AND (index < HIGH(array)) DO
-    hash := ORD(ch) + SHL(hash, 6) + SHL(hash, 16) - hash;
+    hash := ORD(ch) + SHL(hash, A) + SHL(hash, B) - hash;
     index := index + 1;
     ch := array[index]
   END; (* WHILE *)
