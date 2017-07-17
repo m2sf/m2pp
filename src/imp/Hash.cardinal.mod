@@ -4,12 +4,13 @@ IMPLEMENTATION MODULE Hash; (* CARDINAL version *)
 
 (* General Purpose 32-bit Hash Function *)
 
-FROM CardMath IMPORT log2;
+IMPORT Terminal; (* for abort message *)
 
 
 CONST
   HashBitwidth = 32;
   Pow2Max = 2*1024*1024*1024; (* pow2(HashBitwidth-1) = pow2(31) *)
+
 
 (* ---------------------------------------------------------------------------
  * compile time calculation of the bit width of type CARDINAL
@@ -140,11 +141,9 @@ BEGIN
   END; (* IF *)
   
   (* shift left safely *)
-  RETURN hash * pow2(shiftFactor)
+  RETURN hash * pow2[shiftFactor]
 END SHL;
 
-
-PROCEDURE ClearHighestNBits ( VAR value : CARDINAL; n : CARDINAL );
 
 (* ---------------------------------------------------------------------------
  * procedure: ClearBitsInclAndAbove( value, lowestBitToClear )
@@ -152,8 +151,10 @@ PROCEDURE ClearHighestNBits ( VAR value : CARDINAL; n : CARDINAL );
  * Clears all bits including and above bit at position lowestBitToClear.
  * ------------------------------------------------------------------------ *)
 
+TYPE BitIndex = CARDINAL [0..HashBitwidth-1];
+
 PROCEDURE ClearBitsInclAndAbove
-  ( VAR value : CARDINAL; lowestBitToClear : CARDINAL );
+  ( VAR hash : Key; lowestBitToClear : BitIndex );
 
 VAR
   mask : Key;
@@ -161,14 +162,36 @@ VAR
   
 BEGIN
   (* shift lower bits out to the right *)
-  mask := hash DIV Key(lowestBitToClear+1);
+  mask := hash DIV lowestBitToClear+1;
   
   (* shift them back, thereby clearing the low bits *)
-  mask := mask * Key(pow2(lowestBitToClear+1));
+  mask := mask * pow2[lowestBitToClear+1];
   
   (* subtract the mask, thereby clearing the high bits *)
   hash := hash - mask;
 END ClearBitsInclAndAbove;
+
+
+(* ---------------------------------------------------------------------------
+ * array pow2[0..31]
+ * ---------------------------------------------------------------------------
+ * Pre-calculated powers of 2 for n in [0..31]
+ * ------------------------------------------------------------------------ *)
+
+VAR
+  pow2 : ARRAY [0..HashBitwidth-1] OF CARDINAL;
+
+PROCEDURE InitPow2Table;
+
+VAR
+  index : CARDINAL;
+
+BEGIN
+  pow2[0] := 1;
+  FOR index := 1 TO HashBitwidth-1 DO
+    pow2[index] := 2 * pow2[index-1]
+  END (* FOR *)
+END InitPow2Table;
 
 
 BEGIN (* Hash *)
@@ -178,5 +201,8 @@ BEGIN (* Hash *)
       ("Library Hash requires CARDINALs of at least 32 bits.");
     Terminal.WriteLn;
     HALT
-  END (* IF *)
+  END; (* IF *)
+  
+  (* initialise pow2 table *)
+  InitPow2Table
 END Hash.
