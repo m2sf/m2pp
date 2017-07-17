@@ -279,10 +279,12 @@ END InitPow2Table;
 
 
 BEGIN (* Hash *)
-  (* abort if CARDINAL is not at least 32 bits wide *)
-  IF CardBitwidth < KeyBitwidth THEN
+  (* abort if KeyBitwidth width exceeds bit width of type CARDINAL *)
+  IF KeyBitwidth > CardBitwidth THEN
     Terminal.WriteString
-      ("Library Hash requires CARDINALs of at least 32 bits.");
+      ("Hash.mod: KeyBitwidth exceeds bit width of type CARDINAL.");
+    Terminal.WriteLn;
+    Terminal.WriteString("program aborted.");
     Terminal.WriteLn;
     HALT
   END; (* IF *)
