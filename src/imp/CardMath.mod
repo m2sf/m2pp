@@ -156,17 +156,17 @@ BEGIN
 END twosComplement;
 
 
-(* ---------------------------------------------------------------------------
- * function addOverflows(n, m)
- * ---------------------------------------------------------------------------
- * Returns TRUE if operation n + m would overflow, else FALSE.
- * ------------------------------------------------------------------------ *)
+(* --------------------------------------------------------------------------
+ * function addWouldOverflow(n, m)
+ * --------------------------------------------------------------------------
+ * Returns TRUE if operation n + m overflows, else FALSE.
+ * ----------------------------------------------------------------------- *)
 
-PROCEDURE addOverflows ( n, m : CARDINAL ) : BOOLEAN;
+PROCEDURE addWouldOverflow ( n, m : CARDINAL ) : BOOLEAN;
 
 BEGIN
   RETURN (m > 0) AND (n > MAX(CARDINAL) - m)
-END addOverflows;
+END addWouldOverflow;
 
 
 (* Bit operations *)
