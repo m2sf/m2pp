@@ -10,12 +10,14 @@ TYPE File; (* OPAQUE *)
 TYPE Mode = ( Read, Write, Append );
 
 TYPE Status =
-  ( Success,
-    FileNotFound,
-    InsertBufferFull,
-    IllegalOperation,
-    AllocationFailed,
-    Failure );
+  ( Success,          (* operation completed successfully *)
+    FileNotFound,     (* requested file not found at path *)
+    AccessDenied,     (* access to requested file denied *)
+    InsertBufferFull, (* file's insert buffer is full *)
+    IllegalOperation, (* operation not permitted *)
+    AllocationFailed, (* memory allocation failed *)
+    DeviceError,      (* I/O subsystem device error *)
+    Failure );        (* any other failure *)
 
 TYPE Octet = CARDINAL [0..255];
 
@@ -34,7 +36,6 @@ TYPE Octet = CARDINAL [0..255];
  * ------------------+------------------------+-------
  * GetMode           | yes     yes     yes    | no
  * GetStatus         | yes     yes     yes    | no
- * insertBufferEmpty | yes     no*     no*    | no
  * insertBufferFull  | yes     no*     no*    | no
  * eof               | yes     no*     no*    | no
  * ------------------+------------------------+-------
@@ -99,15 +100,6 @@ PROCEDURE GetStatus ( file : File; VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * procedure insertBufferEmpty(file)
- * ---------------------------------------------------------------------------
- * Returns TRUE if the internal insert buffer of file is empty, else FALSE.
- * ------------------------------------------------------------------------ *)
-
-PROCEDURE insertBufferEmpty ( file : File ) : BOOLEAN;
-
-
-(* ---------------------------------------------------------------------------
  * procedure insertBufferFull(file)
  * ---------------------------------------------------------------------------
  * Returns TRUE if the internal insert buffer of file is full, else FALSE.
@@ -134,17 +126,17 @@ PROCEDURE eof ( file : File ) : BOOLEAN;
  * character from the buffer and returns it in out-parameter ch. Otherwise,
  * if the internal insert buffer of file is empty, reads one character at
  * the current reading position of file and passes it in ch, or ASCII EOT
- * if the end of file f had already been reached upon entry into ReadChar.
+ * if the end of file had already been reached upon entry into ReadChar.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE ReadChar ( file : File; VAR ch : CHAR );
 
 
 (* ---------------------------------------------------------------------------
- * procedure WriteChar(file, ch)
+ * procedure InsertChar(file, ch)
  * ---------------------------------------------------------------------------
  * Inserts character ch into the internal insert buffer of file unless
- * the insert buffer is full. Sets status of file to InsertBufferFull if full.
+ * the insert buffer is full. Sets file's status to InsertBufferFull if full.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE InsertChar ( file : File; ch : CHAR ); (* Unread *)
@@ -183,7 +175,7 @@ PROCEDURE ReadOctet ( file : File; VAR octet : Octet );
  * procedure InsertOctet(file, octet)
  * ---------------------------------------------------------------------------
  * Inserts octet into the internal insert buffer of file unless
- * the insert buffer is full. Sets status of file to InsertBufferFull if full.
+ * the insert buffer is full. Sets file's status to InsertBufferFull if full.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE InsertOctet ( file : File; octet : Octet ); (* Unread *)
