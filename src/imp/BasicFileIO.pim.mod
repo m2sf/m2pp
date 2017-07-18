@@ -141,7 +141,7 @@ END Open;
  * Closes file. Passes status in status.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE Close ( VAR file : File; status : Status );
+PROCEDURE Close ( VAR file : File; VAR status : Status );
 
 BEGIN
   IF file = NIL THEN
