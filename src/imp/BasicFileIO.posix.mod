@@ -241,7 +241,7 @@ VAR
   c : INT;
 
 BEGIN
-  IF file = NIL  THEN
+  IF file = NIL THEN
     RETURN
   ELSIF file^.mode # Read THEN
     file^.status := IllegalOperation
