@@ -5,6 +5,7 @@ IMPLEMENTATION MODULE BasicFileIO; (* PIM version *)
 (* Basic File IO library for M2PP and M2BSK *)
 
 FROM ISO646 IMPORT NUL, EOT;
+FROM Storage IMPORT ALLOCATE, DEALLOCATE;
 
 
 TYPE File = POINTER TO FileDescriptor;
@@ -112,7 +113,8 @@ BEGIN
       
       (* TO DO *)
       
-    END (* CASE *)
+    END; (* CASE *)
+    RETURN
   END; (* IF *)
   
   ALLOCATE(file, TSIZE(FileDescriptor));
