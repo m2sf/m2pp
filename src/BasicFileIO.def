@@ -7,7 +7,9 @@ DEFINITION MODULE BasicFileIO;
 
 TYPE File; (* OPAQUE *)
 
+
 TYPE Mode = ( Read, Write, Append );
+
 
 TYPE Status =
   ( Success,          (* operation completed successfully *)
@@ -16,8 +18,10 @@ TYPE Status =
     InsertBufferFull, (* file's insert buffer is full *)
     IllegalOperation, (* operation not permitted *)
     AllocationFailed, (* memory allocation failed *)
-    DeviceError,      (* I/O subsystem device error *)
+    ReadBeyondEOF,    (* attempt to read past EOF *)
+    IOError,          (* read or write error *)
     Failure );        (* any other failure *)
+
 
 TYPE Octet = CARDINAL [0..255];
 
