@@ -1,6 +1,6 @@
 (*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation. *)
 
-IMPLEMENTATION MODULE BasicFileIO;
+IMPLEMENTATION MODULE BasicFileIO; (* PIM version *)
 
 (* Basic File IO library for M2PP and M2BSK *)
 
