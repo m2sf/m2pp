@@ -238,7 +238,7 @@ END length;
  * function charAtIndex(string, index)
  * ---------------------------------------------------------------------------
  * Returns the character at the given index in the given string.
- * Returns ASCII.NUL if string is NIL or index is out of range.
+ * Returns ASCII NUL if string is NIL or index is out of range.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE charAtIndex ( string : String; index : CARDINAL ) : CHAR;
@@ -247,7 +247,7 @@ BEGIN
   IF (string # NIL) AND (index < string^.length) THEN
     RETURN string^.intern^[index]
   ELSE (* invalid or out of range *)
-    RETURN ASCII.NUL
+    RETURN NUL
   END (* IF *)
 END charAtIndex;
 
@@ -324,7 +324,7 @@ BEGIN
   END; (* FOR *)
   
   (* terminate array *)
-  array[arrIndex] := ASCII.NUL;
+  array[arrIndex] := NUL;
   
   (* arrIndex holds number of chars copied *)
   charsCopied := arrIndex
@@ -632,7 +632,7 @@ VAR
 BEGIN
   (* get actual size of array payload *)
   size := 0;
-  WHILE (size <= HIGH(array)) AND (array[size] # ASCII.NUL) DO
+  WHILE (size <= HIGH(array)) AND (array[size] # NUL) DO
     size := size + 1
   END; (* WHILE *)
   
