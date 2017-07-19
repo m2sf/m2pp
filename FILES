@@ -101,3 +101,11 @@
   FileSystemAdapter.p1.mod -- FileSystemAdapter for p1 Modula-2
   FileSystemAdapter.pim.mod -- FileSystemAdapter for any PIM Modula-2 compiler
   FileSystemAdapter.xds.mod -- FileSystemAdapter for XDS Modula-2
+
+/xec
+  LAUNCHSCRIPTS.md -- user info on launch scripts
+  m2pp.bat -- launch script for Windows and OS/2
+  m2pp.com -- launch script for OpenVMS
+  m2pp.sh -- launc script for Unix/POSIX systems
+  
++++
