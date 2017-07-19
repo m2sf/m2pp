@@ -34,6 +34,13 @@ TYPE Status =
 TYPE VisitorProc = PROCEDURE ( Key, Value );
 
 
+(* Invalid key and value sentinels *)
+
+CONST
+  NilKey = String.Nil;
+  NilValue = String.Nil;
+
+
 (* Introspection *)
 
 (* ---------------------------------------------------------------------------
