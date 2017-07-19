@@ -1,0 +1,103 @@
+/
+  /src  -- source directory
+  /xec -- shell scripts directory
+  AUTHORS -- authors and contributors
+  FILES -- this file
+  LICENSE -- software license
+  README.md -- project brief
+  m2pp-grammar.gll -- LL(1) grammar in EBNF
+  option-trie-analysis.txt -- Trie analysis for command line options
+
+/src
+  /src/dep -- dependencies directory
+  /src/imp -- implementation directory
+  ArgLexer.def -- interface for command line argument lexer
+  ArgParser.def -- interface for command line argument parser
+  Args.def -- interface to command line argument handling
+  BasicFileIO.def -- File I/O interface
+  BuildParams.def -- Build parameter definitions
+  CardMath.def -- interface to cardinal math functions
+  CharArray -- interface to character array operations
+  Console.def -- interface to console I/O
+  Dicitionary.def -- interface to global key/value dictionary
+  FNStr.def -- interface to filename string operations
+  FileSystemAdapter.def -- file system interface
+  Hash.cardinal.def -- 32-bit hash function using CARDINAL type
+  Hash.longint.def -- 31-bit hash function using LONGINT type
+  ISO646.def -- ISO646 (aka ASCII) character code constant definitions
+  Infile.iso.def -- interface to source file reader for ISO Modula-2
+  Infile.pim.def -- interface to source file reader for PIM Modula-2
+  Newline.def -- interface to newline mode management
+  NumStr.def -- interface to numeric string conversions
+  Outfile.iso.def -- interface to target file writer for ISO Modula-2
+  Outile.pim.def -- interface to target file writer for PIM Modula-2
+  Preprocessor.def -- interface to preprocessor
+  Settings.def -- interface to program settings management
+  StrPtr.def -- type definitions for module String
+  String.iso.def -- interface to interned strings library for ISO Modula-2
+  String.pim.def -- interface to interned strings library for PIM Modula-2
+  Tabulator.def -- interface to tabulator management
+  Terminal.iso.def -- shim library to adapt PIM terminal to ISO stdlib
+  Terminal.pim.txt -- user info on PIM library's Terminal module
+  stdio.gm2.def -- foreign function interface to C stdio for GNU Modula-2
+  stdio.p1.def -- foreign function interface to C stdio for p1 Modula-2
+  stdio.xds.def -- foreign function interface to C stdio for XDS Modula-2
+
+/src/dep
+  ArgLexer.dep.dot -- dependency graph for module ArgLexer
+  ArgParser.dep.dot -- dependency graph for module ArgParser
+  Args.dep.dot -- dependency graph for module Args
+  BasicFileIO.dep.dot -- dependency graph for module BasicFileIO
+  BuildParams.dep.dot -- dependency graph for module BuildParams
+  CardMath.dep.dot -- dependency graph for module CardMath
+  CharArray.dep.dot -- dependeny graph for module CharArray
+  Console.dep.dot -- dependency graph for module Console
+  Dictionary.dep.dot -- dependency graph for module Dictionary
+  FNStr.dep.dot -- dependency graph for module FNStr
+  Hash.dep.dot -- dependency graph for module Hash
+  ISO646.dep.dot -- dependency graph for module ISO646
+  Infile.dep.dot -- dependency graph for module Infile
+  M2PP.dep.dot -- dependency graph for M2PP driver program
+  Newline.dep.dot -- dependency graph for module Newline
+  NumStr.dep.dot -- dependency graph for module NumStr
+  Outfile.dep.dot -- dependency graph for module Outfile
+  Preprocessor.dep.dot -- dependency graph for module Preprocessor
+  Settings.dep.dot -- dependency graph for module Settings
+  Tabulator.dep.dot -- dependency graph for module Tabulator
+  
+/src/imp
+  /src/imp/BasicFileIO -- subdir for BasicFileIO implementations
+  /src/imp/FileSystemAdapter -- subdir for FileSystemAdapter implementations
+  ArgLexer.mod -- command line argument lexer
+  ArgParser.mod -- command line argument parser
+  Args.mod -- command line argument handler
+  CardMath.mod -- cardinal math library
+  CharArray.mod -- character array operations
+  Console.mod -- console I/O library
+  Dicitionary.mod -- global key/value dictionary
+  FNStr.mod -- filename string operations
+  Hash.cardinal.mod -- CARDINAL based implementation of hash function
+  Hash.longint.mod -- LONGINT based implementation of hash function
+  Infile.mod -- source file reader
+  Newline.mod -- newline mode management
+  NumStr.mod -- numeric string conversions
+  Outfile.mod -- target file writer
+  Preprocessor.mod -- preprocessor
+  Settings.mod -- program settings management
+  String.iso.mod -- interned strings library for ISO Modula-2
+  String.pim.def -- interned strings library for PIM Modula-2
+  Tabulator.mod -- tabulator management
+  Terminal.iso.mod -- PIM terminal to ISO stdlib adapter
+  Terminal.pim.txt -- user info on PIM library's Terminal module
+
+/src/imp/BasicFileIO
+  BasicFileIO.iso.mod -- ISO implementation of module BasicFileIO
+  BasicFileIO.pim.mod -- PIM implementation of module BasicFileIO
+  BasicFileIO.posix.mod -- POSIX implementation of module BasicFileIO
+
+/src/imp/FileSystemAdapter
+  FileSystemAdapter.adw.mod -- FileSystemAdapter for ADW Modula-2
+  FileSystemAdapter.mw.mod -- FileSystemAdapter for Modulaware Modula-2
+  FileSystemAdapter.p1.mod -- FileSystemAdapter for p1 Modula-2
+  FileSystemAdapter.pim.mod -- FileSystemAdapter for any PIM Modula-2 compiler
+  FileSystemAdapter.xds.mod -- FileSystemAdapter for XDS Modula-2
