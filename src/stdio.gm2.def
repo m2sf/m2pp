@@ -22,8 +22,7 @@ FROM SYSTEM IMPORT
   LOC     (* char *),
   ADDRESS (* void* *),
   INT32   (* int *),
-  CARD32  (* size_t in 32-bit mode *),
-  CARD64  (* size_t in 64-bit mode *);
+  SIZET   (* size_t *);
 
 
 CONST
@@ -75,19 +74,12 @@ TYPE FILE = ADDRESS;
 
 (* type size_t *)
 
-(* How do we map size_t to Modula-2? *)
+TYPE SizeT = SIZET; (* waiting to be added to SYSTEM *)
 
-(* 32-bit *)
-<*IF(???32bit???)THEN*>
-TYPE SizeT = CARD32;
 
-(* 64-bit *)
-<*ELSIF(???64-bit???)THEN*>
-TYPE SizeT = CARD64;
+(* type int *)
 
-<*ELSE*>
-(* unsupported architecture *)
-<*END*>
+TYPE INT = INT32;
 
 
 (* foreign declaration for fopen() *)
@@ -97,27 +89,27 @@ PROCEDURE fopen ( VAR (* CONST *) filename, mode : ARRAY OF CHAR ) : FILE;
 
 (* foreign declaration for fflush() *)
 
-PROCEDURE fflush ( stream : FILE ) : INT32;
+PROCEDURE fflush ( stream : FILE ) : INT;
 
 
 (* foreign declaration for fclose() *)
 
-PROCEDURE fclose ( stream : FILE ) : INT32;
+PROCEDURE fclose ( stream : FILE ) : INT;
 
 
 (* foreign declaration for feof() *)
 
-PROCEDURE feof ( stream : FILE ) : INT32;
+PROCEDURE feof ( stream : FILE ) : INT;
 
 
 (* foreign declaration for fgetc() *)
 
-PROCEDURE fgetc ( stream : FILE ) : INT32;
+PROCEDURE fgetc ( stream : FILE ) : INT;
 
 
 (* foreign declaration for fputc() *)
 
-PROCEDURE fputc ( c : INT32; stream : FILE ) : INT32;
+PROCEDURE fputc ( c : INT32; stream : FILE ) : INT;
 
 
 (* foreign declaration for fread() *)
@@ -134,17 +126,17 @@ PROCEDURE fwrite
 
 (* foreign declaration for rename() *)
 
-PROCEDURE rename ( VAR (* CONST *) old, new : ARRAY OF CHAR ) : INT32;
+PROCEDURE rename ( VAR (* CONST *) old, new : ARRAY OF CHAR ) : INT;
 
 
 (* foreign declaration for remove() *)
 
-PROCEDURE remove ( VAR (* CONST *) path : ARRAY OF CHAR ) : INT32;
+PROCEDURE remove ( VAR (* CONST *) path : ARRAY OF CHAR ) : INT;
 
 
 (* foreign declaration for ferror() *)
 
-PROCEDURE ferror ( stream : FILE ) : INT32;
+PROCEDURE ferror ( stream : FILE ) : INT;
 
 
 (* foreign declaration for clearerr() *)

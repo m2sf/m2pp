@@ -81,6 +81,11 @@ TYPE SizeT = CARD64;
 <*END*>
 
 
+(* type int *)
+
+TYPE INT = INT32;
+
+
 (* foreign declaration for fopen() *)
 
 PROCEDURE fopen ( filename, mode : ARRAY OF CHAR ) : FILE;
@@ -88,27 +93,27 @@ PROCEDURE fopen ( filename, mode : ARRAY OF CHAR ) : FILE;
 
 (* foreign declaration for fflush() *)
 
-PROCEDURE fflush ( stream : FILE ) : INT32;
+PROCEDURE fflush ( stream : FILE ) : INT;
 
 
 (* foreign declaration for fclose() *)
 
-PROCEDURE fclose ( stream : FILE ) : INT32;
+PROCEDURE fclose ( stream : FILE ) : INT;
 
 
 (* foreign declaration for feof() *)
 
-PROCEDURE feof ( stream : FILE ) : INT32;
+PROCEDURE feof ( stream : FILE ) : INT;
 
 
 (* foreign declaration for fgetc() *)
 
-PROCEDURE fgetc ( stream : FILE ) : INT32;
+PROCEDURE fgetc ( stream : FILE ) : INT;
 
 
 (* foreign declaration for fputc() *)
 
-PROCEDURE fputc ( c : INT32; stream : FILE ) : INT32;
+PROCEDURE fputc ( c : INT; stream : FILE ) : INT;
 
 
 (* foreign declaration for fread() *)
@@ -128,18 +133,18 @@ PROCEDURE fwrite
 (* foreign declaration for rename() *)
 
 PROCEDURE rename
-  ( <*ASSIGN(Reference,TRUE)*> VAR old, new : ARRAY OF CHAR ) : INT32;
+  ( <*ASSIGN(Reference,TRUE)*> VAR old, new : ARRAY OF CHAR ) : INT;
 
 
 (* foreign declaration for remove() *)
 
 PROCEDURE remove
-  ( <*ASSIGN(Reference,TRUE)*> VAR path : ARRAY OF CHAR ) : INT32;
+  ( <*ASSIGN(Reference,TRUE)*> VAR path : ARRAY OF CHAR ) : INT;
 
 
 (* foreign declaration for ferror() *)
 
-PROCEDURE ferror ( stream : FILE ) : INT32;
+PROCEDURE ferror ( stream : FILE ) : INT;
 
 
 (* foreign declaration for clearerr() *)

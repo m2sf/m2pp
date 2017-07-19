@@ -57,6 +57,16 @@ CONST
 TYPE FILE = POINTER TO ["C"] void;
 
 
+(* type size_t *)
+
+TYPE SizeT = size_t;
+
+
+(* type int *)
+
+TYPE INT = int;
+
+
 (* foreign declaration for fopen() *)
 
 PROCEDURE fopen ( VAR (* CONST *) filename, mode : ARRAY OF CHAR ) : FILE;
@@ -64,54 +74,54 @@ PROCEDURE fopen ( VAR (* CONST *) filename, mode : ARRAY OF CHAR ) : FILE;
 
 (* foreign declaration for fflush() *)
 
-PROCEDURE fflush ( stream : FILE ) : int;
+PROCEDURE fflush ( stream : FILE ) : INT;
 
 
 (* foreign declaration for fclose() *)
 
-PROCEDURE fclose ( stream : FILE ) : int;
+PROCEDURE fclose ( stream : FILE ) : INT;
 
 
 (* foreign declaration for feof() *)
 
-PROCEDURE feof ( stream : FILE ) : int;
+PROCEDURE feof ( stream : FILE ) : INT;
 
 
 (* foreign declaration for fgetc() *)
 
-PROCEDURE fgetc ( stream : FILE ) : int;
+PROCEDURE fgetc ( stream : FILE ) : INT;
 
 
 (* foreign declaration for fputc() *)
 
-PROCEDURE fputc ( c : int; stream : FILE ) : int;
+PROCEDURE fputc ( c : int; stream : FILE ) : INT;
 
 
 (* foreign declaration for fread() *)
 
 PROCEDURE fread
-  ( VAR data : ARRAY OF LOC; size, items  : size_t; stream : FILE ) : size_t;
+  ( VAR data : ARRAY OF LOC; size, items : SizeT; stream : FILE ) : SizeT;
 
 
 (* foreign declaration for fwrite() *)
 
 PROCEDURE fwrite
-  ( data : ARRAY OF LOC; size, items  : size_t; stream : FILE ) : size_t;
+  ( data : ARRAY OF LOC; size, items : SizeT; stream : FILE ) : SizeT;
 
 
 (* foreign declaration for rename() *)
 
-PROCEDURE rename ( VAR (* CONST *) old, new : ARRAY OF CHAR ) : int;
+PROCEDURE rename ( VAR (* CONST *) old, new : ARRAY OF CHAR ) : INT;
 
 
 (* foreign declaration for remove() *)
 
-PROCEDURE remove ( VAR (* CONST *) path : ARRAY OF CHAR ) : int;
+PROCEDURE remove ( VAR (* CONST *) path : ARRAY OF CHAR ) : INT;
 
 
 (* foreign declaration for ferror() *)
 
-PROCEDURE ferror ( stream : FILE ) : int;
+PROCEDURE ferror ( stream : FILE ) : INT;
 
 
 (* foreign declaration for clearerr() *)
