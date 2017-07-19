@@ -1,0 +1,8 @@
+digraph CharArrayDep {
+  node [fontname=helvetica];
+  
+  CharArray -> {
+    ISO646
+  };
+  
+} /* CharArrayDep */

@@ -1,0 +1,6 @@
+digraph ISO646Dep {
+  node [fontname=helvetica];
+  
+  ISO646; /* no dependencies */
+      
+} /* ISO646Dep */

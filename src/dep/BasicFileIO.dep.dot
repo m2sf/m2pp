@@ -1,0 +1,12 @@
+digraph BasicFileIODep {
+  node [fontname=helvetica];
+  
+  BasicFileIO -> {
+    ISO646 Storage
+  };
+    
+  ISO646; /* no dependencies */
+  
+  Storage [shape=box]; /* stdlib */
+    
+} /* BasicFileIODep */

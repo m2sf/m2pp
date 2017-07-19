@@ -1,0 +1,30 @@
+digraph InfileDep {
+  node [fontname=helvetica];
+  
+  Infile -> {
+    BasicFileIO BuildParams ISO646 Storage String
+  };
+  
+  BasicFileIO -> {
+    ISO646 Storage
+  };
+    
+  ISO646; /* no dependencies */
+  
+  Storage [shape=box]; /* stdlib */
+  
+  BuildParams; /* no dependencies */
+  
+  String -> {
+    Hash ISO646 Storage StrPtr
+  };
+  
+  edge [style=dotted];
+  Hash -> {
+    Terminal
+  };
+  edge [style=none];
+  
+  Terminal [shape=box]; /* stdlib */
+  
+} /* InfileDep */

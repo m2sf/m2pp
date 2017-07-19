@@ -1,0 +1,6 @@
+digraph NewlineDep {
+  node [fontname=helvetica];
+  
+  Newline; /* no dependencies */
+      
+} /* NewlineDep */

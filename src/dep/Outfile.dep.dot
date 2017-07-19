@@ -1,0 +1,32 @@
+digraph OutfileDep {
+  node [fontname=helvetica];
+  
+  Outfile -> {
+    BasicFileIO ISO646 Newline String Tabulator
+  };
+  
+  BasicFileIO -> {
+    ISO646 Storage
+  };
+  
+  ISO646; /* no dependencies */
+  
+  Storage [shape=box]; /* stdlib */
+  
+  Newline; /* no dependencies */  
+  
+  String -> {
+    Hash ISO646 Storage StrPtr
+  };
+  
+  edge [style=dotted];
+  Hash -> {
+    Terminal
+  };
+  edge [style=none];
+  
+  StrPtr; /* no dependencies */
+  
+  Tabulator; /* no dependencies */  
+  
+} /* OutfileDep */

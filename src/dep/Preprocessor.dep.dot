@@ -1,0 +1,48 @@
+digraph PreprocessorDep {
+  node [fontname=helvetica];
+  
+  Preprocessor -> {
+    Dictionary Infile ISO646 Outfile String
+  };
+  
+  Dictionary -> {
+    Storage String
+  };
+  
+  Storage [shape=box]; /* stdlib */
+    
+  String -> {
+    Hash ISO646 Storage StrPtr
+  };
+  
+  edge [style=dotted];
+  Hash -> {
+    Terminal
+  };
+  edge [style=none];
+  
+  Terminal [shape=box]; /* stdlib */
+  
+  ISO646; /* no dependencies */
+  
+  StrPtr; /* no dependencies */  
+  
+  Infile -> {
+    BasicFileIO BuildParams ISO646 Storage String
+  };
+  
+  BasicFileIO -> {
+    ISO646 Storage
+  };
+    
+  BuildParams; /* no dependencies */
+  
+  Outfile -> {
+    BasicFileIO ISO646 Newline String Tabulator
+  };
+    
+  Newline; /* no dependencies */  
+    
+  Tabulator; /* no dependencies */  
+  
+} /* PreprocessorDep */

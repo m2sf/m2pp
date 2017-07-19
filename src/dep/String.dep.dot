@@ -1,0 +1,22 @@
+digraph StringDep {
+  node [fontname=helvetica];
+  
+  String -> {
+    Hash ISO646 Storage StrPtr
+  };
+  
+  edge [style=dotted];
+  Hash -> {
+    Terminal
+  };
+  edge [style=none];
+  
+  Terminal [shape=box]; /* stdlib */
+  
+  ISO646; /* no dependencies */
+  
+  Storage [shape=box]; /* stdlib */
+  
+  StrPtr; /* no dependencies */  
+  
+} /* StringDep */

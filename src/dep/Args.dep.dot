@@ -1,0 +1,57 @@
+digraph ArgsImports {
+  node [fontname=helvetica];
+  
+  Args -> {
+    BuildParams CharArray Console FileSystemAdapter Infile ISO646 Outfile
+    String
+  };
+  
+  BuildParams; /* no dependencies */
+  
+  CharArray -> {
+    ISO646
+  };
+  
+  ISO646; /* no dependencies */
+  
+  Console -> {
+    CardMath ISO646 String Terminal
+  };
+  
+  CardMath; /* no dependencies */
+  
+  String -> {
+    Hash ISO646 Storage StrPtr
+  };
+  
+  edge [style=dotted];
+  Hash -> {
+    Terminal
+  };
+  edge [style=none];
+  
+  Terminal [shape=box]; /* stdlib */
+  
+  Storage [shape=box]; /* stdlib */
+  
+  StrPtr; /* no dependencies */  
+  
+  FileSystemAdapter [shape=box];
+  
+  Infile -> {
+    BasicFileIO BuildParams ISO646 Storage String
+  };
+  
+  BasicFileIO -> {
+    ISO646 Storage
+  };
+  
+  Outfile -> {
+    BasicFileIO ISO646 Newline String Tabulator
+  };
+  
+  Newline; /* no dependencies */  
+  
+  Tabulator; /* no dependencies */  
+  
+} /* Args */

@@ -1,0 +1,26 @@
+digraph DictionaryDep {
+  node [fontname=helvetica];
+  
+  Dictionary -> {
+    Storage String
+  };
+  
+  Storage [shape=box]; /* stdlib */
+    
+  String -> {
+    Hash ISO646 Storage StrPtr
+  };
+  
+  edge [style=dotted];
+  Hash -> {
+    Terminal
+  };
+  edge [style=none];
+  
+  Terminal [shape=box]; /* stdlib */
+  
+  ISO646; /* no dependencies */
+  
+  StrPtr; /* no dependencies */  
+  
+} /* DictionaryDep */

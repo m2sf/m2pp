@@ -1,0 +1,12 @@
+digraph HashDep {
+  node [fontname=helvetica];
+  
+  edge [style=dotted];
+  Hash -> {
+    Terminal
+  };
+  edge [style=none];
+  
+  Terminal [shape=box]; /* stdlib */
+  
+} /* HashDep */

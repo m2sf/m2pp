@@ -1,0 +1,52 @@
+digraph ArgParserImports {
+  node [fontname=helvetica];
+  
+  ArgParser -> {
+    ArgLexer Newline NumStr Settings String Tabulator
+  };
+  
+  ArgLexer -> {
+    Infile ISO646 String
+  };
+  
+  Infile -> {
+    BasicFileIO BuildParams ISO646 Storage String
+  };
+  
+  BasicFileIO -> {
+    ISO646 Storage
+  };
+  
+  BuildParams; /* no dependencies */
+  
+  ISO646; /* no dependencies */
+  
+  Storage [shape=box]; /* stdlib */
+  
+  String -> {
+    Hash ISO646 Storage StrPtr
+  };
+  
+  edge [style=dotted];
+  Hash -> {
+    Terminal
+  };
+  edge [style=none];
+  
+  Terminal [shape=box]; /* stdlib */
+  
+  StrPtr; /* no dependencies */  
+  
+  Newline; /* no dependencies */
+  
+  NumStr -> {
+    String
+  };
+    
+  Settings -> {
+    String Newline Tabulator
+  };
+    
+  Tabulator; /* no dependencies */
+  
+} /* ArgParserImports */

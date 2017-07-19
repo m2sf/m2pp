@@ -1,0 +1,6 @@
+digraph TabulatorDep {
+  node [fontname=helvetica];
+  
+  Tabulator; /* no dependencies */
+      
+} /* TabulatorDep */

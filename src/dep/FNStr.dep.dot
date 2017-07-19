@@ -1,0 +1,28 @@
+digraph FNStrDep {
+  node [fontname=helvetica];
+  
+  FNStr -> {
+    CardMath ISO646 String
+  };
+  
+  CardMath; /* no dependencies */
+  
+  ISO646; /* no dependencies */
+  
+  String -> {
+    Hash ISO646 Storage StrPtr
+  };
+  
+  edge [style=dotted];
+  Hash -> {
+    Terminal
+  };
+  edge [style=none];
+  
+  Terminal [shape=box]; /* stdlib */
+    
+  Storage [shape=box]; /* stdlib */
+  
+  StrPtr; /* no dependencies */
+  
+} /* FNStrDep */

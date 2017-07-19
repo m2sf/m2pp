@@ -1,0 +1,6 @@
+digraph CardMathDep {
+  node [fontname=helvetica];
+  
+  CardMath; /* no dependencies */
+      
+} /* CardMathDep */

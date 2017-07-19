@@ -1,0 +1,28 @@
+digraph ConsoleDep {
+  node [fontname=helvetica];
+  
+  Console -> {
+    CardMath ISO646 String Terminal
+  };
+  
+  CardMath; /* no dependencies */
+  
+  ISO646; /* no dependencies */
+  
+  String -> {
+    Hash ISO646 Storage StrPtr
+  };
+  
+  edge [style=dotted];
+  Hash -> {
+    Terminal
+  };
+  edge [style=none];
+    
+  Storage [shape=box]; /* stdlib */
+  
+  StrPtr; /* no dependencies */  
+  
+  Terminal [shape=box]; /* stdlib */
+  
+} /* ConsoleDep */
