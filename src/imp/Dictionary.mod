@@ -5,7 +5,8 @@ IMPLEMENTATION MODULE Dictionary;
 (* Key/Value Dictionary *)
 
 IMPORT String;
-
+FROM SYSTEM IMPORT TSIZE;
+FROM Storage IMPORT ALLOCATE, DEALLOCATE;
 FROM String IMPORT StringT; (* alias for String.String *)
 
 
@@ -87,13 +88,13 @@ VAR
 
 BEGIN
   (* bail out if key is NIL *)
-  IF key = NIL THEN
+  IF key = NilKey THEN
     dictionary.lastStatus := NilNotPermitted;
     RETURN FALSE
   END; (* IF *)
   
   (* return TRUE if key matches last searched key *)
-  IF (dictionary.lastSearch.key # NIL) AND
+  IF (dictionary.lastSearch.key # NilKey) AND
      (key = dictionary.lastSearch.key) THEN
     dictionary.lastStatus := Success;
     RETURN TRUE
@@ -103,7 +104,7 @@ BEGIN
   value := lookup(dictionary.root, key, dictionary.lastStatus);
   
   (* update cache if entry found *)
-  IF value # NIL THEN
+  IF value # NilValue THEN
     dictionary.lastSearch.key := key;
     dictionary.lastSearch.value := value;
   END; (* IF *)
@@ -126,13 +127,13 @@ VAR
   
 BEGIN
   (* bail out if key is NIL *)
-  IF key = NIL THEN
+  IF key = NilKey THEN
     dictionary.lastStatus := NilNotPermitted;
-    RETURN NIL
+    RETURN NilKey
   END; (* IF *)
   
   (* return cached value if key matches last searched key *)
-  IF (dictionary.lastSearch.key # NIL) AND
+  IF (dictionary.lastSearch.key # NilKey) AND
      (key = dictionary.lastSearch.key) THEN
     dictionary.lastStatus := Success;
     RETURN dictionary.lastSearch.value
@@ -142,7 +143,7 @@ BEGIN
   value := lookup(dictionary.root, key, dictionary.lastStatus);
   
   (* update cache if entry found *)
-  IF value # NIL THEN
+  IF value # NilKey THEN
     dictionary.lastSearch.key := key;
     dictionary.lastSearch.value := value
   END; (* IF *)
@@ -167,7 +168,7 @@ VAR
   
 BEGIN
   (* bail out if key or value or both are NIL *)
-  IF (key = NIL) OR (value = NIL) THEN
+  IF (key = NilKey) OR (value = NilValue) THEN
     dictionary.lastStatus := NilNotPermitted;
     RETURN
   END; (* IF *)
@@ -199,16 +200,16 @@ VAR
 
 BEGIN
   (* bail out if key is NIL *)
-  IF key = NIL THEN
+  IF key = NilKey THEN
     dictionary.lastStatus := NilNotPermitted;
     RETURN
   END; (* IF *)
   
   (* check key before getting interned string for value *)  
-  IF lookup(dictionary.root, key, dictionary.lastStatus) = NIL THEN
+  IF lookup(dictionary.root, key, dictionary.lastStatus) = NilValue THEN
     value := String.fromArray(array);
     
-    IF value = NIL THEN
+    IF value = NilValue THEN
       dictionary.lastStatus := NilNotPermitted;
       RETURN
       
@@ -235,7 +236,7 @@ VAR
   
 BEGIN
   (* bail out if key is NIL *)
-  IF key = NIL THEN
+  IF key = NilKey THEN
     dictionary.lastStatus := NilNotPermitted;
     RETURN
   END; (* IF *)
@@ -249,8 +250,8 @@ BEGIN
     
     (* clear cache if removed key is in cache *)
     IF key = dictionary.lastSearch.key THEN
-      dictionary.lastSearch.key := NIL;
-      dictionary.lastSearch.value := NIL
+      dictionary.lastSearch.key := NilKey;
+      dictionary.lastSearch.value := NilValue
     END (* IF *)
   END (* IF *)
 END RemoveKey;
@@ -327,7 +328,7 @@ BEGIN
   END; (* WHILE *)
   
   (* restore sentinel's key *)
-  bottom^.key := NIL;
+  bottom^.key := NilKey;
   
   (* check whether or not bottom has been reached *)
   IF thisNode # bottom THEN
@@ -336,7 +337,7 @@ BEGIN
     
   ELSE (* bottom reached -- key not found *)
     status := EntryNotFound;
-    RETURN NIL
+    RETURN NilKey
   END (* IF *)
 END lookup;
 
@@ -437,7 +438,7 @@ BEGIN
     (* key already exists *)
       String.Equal :
         status := KeyAlreadyPresent;
-        RETURN NIL
+        RETURN NilKey
     
     (* key < node^.key *)
     | String.Less :
@@ -448,7 +449,6 @@ BEGIN
     | String.Greater :
         (* recursive insert right *)
         node := insert(node^.right, key, value, status)
-        
     END (* CASE *)
   END; (* IF *)
   
@@ -481,7 +481,7 @@ BEGIN
   (* exit when bottom reached *)
   IF node = bottom THEN
     status := EntryNotFound;
-    RETURN NIL;
+    RETURN NilKey;
   END; (* IF *)
   
   (* move down recursively until key is found or bottom is reached *)
@@ -506,7 +506,7 @@ BEGIN
     candidate := bottom;
     node := node^.right;
     
-    DEALLOCATE(prevNode);
+    DEALLOCATE(prevNode, TSIZE(NodeDescriptor));
     status := Success
     
   (* rebalance on the way back up *)
@@ -565,8 +565,8 @@ BEGIN
   ALLOCATE(bottom, TSIZE(NodeDescriptor));
   (* bottom^ := { 0, NIL, NIL, bottom, bottom } *)
   bottom^.level := 0;
-  bottom^.key := NIL;
-  bottom^.value := NIL;
+  bottom^.key := NilKey;
+  bottom^.value := NilValue;
   bottom^.left := bottom;
   bottom^.right := bottom;
 
@@ -574,7 +574,7 @@ BEGIN
   (* dictionary := { 0, bottom, NIL, NIL, Success } *)
   dictionary.entries := 0;
   dictionary.root := bottom
-  dictionary.lastSearch.key := NIL;
-  dictionary.lastSearch.value := NIL;
+  dictionary.lastSearch.key := NilKey;
+  dictionary.lastSearch.value := NilValue;
   dictionary.lastStatus := Success;
 END Dictionary.
