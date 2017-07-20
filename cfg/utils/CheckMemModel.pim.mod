@@ -76,7 +76,7 @@ BEGIN
   (* find highest digit *)
   weight := 1;
   WHILE value DIV weight > 10 DO
-    weight := weight * 10;
+    weight := weight * 10
   END; (* WHILE *)
   
   (* print digits *)
