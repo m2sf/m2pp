@@ -41,7 +41,7 @@ do
   esac
 done
 #
-# CARDINAL size
+# LONGINT size
 #
 echo "[LONGINT Size]"
 PS3="Size of type LONGINT: "
