@@ -45,7 +45,6 @@ do
       break;;
   esac
 done
-
 #
 # memory model
 #
@@ -55,15 +54,20 @@ select option in "16/16" "16/32" "32/32" "32/64" "64/64" Quit
 do
   case $option in
     "16/16")
-      echo "16/16";;
+      echo "16/16"
+      ;;
     "16/32")
-      echo "16/32";;
+      echo "16/32"
+      ;;
     "32/32")
-      echo "32/32";;
+      echo "32/32"
+      ;;
     "32/64")
-      echo "32/64";;
+      echo "32/64"
+      ;;
     "64/64")
-      echo "64/64";;
+      echo "64/64"
+      ;;
     Quit)
       break;;
   esac
