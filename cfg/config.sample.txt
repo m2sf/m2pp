@@ -1,0 +1,64 @@
+$ ./config.sh
+*** M2PP build configuration script for Unix/POSIX ***
+
+Dialect Selection
+1) ISO Modula-2
+2) PIM Modula-2
+3) Quit
+Modula-2 dialect: 1
+
+Compiler Selection
+1) GNU Modula-2
+2) p1 Modula-2
+3) XDS Modula-2
+4) Quit
+Modula-2 compiler: 1
+
+I/O Library Selection
+1) POSIX I/O library
+2) ISO I/O library
+3) Quit
+I/O library: 1
+
+Bitwidths of CARDINAL/LONGINT
+1) 16/16 bits  3) 32/32 bits  5) 64/64 bits
+2) 16/32 bits  4) 32/64 bits  6) Quit
+Memory model: 4
+
+Path of M2PP src directory: ~/Development/m2pp/src
+
+Selected build configuration
+Dialect       : ISO Modula-2 (iso)
+Compiler      : GNU Modula-2 (gm2)
+I/O library   : POSIX I/O library (posix)
+Memory model  : 32/64 bits (cardinal)
+M2PP src path : /Users/quasimodo/Development/m2pp/src/
+
+Are these details correct? (y/n) : y
+
+Copying source files corresponding to selected build configuration ...
+
+copying /Users/quasimodo/Development/m2pp/src/Hash.cardinal.def
+to /Users/quasimodo/Development/m2pp/src/Hash.def
+copying /Users/quasimodo/Development/m2pp/src/imp/Hash.cardinal.mod
+to /Users/quasimodo/Development/m2pp/src/imp/Hash.mod
+copying /Users/quasimodo/Development/m2pp/src/Infile.iso.def
+to /Users/quasimodo/Development/m2pp/src/Infile.def
+copying /Users/quasimodo/Development/m2pp/src/Outfile.iso.def
+to /Users/quasimodo/Development/m2pp/src/Outfile.def
+copying /Users/quasimodo/Development/m2pp/src/String.iso.def
+to /Users/quasimodo/Development/m2pp/src/String.def
+copying /Users/quasimodo/Development/m2pp/src/imp/String.iso.mod
+to /Users/quasimodo/Development/m2pp/src/imp/String.mod
+copying /Users/quasimodo/Development/m2pp/src/Terminal.iso.def
+to /Users/quasimodo/Development/m2pp/src/Terminal.def
+copying /Users/quasimodo/Development/m2pp/src/imp/Terminal.iso.mod
+to /Users/quasimodo/Development/m2pp/src/imp/Terminal.mod
+copying /Users/quasimodo/Development/m2pp/src/imp/BasicFileIO/BasicFileIO.posix.mod
+to /Users/quasimodo/Development/m2pp/src/imp/BasicFileIO.mod
+copying /Users/quasimodo/Development/m2pp/src/imp/FileSystemAdapter/FileSystemAdapter.posix.mod
+to /Users/quasimodo/Development/m2pp/src/imp/FileSystemAdapter.mod
+copying /Users/quasimodo/Development/m2pp/src/posix/stdio.gm2.def
+to /Users/quasimodo/Development/m2pp/src/stdio.def
+
+Build configuration completed.
