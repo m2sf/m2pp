@@ -3,25 +3,27 @@ echo "*** M2PP build configuration script for Unix/POSIX ***"
 #
 # compiler menu
 #
-echo "[Compiler Selection]"
+echo ""
+echo "Compiler Selection"
 PS3="Modula-2 compiler: "
-select option in "GM2" "p1" "XDS" "any PIM compiler" Quit
+select compiler in \
+  "GNU Modula-2" "p1 Modula-2" "XDS Modula-2" "generic PIM compiler" Quit
 do
-  case $option in
-    "GM2")
-      echo GNU Modula-2
+  case $compiler in
+    "GNU Modula-2")
+      compilerID="gm2"
       break
       ;;
-    "p1")
-      echo p1 Modula-2
+    "p1 Modula-2")
+      compilerID="p1"
       break
       ;;
-    "XDS")
-      echo XDS Modula-2;
+    "XDS Modula-2")
+      compilerID="xds"
       break
       ;;
-    "any PIM compiler")
-      echo generic PIM Modula-2
+    "generic PIM compiler")
+      compilerID="pim"
       break
       ;;
     Quit)
@@ -30,56 +32,93 @@ do
   esac
 done
 #
-# library menu
+# io-library menu
 #
-echo "[I/O Library Selection]"
+echo ""
+echo "I/O Library Selection"
 PS3="I/O library: "
-select option in "POSIX" "ISO" "PIM" Quit
-do
-  case $option in
-    "POSIX")
-      echo POSIX
-      break
-      ;;
-    "ISO")
-      echo ISO
-      break
-      ;;
-    "PIM")
-      echo PIM
-      break
-      ;;
-    Quit)
-      exit
-      ;;
-  esac
-done
+#
+# GM2
+#
+if [ "$compilerID" = "gm2" ]
+then
+  select iolib in \
+    "POSIX I/O library" "ISO I/O library" "PIM I/O library" Quit
+  do
+    case $iolib in
+      "POSIX I/O library")
+        iolibID="posix"
+        break
+        ;;
+      "ISO I/O library")
+        iolibID="iso"
+        break
+        ;;
+      "PIM I/O library")
+        iolibID="pim"
+        break
+        ;;
+      Quit)
+        exit
+        ;;
+    esac
+  done
+#
+# p1 and XDS
+#
+elif [ "$compilerID" = "p1" ] || [ "$compilerID" = "xds" ]
+then
+  select iolib in \
+    "POSIX" "ISO" Quit
+  do
+    case $iolib in
+      "POSIX I/O library")
+        iolibID="posix"
+        break
+        ;;
+      "ISO I/O library")
+        iolibID="iso"
+        break
+        ;;
+      Quit)
+        exit
+        ;;
+    esac
+  done
+#
+# PIM
+#
+else
+  iolibID="pim"
+fi
 #
 # memory model menu
 #
-echo "[Bitwidths of CARDINAL/LONGINT]"
+echo ""
+echo "Bitwidths of CARDINAL/LONGINT"
 PS3="Memory model: "
-select option in "16/16" "16/32" "32/32" "32/64" "64/64" Quit
+select mm in \
+  "16/16 bits" "16/32 bits" "32/32 bits" "32/64 bits" "64/64 bits" Quit
 do
-  case $option in
-    "16/16")
-      echo "16/16"
+  case $mm in
+    "16/16 bits")
+      hashlibID="cardinal"
       break
       ;;
-    "16/32")
-      echo "16/32"
+    "16/32 bits")
+      hashlibID="longint"
       break
       ;;
-    "32/32")
-      echo "32/32"
+    "32/32 bits")
+      hashlibID="cardinal"
       break
       ;;
-    "32/64")
-      echo "32/64"
+    "32/64 bits")
+      hashlibID="cardinal"
       break
       ;;
-    "64/64")
-      echo "64/64"
+    "64/64 bits")
+      hashlibID="cardinal"
       break
       ;;
     Quit)
@@ -87,6 +126,12 @@ do
       ;;
   esac
 done
+
+echo ""
+echo "Selected build configuration"
+echo "Compiler     : $compiler ($compilerID)"
+echo "I/O library  : $iolib ($iolibID)"
+echo "Memory model : $mm ($hashlibID)"
 
 # TO DO #
 
