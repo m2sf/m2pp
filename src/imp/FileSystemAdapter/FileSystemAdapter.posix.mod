@@ -6,7 +6,7 @@ IMPLEMENTATION MODULE FileSystemAdapter; (* POSIX version *)
    not using any of the junk that comes with PIM and ISO *)
 
 FROM stdio IMPORT INT, rename, remove;
-FROM unistd IMPORT FileOK, CreateOnly, access, rmdir;
+FROM unistd IMPORT FileOK, CreateOnly, access, unlink;
 
 
 PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
@@ -73,7 +73,7 @@ BEGIN
     RETURN
   END; (* IF *)
   
-  res := rmdir(path);
+  res := unlink(path);
   
   IF res = 0 THEN
     status := Success
