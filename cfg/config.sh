@@ -46,7 +46,7 @@ do
   esac
 done
 #
-# memory model
+# memory model menu
 #
 echo "[Bitwidths of CARDINAL/LONGINT]"
 PS3="Memory model: "
