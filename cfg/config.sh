@@ -10,18 +10,23 @@ do
   case $option in
     "GM2")
       echo GNU Modula-2
+      break
       ;;
     "p1")
       echo p1 Modula-2
+      break
       ;;
     "XDS")
       echo XDS Modula-2;
+      break
       ;;
     "any PIM compiler")
       echo generic PIM Modula-2
+      break
       ;;
     Quit)
-      break;;
+      exit
+      ;;
   esac
 done
 #
@@ -34,15 +39,19 @@ do
   case $option in
     "POSIX")
       echo POSIX
+      break
       ;;
     "ISO")
       echo ISO
+      break
       ;;
     "PIM")
       echo PIM
+      break
       ;;
     Quit)
-      break;;
+      exit
+      ;;
   esac
 done
 #
@@ -55,21 +64,27 @@ do
   case $option in
     "16/16")
       echo "16/16"
+      break
       ;;
     "16/32")
       echo "16/32"
+      break
       ;;
     "32/32")
       echo "32/32"
+      break
       ;;
     "32/64")
       echo "32/64"
+      break
       ;;
     "64/64")
       echo "64/64"
+      break
       ;;
     Quit)
-      break;;
+      exit
+      ;;
   esac
 done
 
