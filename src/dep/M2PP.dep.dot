@@ -48,7 +48,7 @@ digraph M2PPDep {
   };
   
   BasicFileIO -> {
-    ISO646 Storage
+    FileSystemAdapter ISO646 Storage
   };
   
   Outfile -> {

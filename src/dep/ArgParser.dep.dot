@@ -14,14 +14,16 @@ digraph ArgParserImports {
   };
   
   BasicFileIO -> {
-    ISO646 Storage
+    FileSystemAdapter ISO646 Storage
   };
   
-  BuildParams; /* no dependencies */
-  
+  FileSystemAdapter [shape=box];
+    
   ISO646; /* no dependencies */
   
   Storage [shape=box]; /* stdlib */
+  
+  BuildParams; /* no dependencies */
   
   String -> {
     Hash ISO646 Storage StrPtr

@@ -2,9 +2,11 @@ digraph BasicFileIODep {
   node [fontname=helvetica];
   
   BasicFileIO -> {
-    ISO646 Storage
+    FileSystemAdapter ISO646 Storage
   };
-    
+  
+  FileSystemAdapter [shape=box];
+  
   ISO646; /* no dependencies */
   
   Storage [shape=box]; /* stdlib */
