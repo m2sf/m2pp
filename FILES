@@ -11,6 +11,7 @@
 /src
   /src/dep -- dependencies directory
   /src/imp -- implementation directory
+  /src/posix -- foreign interface directory for POSIX
   ArgLexer.def -- interface for command line argument lexer
   ArgParser.def -- interface for command line argument parser
   Args.def -- interface to command line argument handling
@@ -39,9 +40,6 @@
   Tabulator.def -- interface to tabulator management
   Terminal.iso.def -- shim library to adapt PIM terminal to ISO stdlib
   Terminal.pim.txt -- user info on PIM library's Terminal module
-  stdio.gm2.def -- foreign function interface to C stdio for GNU Modula-2
-  stdio.p1.def -- foreign function interface to C stdio for p1 Modula-2
-  stdio.xds.def -- foreign function interface to C stdio for XDS Modula-2
 
 /src/dep
   ArgLexer.dep.dot -- dependency graph for module ArgLexer
@@ -101,6 +99,11 @@
   FileSystemAdapter.p1.mod -- FileSystemAdapter for p1 Modula-2
   FileSystemAdapter.pim.mod -- FileSystemAdapter for any PIM Modula-2 compiler
   FileSystemAdapter.xds.mod -- FileSystemAdapter for XDS Modula-2
+
+/src/posix
+  stdio.gm2.def -- foreign function interface to C stdio for GNU Modula-2
+  stdio.p1.def -- foreign function interface to C stdio for p1 Modula-2
+  stdio.xds.def -- foreign function interface to C stdio for XDS Modula-2
 
 /xec
   LAUNCHSCRIPTS.md -- user info on launch scripts
