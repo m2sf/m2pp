@@ -1,59 +1,69 @@
 #!/bin/bash
 echo "*** M2PP build configuration script for Unix/POSIX ***"
 #
-# dialect menu
+# compiler menu
 #
 echo "[Compiler Selection]"
 PS3="Modula-2 compiler: "
-select option in "ADW" "GM2" "p1" "XDS" "any PIM compiler" Quit
+select option in "GM2" "p1" "XDS" "any PIM compiler" Quit
 do
   case $option in
-    "ADW")
-      echo ADW Modula-2;;
     "GM2")
-      echo GNU Modula-2;;
+      echo GNU Modula-2
+      ;;
     "p1")
-      echo p1 Modula-2;;
+      echo p1 Modula-2
+      ;;
     "XDS")
-      echo XDS Modula-2;;
+      echo XDS Modula-2;
+      ;;
     "any PIM compiler")
-      echo generic PIM Modula-2;;
+      echo generic PIM Modula-2
+      ;;
     Quit)
       break;;
   esac
 done
 #
-# CARDINAL size
+# library menu
 #
-echo "[CARDINAL Size]"
-PS3="Size of type CARDINAL: "
-select option in "16 bits" "32 bits" "64 bits" Quit
+echo "[I/O Library Selection]"
+PS3="I/O library: "
+select option in "POSIX" "ISO" "PIM" Quit
 do
   case $option in
-    "16 bits")
-      echo 16;;
-    "32 bits")
-      echo 32;;
-    "64 bits")
-      echo 64;;
+    "POSIX")
+      echo POSIX
+      ;;
+    "ISO")
+      echo ISO
+      ;;
+    "PIM")
+      echo PIM
+      ;;
     Quit)
       break;;
   esac
 done
+
 #
-# LONGINT size
+# memory model
 #
-echo "[LONGINT Size]"
-PS3="Size of type LONGINT: "
-select option in "16 bits" "32 bits" "64 bits" Quit
+echo "[Bitwidths of CARDINAL/LONGINT]"
+PS3="Memory model: "
+select option in "16/16" "16/32" "32/32" "32/64" "64/64" Quit
 do
   case $option in
-    "16 bits")
-      echo 16;;
-    "32 bits")
-      echo 32;;
-    "64 bits")
-      echo 64;;
+    "16/16")
+      echo "16/16";;
+    "16/32")
+      echo "16/32";;
+    "32/32")
+      echo "32/32";;
+    "32/64")
+      echo "32/64";;
+    "64/64")
+      echo "64/64";;
     Quit)
       break;;
   esac
