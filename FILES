@@ -1,4 +1,5 @@
 /
+  /cfg -- build configuration directory
   /src  -- source directory
   /xec -- shell scripts directory
   AUTHORS -- authors and contributors
@@ -7,6 +8,16 @@
   README.md -- project brief
   m2pp-grammar.gll -- LL(1) grammar in EBNF
   option-trie-analysis.txt -- Trie analysis for command line options
+
+/cfg
+  /cfg/utils
+  config.bat -- build configuration script for Windows and OS/2
+  config.com -- build configuration script for OpenVMS
+  config.sh -- build configuration script for Unix/POSIX systems
+
+/cfg/utils
+  CheckMemModel.iso.mod -- print sizes of CARDINAL and LONGINT (ISO version)
+  CheckMemModel.pim.mod -- print sizes of CARDINAL and LONGINT (PIM version)
 
 /src
   /src/dep -- dependencies directory
@@ -109,6 +120,6 @@
   LAUNCHSCRIPTS.md -- user info on launch scripts
   m2pp.bat -- launch script for Windows and OS/2
   m2pp.com -- launch script for OpenVMS
-  m2pp.sh -- launc script for Unix/POSIX systems
+  m2pp.sh -- launch script for Unix/POSIX systems
   
 +++
