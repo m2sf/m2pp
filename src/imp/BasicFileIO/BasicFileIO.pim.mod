@@ -4,6 +4,8 @@ IMPLEMENTATION MODULE BasicFileIO; (* PIM version *)
 
 (* Basic File IO library for M2PP and M2BSK *)
 
+IMPORT FileSystem, FileSystemAdapter; (* PIM specific *)
+
 FROM ISO646 IMPORT NUL, EOT;
 FROM Storage IMPORT ALLOCATE, DEALLOCATE;
 
