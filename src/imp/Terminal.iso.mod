@@ -30,7 +30,7 @@ PROCEDURE Write ( ch : CHAR );
 
 BEGIN
   STextIO.WriteChar(ch)
-END 
+END Write;
 
 
 (* ---------------------------------------------------------------------------
@@ -39,7 +39,7 @@ END
  * Writes the given character array to standard output.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE WriteString ( VAR (* CONST *) array : ARRAY OF CHAR );
+PROCEDURE WriteString ( array : ARRAY OF CHAR );
 
 BEGIN
   STextIO.WriteString(array)
