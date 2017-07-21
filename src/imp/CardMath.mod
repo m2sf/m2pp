@@ -13,16 +13,15 @@ CONST
   MaxCardDivPow2Of40 = MaxCardDivPow2Of32 DIV 256;
   MaxCardDivPow2Of48 = MaxCardDivPow2Of40 DIV 256;
   MaxCardDivPow2Of56 = MaxCardDivPow2Of48 DIV 256;
-  MaxCardDivPow2Of64 = MaxCardDivPow2Of56 DIV 256;
-    
-  BW8 = MAX(CARDINAL) <= 255;
-  BW16 = NOT BW8 AND (MaxCardDivPow2Of8 <= 255);
-  BW24 = NOT BW16 AND (MaxCardDivPow2Of16 <= 255);
-  BW32 = NOT BW24 AND (MaxCardDivPow2Of24 <= 255);
-  BW40 = NOT BW32 AND (MaxCardDivPow2Of32 <= 255);
-  BW48 = NOT BW40 AND (MaxCardDivPow2Of40 <= 255);
-  BW56 = NOT BW48 AND (MaxCardDivPow2Of48 <= 255);
-  BW64 = NOT BW56 AND (MaxCardDivPow2Of56 <= 255);
+  
+  BW8 = (MAX(CARDINAL) <= 255);
+  BW16 = (MaxCardDivPow2Of8 > 0) AND (MaxCardDivPow2Of8 <= 255);
+  BW24 = (MaxCardDivPow2Of16 > 0) AND (MaxCardDivPow2Of16 <= 255);
+  BW32 = (MaxCardDivPow2Of24 > 0) AND (MaxCardDivPow2Of24 <= 255);
+  BW40 = (MaxCardDivPow2Of32 > 0) AND (MaxCardDivPow2Of32 <= 255);
+  BW48 = (MaxCardDivPow2Of40 > 0) AND (MaxCardDivPow2Of40 <= 255);
+  BW56 = (MaxCardDivPow2Of48 > 0) AND (MaxCardDivPow2Of48 <= 255);
+  BW64 = (MaxCardDivPow2Of56 > 0) AND (MaxCardDivPow2Of56 <= 255);
   
   Bitwidth =
     8*ORD(BW8) + 16*ORD(BW16) + 24*ORD(BW24) + 32*ORD(BW32) +
@@ -386,14 +385,16 @@ VAR
 
 PROCEDURE InitPow10Table;
 
+CONST
+  OctetsPerCard = Bitwidth DIV 8;
+
 VAR
   index : CARDINAL;
 
-BEGIN
+BEGIN  
+  (* calculate powers of 10 *)
   powerOf10[0] := 1;
-  
-  (* any size of CARDINAL *)
-  FOR index := 1 TO maxDecDigits[Bitwidth DIV 8] DO
+  FOR index := 1 TO maxDecDigits[OctetsPerCard] DO
     powerOf10[index] := powerOf10[index-1] * 10
   END (* FOR *)
 END InitPow10Table;
