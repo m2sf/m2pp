@@ -1,6 +1,6 @@
 (*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation. *)
 
-DEFINITION MODULE Console;
+IMPLEMENTATION MODULE Console;
 
 (* Console I/O library *)
 
