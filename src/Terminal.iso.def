@@ -29,7 +29,7 @@ PROCEDURE Write ( ch : CHAR );
  * Writes the given character array to standard output.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE WriteString ( VAR (* CONST *) array : ARRAY OF CHAR );
+PROCEDURE WriteString ( array : ARRAY OF CHAR );
 
 
 (* ---------------------------------------------------------------------------
