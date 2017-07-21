@@ -455,7 +455,7 @@ BEGIN
     index := index + 1
   END; (* WHILE *)
   
-  (* read chars from file *)
+  (* read octets from file *)
   noError := TRUE;
   WHILE noError AND (index < HIGH(buffer)) AND feof(file^.fptr) = 0 DO
     c := fgetc(file^.fptr);

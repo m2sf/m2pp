@@ -1,4 +1,4 @@
-(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation. *)
+(*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation. *)
 
 IMPLEMENTATION MODULE BasicFileIO; (* ISO version *)
 
