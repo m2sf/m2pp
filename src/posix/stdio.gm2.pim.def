@@ -1,0 +1,147 @@
+(*!m2pim+gm2*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE FOR "C" stdio; (* GNU Modula-2 PIM version *)
+
+(* Modula-2 interface to POSIX stdio *)
+
+EXPORT UNQUALIFIED
+
+  (* Errno constants *)
+  EPERM, ENOENT, EIO, ENXIO, E2BIG, EBADF, ENOMEM, EACCES, EFAULT, ENOTBLK,
+  EBUSY, EBUSY, EEXIST, EXDEV, ENODEV, ENOTDIR, EISDIR, EINVAL, ENFILE,
+  EMFILE, ENOTTY, ETXTBSY, EFBIG, ENOSPC, ESPIPE, EROFS, EMLINK, EPIPE,
+  EAGAIN, EWOULDBLOCK, ELOOP, ENAMETOOLONG, ENOTEMPTY, EFTYPE, EPWROFF,
+  EDEVERR, ENODATA, ENODATA, ENOSR, ENOSTR, ETIME,
+  
+  (* types and functions *)
+  FILE, SizeT, fopen, fflush, fclose, feof, fgetc, fputc, fread, fwrite,
+  rename, remove, ferror, clearerr;
+  
+
+FROM SYSTEM IMPORT
+  BYTE    (* char *),
+  ADDRESS (* void* *),
+  INT32   (* int *),
+  CSIZE_T (* size_t *);
+
+
+CONST
+  EPERM        (* Operation not permitted *) = 1;
+  ENOENT       (* No such file or directory *) = 2;
+  EIO          (* Input/output error *) = 5;
+  ENXIO        (* Device not configured *) = 6;
+  E2BIG        (* Argument list too long *) = 7;
+  EBADF        (* Bad file descriptor *) = 9;
+  ENOMEM       (* Cannot allocate memory *) = 12;
+  EACCES       (* Permission denied *) = 13;
+  EFAULT       (* Bad address *) = 14;
+  ENOTBLK      (* Block device required *) = 15;
+  EBUSY        (* Device or resource busy *) = 16;
+  EEXIST       (* File exists *) = 17;
+  EXDEV        (* Cross-device link *) = 18;
+  ENODEV       (* Operation not supported by device *) = 19;
+  ENOTDIR      (* Not a directory *) = 20;
+  EISDIR       (* Is a directory *) = 21;
+  EINVAL       (* Invalid argument *) = 22;
+  ENFILE       (* Too many open files in system *) = 23;
+  EMFILE       (* Too many open files *) = 24;
+  ENOTTY       (* Inappropriate ioctl for device *) = 25;
+  ETXTBSY      (* Text file busy *) = 26;
+  EFBIG        (* File too large *) = 27;
+  ENOSPC       (* No space left on device *) = 28;
+  ESPIPE       (* Illegal seek *) = 29;
+  EROFS        (* Read-only file system *) = 30;
+  EMLINK       (* Too many links *) = 31;
+  EPIPE        (* Broken pipe *) = 32;
+  EAGAIN       (* Resource temporarily unavailable *) = 35;
+  EWOULDBLOCK  (* Operation would block *) = EAGAIN;
+  ELOOP        (* Too many levels of symbolic links *) = 62;
+  ENAMETOOLONG (* File name too long *) = 63;
+  ENOTEMPTY    (* Directory not empty *) = 66;
+  EFTYPE       (* Inappropriate file type or format *) = 79;
+  EPWROFF      (* Device power is off *) = 82;
+  EDEVERR      (* Device error *) = 83;
+  ENODATA      (* No message available on STREAM *) = 96;
+  ENOSR        (* No STREAM resources *) = 98;
+  ENOSTR       (* Not a STREAM *) = 99;
+  ETIME        (* STREAM ioctl timeout *) = 101;
+
+
+(* type FILE *)
+
+TYPE FILE = ADDRESS;
+
+
+(* type size_t *)
+
+TYPE SizeT = CSIZE_T;
+
+
+(* type int *)
+
+TYPE INT = INT32;
+
+
+(* foreign declaration for fopen() *)
+
+PROCEDURE fopen ( VAR (* CONST *) filename, mode : ARRAY OF CHAR ) : FILE;
+
+
+(* foreign declaration for fflush() *)
+
+PROCEDURE fflush ( stream : FILE ) : INT;
+
+
+(* foreign declaration for fclose() *)
+
+PROCEDURE fclose ( stream : FILE ) : INT;
+
+
+(* foreign declaration for feof() *)
+
+PROCEDURE feof ( stream : FILE ) : INT;
+
+
+(* foreign declaration for fgetc() *)
+
+PROCEDURE fgetc ( stream : FILE ) : INT;
+
+
+(* foreign declaration for fputc() *)
+
+PROCEDURE fputc ( c : INT; stream : FILE ) : INT;
+
+
+(* foreign declaration for fread() *)
+
+PROCEDURE fread
+  ( VAR data : ARRAY OF BYTE; size, items  : SizeT; stream : FILE ) : SizeT;
+
+
+(* foreign declaration for fwrite() *)
+
+PROCEDURE fwrite
+  ( data : ARRAY OF BYTE; size, items  : SizeT; stream : FILE ) : SizeT;
+
+
+(* foreign declaration for rename() *)
+
+PROCEDURE rename ( VAR (* CONST *) old, new : ARRAY OF CHAR ) : INT;
+
+
+(* foreign declaration for remove() *)
+
+PROCEDURE remove ( VAR (* CONST *) path : ARRAY OF CHAR ) : INT;
+
+
+(* foreign declaration for ferror() *)
+
+PROCEDURE ferror ( stream : FILE ) : INT;
+
+
+(* foreign declaration for clearerr() *)
+
+PROCEDURE clearerr ( stream : FILE );
+
+
+END stdio.
