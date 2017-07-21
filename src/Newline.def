@@ -4,9 +4,9 @@ DEFINITION MODULE Newline;
 
 (* Newline mode management *)
 
-CONST Default = LF;
-
 TYPE Mode = ( LF, CR, CRLF );
+
+CONST Default = LF;
 
 
 PROCEDURE SetMode ( mode : Mode );
