@@ -4,6 +4,10 @@ DEFINITION MODULE Settings;
 
 (* Program wide settings management *)
 
+IMPORT Newline, Tabulator;
+FROM String IMPORT StringT; (* alias for String.String *)
+
+
 TYPE Setting =
   ( Infile, Outfile, TabWidth, NewlineMode, Verbose, ShowSettings );
 
@@ -20,7 +24,7 @@ PROCEDURE SetInfile ( path : StringT );
 (* Sets the infile setting to path. *)
 
 
-PROCEDURE infile ( ) : StringT;
+PROCEDURE infile () : StringT;
 (* Returns the infile setting. *)
 
 
@@ -28,7 +32,7 @@ PROCEDURE SetOutfile ( path : StringT );
 (* Sets the outfile setting to path. *)
 
 
-PROCEDURE outfile ( ) : StringT;
+PROCEDURE outfile () : StringT;
 (* Returns the outfile setting. *)
 
 
@@ -36,7 +40,7 @@ PROCEDURE SetTabWidth ( value : Tabulator.TabWidth );
 (* Sets the tabwidth setting to value. *)
 
 
-PROCEDURE tabWidth ( ) : Tabluator.TabWidth;
+PROCEDURE tabWidth () : Tabulator.TabWidth;
 (* Returns the tabwidth setting. *)
 
 
@@ -44,7 +48,7 @@ PROCEDURE SetNewlineMode ( mode : Newline.Mode );
 (* Sets the newline mode setting to mode. *)
 
 
-PROCEDURE newlineMode ( ) : Newline.Mode;
+PROCEDURE newlineMode () : Newline.Mode;
 (* Returns the newline mode setting. *)
 
 
@@ -52,7 +56,7 @@ PROCEDURE SetVerbose ( value : BOOLEAN );
 (* Sets the verbose setting. *)
 
 
-PROCEDURE verbose ( ) : BOOLEAN;
+PROCEDURE verbose () : BOOLEAN;
 (* Returns the verbose setting. *)
 
 
