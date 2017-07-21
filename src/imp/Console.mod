@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE Console;
 
 (* Console I/O library *)
 
-IMPORT Terminal;
+IMPORT String, Terminal;
 
 FROM ISO646 IMPORT NUL, TAB, NEWLINE, SPACE, BACKSLASH, DEL;
 FROM String IMPORT StringT; (* alias for String.String *)
@@ -75,7 +75,7 @@ PROCEDURE WriteChar ( ch : CHAR );
 BEGIN
   (* write unless control char *)
   IF (ch >= SPACE) AND (ch # DEL) THEN
-    Terminal.Write(char)
+    Terminal.Write(ch)
   END (* IF *)
 END WriteChar;
 
