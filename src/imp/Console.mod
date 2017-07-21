@@ -37,7 +37,7 @@ END ReadChar;
  * in chars.  NEWLINE terminates input and will not be copied to chars.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE ReadChars ( VAR chars : ARRAY OF CHARS );
+PROCEDURE ReadChars ( VAR chars : ARRAY OF CHAR );
 
 VAR
   ch : CHAR;
