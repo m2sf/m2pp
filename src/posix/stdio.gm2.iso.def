@@ -1,6 +1,6 @@
 (*!m2iso+gm2*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-DEFINITION MODULE FOR "C" stdio; (* GNU Modula-2 version *)
+DEFINITION MODULE FOR "C" stdio; (* GNU Modula-2 ISO version *)
 
 (* Modula-2 interface to POSIX stdio *)
 
@@ -22,7 +22,7 @@ FROM SYSTEM IMPORT
   LOC     (* char *),
   ADDRESS (* void* *),
   INT32   (* int *),
-  SIZET   (* size_t *);
+  CSIZE_T (* size_t *);
 
 
 CONST
@@ -74,7 +74,7 @@ TYPE FILE = ADDRESS;
 
 (* type size_t *)
 
-TYPE SizeT = SIZET; (* waiting to be added to SYSTEM *)
+TYPE SizeT = CSIZE_T;
 
 
 (* type int *)
@@ -109,7 +109,7 @@ PROCEDURE fgetc ( stream : FILE ) : INT;
 
 (* foreign declaration for fputc() *)
 
-PROCEDURE fputc ( c : INT32; stream : FILE ) : INT;
+PROCEDURE fputc ( c : INT; stream : FILE ) : INT;
 
 
 (* foreign declaration for fread() *)
