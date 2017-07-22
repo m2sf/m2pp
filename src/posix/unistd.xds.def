@@ -1,0 +1,37 @@
+(*!m2iso+xds*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+<*+M2EXTENSIONS*> <*+CSTDLIB*>
+
+DEFINITION MODULE ["C"] unistd; (* XDS Modula-2 version *)
+
+(* Modula-2 interface to POSIX unistd *)
+
+FROM SYSTEM IMPORT int;
+
+
+(* type int *)
+
+TYPE INT = int;
+
+
+TYPE AccessMode = INT [0..7];
+
+
+CONST
+  FileExists = 0; (* 0b0000 *)
+  Executable = 1; (* 0b0001 *)
+  Writable   = 2, (* 0b0010 *)
+  Readable   = 4; (* 0b0100 *)
+
+
+(* foreign declaration for access() *)
+
+PROCEDURE access ( path : ARRAY OF CHAR; mode : AccessMode ) : INT;
+
+
+(* foreign declaration for unlink() *)
+
+PROCEDURE unlink ( path : ARRAY OF CHAR ) : INT;
+
+
+END unistd.
