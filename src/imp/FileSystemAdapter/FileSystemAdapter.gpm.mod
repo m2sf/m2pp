@@ -2,20 +2,51 @@
 
 IMPLEMENTATION MODULE FileSystemAdapter; (* GPM version *)
 
-IMPORT UxFiles, FLength; (* GPM specific libraries *)
+IMPORT FLength, PathLookup, UxFiles; (* GPM specific libraries *)
 
 
 PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if the file at the given path exists, else FALSE. *)
 
+CONST
+  NUL = CHR(0);
+  
 VAR
   found : BOOLEAN;
+  dirpath  : ARRAY [0..175] OF CHAR;
+  dummy,
+  filename : ARRAY [0..79] OF CHAR;
 
 BEGIN
-  (* TO DO *)
+  (* bail out if path is empty *)
+  IF path[0] = NUL THEN
+    RETURN FALSE
+  END; (* IF *)
   
-  (* use FindAbsName in module pathlookup *)
+  (* search for NUL terminator from left to right *)
+  index := 0;
+  WHILE (index <= HIGH(path)) AND (path[index] # NUL) DO
+    index := index + 1
+  END; (* WHILE *)
   
+  (* search for dir separator from right to left *)
+  ch := path[index];
+  WHILE (index > 0) AND (ch # '/') AND (ch # BACKSLASH) DO
+    index := index - 1;
+    ch := path[index]
+  END; (* WHILE *)
+  
+  IF (ch = '/') OR (ch = BACKSLASH) THEN
+  
+    (* copy path[0..index] to dirpath *)
+    
+    (* copy path[index+1..len] to filename *)
+    
+    PathLookup.FindAbsName(dirpath, filename, dummy, found)
+  ELSE (* no dir path *)
+    PathLookup.FindAbsName("", path, dummy, found)
+  END; (* IF *)
+    
   RETURN found
 END fileExists;
 
