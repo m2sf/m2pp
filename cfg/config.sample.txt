@@ -1,4 +1,4 @@
-$ ./config.sh
+$ config.sh
 *** M2PP build configuration script for Unix/POSIX ***
 
 Dialect Selection
@@ -39,26 +39,22 @@ Are these details correct? (y/n) : y
 Copying source files corresponding to selected build configuration ...
 
 copying /Users/quasimodo/Development/m2pp/src/Hash.cardinal.def
-to /Users/quasimodo/Development/m2pp/src/Hash.def
-copying /Users/quasimodo/Development/m2pp/src/imp/Hash.cardinal.mod
-to /Users/quasimodo/Development/m2pp/src/imp/Hash.mod
+     to /Users/quasimodo/Development/m2pp/src/Hash.def
 copying /Users/quasimodo/Development/m2pp/src/Infile.iso.def
-to /Users/quasimodo/Development/m2pp/src/Infile.def
+     to /Users/quasimodo/Development/m2pp/src/Infile.def
 copying /Users/quasimodo/Development/m2pp/src/Outfile.iso.def
-to /Users/quasimodo/Development/m2pp/src/Outfile.def
+     to /Users/quasimodo/Development/m2pp/src/Outfile.def
 copying /Users/quasimodo/Development/m2pp/src/String.iso.def
-to /Users/quasimodo/Development/m2pp/src/String.def
-copying /Users/quasimodo/Development/m2pp/src/imp/String.iso.mod
-to /Users/quasimodo/Development/m2pp/src/imp/String.mod
+     to /Users/quasimodo/Development/m2pp/src/String.def
 copying /Users/quasimodo/Development/m2pp/src/Terminal.iso.def
-to /Users/quasimodo/Development/m2pp/src/Terminal.def
+     to /Users/quasimodo/Development/m2pp/src/Terminal.def
 copying /Users/quasimodo/Development/m2pp/src/imp/Terminal.iso.mod
-to /Users/quasimodo/Development/m2pp/src/imp/Terminal.mod
+     to /Users/quasimodo/Development/m2pp/src/imp/Terminal.mod
 copying /Users/quasimodo/Development/m2pp/src/imp/BasicFileIO/BasicFileIO.posix.mod
-to /Users/quasimodo/Development/m2pp/src/imp/BasicFileIO.mod
+     to /Users/quasimodo/Development/m2pp/src/imp/BasicFileIO.mod
 copying /Users/quasimodo/Development/m2pp/src/imp/FileSystemAdapter/FileSystemAdapter.posix.mod
-to /Users/quasimodo/Development/m2pp/src/imp/FileSystemAdapter.mod
-copying /Users/quasimodo/Development/m2pp/src/posix/stdio.gm2.def
-to /Users/quasimodo/Development/m2pp/src/stdio.def
+     to /Users/quasimodo/Development/m2pp/src/imp/FileSystemAdapter.mod
+copying /Users/quasimodo/Development/m2pp/src/posix/stdio.gm2.iso.def
+     to /Users/quasimodo/Development/m2pp/src/stdio.def
 
 Build configuration completed.

@@ -1,6 +1,15 @@
 #!/bin/bash
 echo "*** M2PP build configuration script for Unix/POSIX ***"
 #
+if [ "$1" = "-t" ] || [ "$1" = "--test" ]
+then
+  echo ""
+  echo "running in test mode, no files will be copied."
+  test=1
+else
+  test=0
+fi
+#
 # ---------------------------------------------------------------------------
 # dialect menu
 # ---------------------------------------------------------------------------
@@ -220,87 +229,84 @@ echo ""
 echo Copying source files corresponding to selected build configuration ...
 echo ""
 
+# copy function
+function copy {
+  echo "copying $1"
+  echo "     to $2"
+  if [ ! $test ]
+  then
+    cp $1 $2
+  fi
+} # end copy
+
+# remove function
+function remove {
+  echo "removing $1"
+  if [ ! $test ]
+  then
+    rm $1
+  fi
+} # end remove
+
 # module Hash
-echo copying "${srcpath}Hash.${hashlibID}.def"
-echo  to "${srcpath}Hash.def"
-#cp "${srcpath}Hash.${hashlibID}.def" "${srcpath}Hash.def"
-echo copying "${srcpath}imp/Hash.${hashlibID}.mod"
-echo  to "${srcpath}imp/Hash.mod"
-#cp "${srcpath}imp/Hash.${hashlibID}.mod" "${srcpath}/imp/Hash.mod"
+copy "${srcpath}Hash.${hashlibID}.def" "${srcpath}Hash.def"
 
 # module Infile
-echo copying "${srcpath}Infile.${dialectID}.def"
-echo  to "${srcpath}Infile.def"
-#cp "${srcpath}Infile.${dialectID}.def" "${srcpath}Infile.def"
+copy "${srcpath}Infile.${dialectID}.def" "${srcpath}Infile.def"
 
 # module Outfile
-echo copying "${srcpath}Outfile.${dialectID}.def"
-echo  to "${srcpath}Outfile.def"
-#cp "${srcpath}Outfile.${dialectID}.def" "${srcpath}Outfile.def"
+copy "${srcpath}Outfile.${dialectID}.def" "${srcpath}Outfile.def"
 
 # module String
-echo copying "${srcpath}String.${dialectID}.def"
-echo  to "${srcpath}String.def"
-#cp "${srcpath}String.${dialectID}.def" "${srcpath}String.def"
-echo copying "${srcpath}imp/String.${dialectID}.mod"
-echo  to "${srcpath}imp/String.mod"
-#cp "${srcpath}imp/String.${dialectID}.def" "${srcpath}imp/String.mod"
+copy "${srcpath}String.${dialectID}.def" "${srcpath}String.def"
 
 # module Terminal
 if [ "$dialectID" = "iso" ]
 then
-  echo copying "${srcpath}Terminal.iso.def"
-  echo  to "${srcpath}Terminal.def"
-#cp "${srcpath}Terminal.iso.def" "${srcpath}Terminal.def"
-  echo copying "${srcpath}imp/Terminal.iso.mod"
-  echo  to "${srcpath}imp/Terminal.mod"
-#cp "${srcpath}imp/Terminal.iso.mod" "${srcpath}imp/Terminal.mod"
+  copy "${srcpath}Terminal.iso.def" "${srcpath}Terminal.def"
+  copy "${srcpath}imp/Terminal.iso.mod" "${srcpath}imp/Terminal.mod"
 else
   if [ -f "${srcpath}Terminal.def" ]
   then
-    echo removing "${srcpath}Terminal.def"
-    # rm "${srcpath}Terminal.def"
+    remove "${srcpath}Terminal.def"
   fi
   if [ -f "${srcpath}imp/Terminal.mod" ]
   then
-    echo removing "${srcpath}imp/Terminal.mod"
-    # rm "${srcpath}imp/Terminal.mod"
+    remove "${srcpath}imp/Terminal.mod"
   fi
 fi
 
 # module BasicFileIO
-echo copying "${srcpath}imp/BasicFileIO/BasicFileIO.${iolibID}.mod"
-echo  to "${srcpath}imp/BasicFileIO.mod"
-#cp "${srcpath}imp/BasicFileIO/BasicFileIO.${iolibID}.mod"
-#\  "${srcpath}imp/BasicFileIO.mod"
+copy "${srcpath}imp/BasicFileIO/BasicFileIO.${iolibID}.mod" \
+ "${srcpath}imp/BasicFileIO.mod"
 
 # module FileSystemAdapter
 if [ "$iolibID" = "iso" ]
 then
-  echo copying \
-    "${srcpath}imp/FileSystemAdapter/FileSystemAdapter.${compilerID}.mod"
-  echo  to "${srcpath}imp/FileSystemAdapter.mod"
-#cp "${srcpath}imp/BasicFileIO/BasicFileIO.${iolibID}.mod"
-#\  "${srcpath}imp/BasicFileIO.mod"
+  copy \
+    "${srcpath}imp/FileSystemAdapter/FileSystemAdapter.${compilerID}.mod" \
+    "${srcpath}imp/FileSystemAdapter.mod"
 else
-  echo copying \
-    "${srcpath}imp/FileSystemAdapter/FileSystemAdapter.${iolibID}.mod"
-  echo  to "${srcpath}imp/FileSystemAdapter.mod"
-#cp "${srcpath}imp/BasicFileIO/BasicFileIO.${iolibID}.mod"
-#\  "${srcpath}imp/BasicFileIO.mod"
+  copy \
+    "${srcpath}imp/FileSystemAdapter/FileSystemAdapter.${iolibID}.mod" \
+    "${srcpath}imp/FileSystemAdapter.mod"
 fi
 
 # foreign module stdio
 if [ "$iolibID" = "posix" ] || [ "$compilerID" = "p1" ]
 then
-  echo copying "${srcpath}posix/stdio.${compilerID}.def"
-  echo  to "${srcpath}stdio.def"
-#cp "${srcpath}posix/stdio.${compilerID}.def" "${srcpath}/stdio.def"
+  if [ "$compilerID" = "gm2" ]
+  then
+    copy "${srcpath}posix/stdio.${compilerID}.${dialectID}.def" \
+      "${srcpath}stdio.def"
+  else
+    copy "${srcpath}posix/stdio.${compilerID}.def" \
+      "${srcpath}stdio.def"
+  fi
 else
   if [ -f "${srcpath}stdio.def" ]
   then
-    echo removing "${srcpath}stdio.def"
-    # rm "${srcpath}stdio.def"
+    remove "${srcpath}stdio.def"
   fi
 fi
 
