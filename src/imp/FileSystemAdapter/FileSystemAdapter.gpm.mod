@@ -13,9 +13,9 @@ CONST
   
 VAR
   found : BOOLEAN;
-  dirpath  : ARRAY [0..175] OF CHAR;
-  dummy,
-  filename : ARRAY [0..79] OF CHAR;
+  dirpath : ARRAY [0..175] OF CHAR;
+  dummy, fname : ARRAY [0..79] OF CHAR;
+  len, dirPathIndex, srcIndex, tgtIndex : CARDINAL;
 
 BEGIN
   (* bail out if path is empty *)
@@ -24,26 +24,44 @@ BEGIN
   END; (* IF *)
   
   (* search for NUL terminator from left to right *)
-  index := 0;
-  WHILE (index <= HIGH(path)) AND (path[index] # NUL) DO
-    index := index + 1
+  len := 0;
+  WHILE (len <= HIGH(path)) AND (path[len] # NUL) DO
+    len := len + 1
   END; (* WHILE *)
-  
+    
   (* search for dir separator from right to left *)
-  ch := path[index];
-  WHILE (index > 0) AND (ch # '/') AND (ch # BACKSLASH) DO
-    index := index - 1;
-    ch := path[index]
+  ch := path[len];
+  dirIndex := 0;
+  WHILE (dirIndex > 0) AND (ch # '/') AND (ch # BACKSLASH) DO
+    dirIndex := dirIndex - 1;
+    ch := path[dirIndex]
   END; (* WHILE *)
   
   IF (ch = '/') OR (ch = BACKSLASH) THEN
   
-    (* copy path[0..index] to dirpath *)
+    (* copy path[0..dirIndex] to dirpath *)
+    FOR srcIndex := 0 TO dirIndex DO
+      dirpath[srcIndex] := path[srcIndex]
+    END; (* FOR *)
     
-    (* copy path[index+1..len] to filename *)
+    (* terminate dirpath *)
+    dirpath[dirIndex+1] := NUL;
     
-    PathLookup.FindAbsName(dirpath, filename, dummy, found)
-  ELSE (* no dir path *)
+    (* copy path[index+1..len] to fname *)
+    tgtIndex := 0;
+    FOR srcIndex := dirIndex+1 TO len DO
+      fname[tgtIndex] := path[srcIndex];
+      tgtIndex := tgtIndex + 1
+    END; (* FOR *)
+    
+    (* terminate fname unless terminated *)
+    IF fname[tgtIndex-1] # NUL THEN
+      fname[tgtIndex] := NUL
+    END; (* IF *)
+    
+    PathLookup.FindAbsName(dirpath, fname, dummy, found)
+    
+  ELSE (* path contains no directory *)
     PathLookup.FindAbsName("", path, dummy, found)
   END; (* IF *)
     
