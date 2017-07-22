@@ -12,9 +12,16 @@ IMPORT unistd0; (* foreign interface *)
 TYPE INT = unistd0.INT;
 
 
+TYPE AccessMode = (
+  FileExists, (* 0b0000 *)
+  Executable, (* 0b0001 *)
+  Writable,   (* 0b0010 *)
+  Readable ); (* 0b0100 *)
+
+
 (* access() *)
 
-PROCEDURE access ( path : ARRAY OF CHAR ) : INT;
+PROCEDURE access ( path : ARRAY OF CHAR; mode : AccessMode ) : INT;
 
 
 (* unlink() *)

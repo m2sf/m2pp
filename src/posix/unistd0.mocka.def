@@ -15,7 +15,7 @@ TYPE INT = INTEGER;
 
 (* foreign declaration for access() *)
 
-PROCEDURE access ( path : ADDRESS ) : INT;
+PROCEDURE access ( path : ADDRESS; mode : INT ) : INT;
 
 
 (* foreign declaration for unlink() *)
