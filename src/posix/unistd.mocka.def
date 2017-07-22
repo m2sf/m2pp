@@ -12,11 +12,14 @@ IMPORT unistd0; (* foreign interface *)
 TYPE INT = unistd0.INT;
 
 
-TYPE AccessMode = (
-  FileExists, (* 0b0000 *)
-  Executable, (* 0b0001 *)
-  Writable,   (* 0b0010 *)
-  Readable ); (* 0b0100 *)
+TYPE AccessMode = INT [0..7];
+
+
+CONST
+  FileExists = 0; (* 0b0000 *)
+  Executable = 1; (* 0b0001 *)
+  Writable   = 2, (* 0b0010 *)
+  Readable   = 4; (* 0b0100 *)
 
 
 (* access() *)
