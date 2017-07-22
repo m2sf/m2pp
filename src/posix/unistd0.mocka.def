@@ -1,0 +1,26 @@
+(*!m2pim+mocka*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+FOREIGN MODULE unistd0; (* MOCKA version *)
+
+(* Low-level Modula-2 interface to POSIX unistd *)
+  
+
+FROM SYSTEM IMPORT ADDRESS (* void* *);
+
+
+(* type int *)
+
+TYPE INT = INTEGER;
+
+
+(* foreign declaration for access() *)
+
+PROCEDURE access ( path : ADDRESS ) : INT;
+
+
+(* foreign declaration for unlink() *)
+
+PROCEDURE unlink ( path : ADDRESS ) : INT;
+
+
+END unistd0.

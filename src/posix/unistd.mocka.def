@@ -1,0 +1,25 @@
+(*!m2pim+mocka*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+FOREIGN MODULE unistd; (* MOCKA version *)
+
+(* User-level Modula-2 interface to POSIX unistd *)
+  
+IMPORT unistd0; (* foreign interface *)
+
+
+(* type int *)
+
+TYPE INT = unistd0.INT;
+
+
+(* access() *)
+
+PROCEDURE access ( path : ARRAY OF CHAR ) : INT;
+
+
+(* unlink() *)
+
+PROCEDURE unlink ( path : ARRAY OF CHAR ) : INT;
+
+
+END unistd.
