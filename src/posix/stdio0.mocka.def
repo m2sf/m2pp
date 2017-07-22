@@ -85,4 +85,4 @@ PROCEDURE ferror ( stream : FILE ) : INT;
 PROCEDURE clearerr ( stream : FILE );
 
 
-END stdio.
+END stdio0.
