@@ -1,4 +1,5 @@
 #!/bin/bash
+# config.sh * Copyright (c) 2017 Modula-2 Software Foundation
 echo "*** M2PP build configuration script for Unix/POSIX ***"
 #
 if [ "$1" = "-t" ] || [ "$1" = "--test" ]
@@ -39,6 +40,7 @@ done
 echo ""
 echo "Compiler Selection"
 PS3="Modula-2 compiler: "
+needsPosixShim=0
 #
 # ---------------------------------------------------------------------------
 # ISO compiler selection
@@ -72,15 +74,21 @@ then
 elif [ "$dialectID" = "pim" ]
 then
   select compiler in \
-    "GNU Modula-2" "MOCKA Modula-2" "generic PIM compiler" Quit
+    "ACK Modula-2" "GNU Modula-2" "MOCKA Modula-2" "generic PIM compiler" Quit
   do
     case $compiler in
+      "ACK Modula-2")
+        compilerID="ack"
+        needsPosixShim=1
+        break
+        ;;
       "GNU Modula-2")
         compilerID="gm2"
         break
         ;;
       "MOCKA Modula-2")
         compilerID="mocka"
+        needsPosixShim=1
         break
         ;;
       "generic PIM compiler")
@@ -126,28 +134,31 @@ then
 # ---------------------------------------------------------------------------
 # PIM io-library selection
 # ---------------------------------------------------------------------------
-elif [ "$dialectID" = "pim" ] && [ "$compilerID" = "mocka" ]
-then
-  iolibID="posix"
-#
 elif [ "$dialectID" = "pim" ]
 then
-  select iolib in "POSIX I/O library" "PIM I/O library" Quit
-  do
-    case $iolib in
-      "POSIX I/O library")
-        iolibID="posix"
-        break
-        ;;
-      "PIM I/O library")
-        iolibID="pim"
-        break
-        ;;
-      Quit)
-        exit
-        ;;
-    esac
-  done
+  if [ "$compilerID" = "ack" ] || [ "$compilerID" = "mocka" ]
+  then # posix only
+    iolib="POSIX I/O library"
+    iolibID="posix"
+    echo "$iolib"
+  else # posix or pim
+    select iolib in "POSIX I/O library" "PIM I/O library" Quit
+    do
+      case $iolib in
+        "POSIX I/O library")
+          iolibID="posix"
+          break
+          ;;
+        "PIM I/O library")
+          iolibID="pim"
+          break
+          ;;
+        Quit)
+          exit
+          ;;
+      esac
+    done
+  fi
 fi
 #
 # ---------------------------------------------------------------------------
@@ -250,10 +261,13 @@ function copy {
 
 # remove function
 function remove {
-  echo "removing $1"
-  if [ ! $test ]
+  if [ -f $1 ]
   then
-    rm $1
+    echo "removing $1"
+    if [ ! $test ]
+    then
+      rm $1
+    fi
   fi
 } # end remove
 
@@ -275,14 +289,8 @@ then
   copy "${srcpath}Terminal.iso.def" "${srcpath}Terminal.def"
   copy "${srcpath}imp/Terminal.iso.mod" "${srcpath}imp/Terminal.mod"
 else
-  if [ -f "${srcpath}Terminal.def" ]
-  then
-    remove "${srcpath}Terminal.def"
-  fi
-  if [ -f "${srcpath}imp/Terminal.mod" ]
-  then
-    remove "${srcpath}imp/Terminal.mod"
-  fi
+  remove "${srcpath}Terminal.def"
+  remove "${srcpath}imp/Terminal.mod"
 fi
 
 # module BasicFileIO
@@ -301,22 +309,39 @@ else
     "${srcpath}imp/FileSystemAdapter.mod"
 fi
 
-# foreign module stdio
+# posix shim libraries
+if [ $needsPosixShim ]
+then
+  copy "${srcpath}posix/stdio.shim.def" "${srcpath}stdio.def"
+  copy "${srcpath}imp/posix/stdio.shim.mod" "${srcpath}imp/stdio.mod"
+  copy "${srcpath}posix/unistd.shim.def" "${srcpath}unistd.def"
+  copy "${srcpath}imp/posix/unistd.shim.mod" "${srcpath}imp/unistd.mod"
+fi
+
+# foreign interface modules stdio and unistd
 if [ "$iolibID" = "posix" ] || [ "$compilerID" = "p1" ]
 then
   if [ "$compilerID" = "gm2" ]
   then
     copy "${srcpath}posix/stdio.${compilerID}.${dialectID}.def" \
       "${srcpath}stdio.def"
+    copy "${srcpath}posix/unistd.${compilerID}.${dialectID}.def" \
+      "${srcpath}unistd.def"
+  elif [ $needsPosixShim ]
+  then
+    copy "${srcpath}posix/stdio0.${compilerID}.def" "${srcpath}stdio0.def"
+    copy "${srcpath}posix/unistd0.${compilerID}.def" "${srcpath}unistd0.def"
   else
-    copy "${srcpath}posix/stdio.${compilerID}.def" \
-      "${srcpath}stdio.def"
+    copy "${srcpath}posix/stdio.${compilerID}.def" "${srcpath}stdio.def"
+    copy "${srcpath}posix/unistd.${compilerID}.def" "${srcpath}unistd.def"
   fi
 else
-  if [ -f "${srcpath}stdio.def" ]
-  then
-    remove "${srcpath}stdio.def"
-  fi
+  remove "${srcpath}stdio.def"
+  remove "${srcpath}stdio0.def"
+  remove "${srcpath}unistd.def"
+  remove "${srcpath}unistd0.def"
+  remove "${srcpath}imp/stdio.mod"
+  remove "${srcpath}imp/unistd.mod"
 fi
 
 echo ""
