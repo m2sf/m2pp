@@ -5,13 +5,6 @@ IMPLEMENTATION MODULE FileSystemAdapter; (* GPM version *)
 IMPORT UxFiles, FLength; (* GPM specific libraries *)
 
 
-CONST
-  Opened = ChanConsts.opened;
-  NotFound = ChanConsts.noSuchFile;
-  ExistsAlready = ChanConsts.fileExists;
-  OpenAlready = ChanConsts.alreadyOpen;
-
-
 PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if the file at the given path exists, else FALSE. *)
 
@@ -19,7 +12,10 @@ VAR
   found : BOOLEAN;
 
 BEGIN
-  (* TO DO *) (* use FindAbsName in module pathlookup *)
+  (* TO DO *)
+  
+  (* use FindAbsName in module pathlookup *)
+  
   RETURN found
 END fileExists;
 
