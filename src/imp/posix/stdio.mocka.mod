@@ -4,21 +4,17 @@ IMPLEMENTATION MODULE stdio; (* MOCKA version *)
 
 (* User-level Modula-2 interface to POSIX stdio *)
   
-IMPORT stdio0;
+IMPORT stdio0; (* foreign interface *)
 
-FROM SYSTEM IMPORT ADDRESS, ADR, BYTE;
+FROM SYSTEM IMPORT ADR, BYTE;
 
 
 (* fopen() *)
 
 PROCEDURE fopen ( filename, mode : ARRAY OF CHAR ) : FILE;
 
-fnameAddr, modeAddr : ADDRESS;
-
 BEGIN
-  fnameAddr := ADR(filename);
-  modeAddr := ADR(mode);
-  RETURN stdio0.fopen(fnameAddr, modeAddr)
+  RETURN stdio0.fopen(ADR(filename), ADR(mode))
 END fopen;
 
 
@@ -27,11 +23,8 @@ END fopen;
 PROCEDURE fread
   ( VAR data : ARRAY OF BYTE; size, items  : SizeT; stream : FILE ) : SizeT;
 
-VAR dataAddr : ADDRESS;
-
 BEGIN
-  dataAddr := ADR(data);
-  RETURN stdio0.fread(dataAddr, size, items, stream)
+  RETURN stdio0.fread(ADR(data), size, items, stream)
 END fread;
 
 
@@ -40,11 +33,8 @@ END fread;
 PROCEDURE fwrite
   ( data : ARRAY OF BYTE; size, items  : SizeT; stream : FILE ) : SizeT;
 
-VAR dataAddr : ADDRESS;
-
 BEGIN
-  dataAddr := ADR(data);
-  RETURN stdio0.fread(dataAddr, size, items, stream)
+  RETURN stdio0.fread(ADR(data), size, items, stream)
 END fwrite;
 
 
@@ -52,12 +42,8 @@ END fwrite;
 
 PROCEDURE rename ( old, new : ARRAY OF CHAR ) : INT;
 
-oldAddr, newAddr : ADDRESS;
-
 BEGIN
-  oldAddr := ADR(old);
-  newAddr := ADR(new);
-  RETURN stdio0.rename(oldAddr, newAddr)
+  RETURN stdio0.rename(ADR(old), ADR(new))
 END rename;
 
 
@@ -65,11 +51,8 @@ END rename;
 
 PROCEDURE remove ( path : ARRAY OF CHAR ) : INT;
 
-VAR pathAddr : ADDRESS;
-
 BEGIN
-  pathAddr := ADR(path);
-  RETURN stdio0.remove(pathAddr)
+  RETURN stdio0.remove(ADR(path))
 END remove;
 
 
