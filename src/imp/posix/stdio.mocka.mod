@@ -34,7 +34,7 @@ PROCEDURE fwrite
   ( data : ARRAY OF BYTE; size, items  : SizeT; stream : FILE ) : SizeT;
 
 BEGIN
-  RETURN stdio0.fread(ADR(data), size, items, stream)
+  RETURN stdio0.fwrite(ADR(data), size, items, stream)
 END fwrite;
 
 
