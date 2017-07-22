@@ -1,6 +1,6 @@
 (*!m2pim+mocka*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-FOREIGN MODULE unistd; (* MOCKA version *)
+DEFINITION MODULE unistd; (* MOCKA version *)
 
 (* User-level Modula-2 interface to POSIX unistd *)
   
