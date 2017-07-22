@@ -106,6 +106,7 @@
 
 /src/imp/FileSystemAdapter
   FileSystemAdapter.adw.mod -- FileSystemAdapter for ADW Modula-2
+  FileSystemAdapter.gpm.mod -- FileSystemAdapter for GPM Modula-2
   FileSystemAdapter.mw.mod -- FileSystemAdapter for Modulaware Modula-2
   FileSystemAdapter.p1.mod -- FileSystemAdapter for p1 Modula-2
   FileSystemAdapter.pim.mod -- FileSystemAdapter for any PIM Modula-2 compiler
