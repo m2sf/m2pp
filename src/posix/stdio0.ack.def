@@ -1,0 +1,89 @@
+(*!m2pim+ack*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+(*$Foreign language module *)
+
+DEFINITION MODULE stdio0; (* ACK version *)
+
+(* Low-level Modula-2 interface to POSIX stdio *)
+  
+FROM SYSTEM IMPORT ADDRESS;
+
+
+(* type FILE *)
+
+TYPE FILE = ADDRESS;
+
+
+(* type size_t *)
+
+TYPE SizeT = CARDINAL;
+
+
+(* type int *)
+
+TYPE INT = INTEGER;
+
+
+(* foreign declaration for fopen() *)
+
+PROCEDURE fopen ( filename, mode : ADDRESS ) : FILE;
+
+
+(* foreign declaration for fflush() *)
+
+PROCEDURE fflush ( stream : FILE ) : INT;
+
+
+(* foreign declaration for fclose() *)
+
+PROCEDURE fclose ( stream : FILE ) : INT;
+
+
+(* foreign declaration for feof() *)
+
+PROCEDURE feof ( stream : FILE ) : INT;
+
+
+(* foreign declaration for fgetc() *)
+
+PROCEDURE fgetc ( stream : FILE ) : INT;
+
+
+(* foreign declaration for fputc() *)
+
+PROCEDURE fputc ( c : INT; stream : FILE ) : INT;
+
+
+(* foreign declaration for fread() *)
+
+PROCEDURE fread
+  ( data : ADDRESS; size, items  : SizeT; stream : FILE ) : SizeT;
+
+
+(* foreign declaration for fwrite() *)
+
+PROCEDURE fwrite
+  ( data : ADDRESS; size, items  : SizeT; stream : FILE ) : SizeT;
+
+
+(* foreign declaration for rename() *)
+
+PROCEDURE rename ( old, new : ADDRESS ) : INT;
+
+
+(* foreign declaration for remove() *)
+
+PROCEDURE remove ( path : ADDRESS ) : INT;
+
+
+(* foreign declaration for ferror() *)
+
+PROCEDURE ferror ( stream : FILE ) : INT;
+
+
+(* foreign declaration for clearerr() *)
+
+PROCEDURE clearerr ( stream : FILE );
+
+
+END stdio0.
