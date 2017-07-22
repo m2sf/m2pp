@@ -111,10 +111,22 @@
   FileSystemAdapter.pim.mod -- FileSystemAdapter for any PIM Modula-2 compiler
   FileSystemAdapter.xds.mod -- FileSystemAdapter for XDS Modula-2
 
+/src/imp/posix
+  stdio.mocka.mod -- user-level C stdio shim library for MOCKA Modula-2
+  unistd.mocka.mod -- user-level C unistd shim library for MOCKA Modula-2
+
 /src/posix
-  stdio.gm2.def -- foreign function interface to C stdio for GNU Modula-2
+  stdio.gm2.iso.def -- foreign function interface to C stdio for GNU Modula-2
+  stdio.gm2.pim.def -- foreign function interface to C stdio for GNU Modula-2
+  stdio.mocka.def -- user-level interface to C stdio for MOCKA Modula-2
   stdio.p1.def -- foreign function interface to C stdio for p1 Modula-2
   stdio.xds.def -- foreign function interface to C stdio for XDS Modula-2
+  stdio0.mocka.def -- low-level interface to C stdio for MOCKA Modula-2
+  unistd.gm2.def -- foreign function interface to C unistd for GNU Modula-2
+  unistd.mocka.def -- user-level interface to C unistd for MOCKA Modula-2
+  unistd.p1.def -- foreign function interface to C unistd for p1 Modula-2
+  unistd.xds.def -- foreign function interface to C unistd for XDS Modula-2
+  unistd0.mocka.def -- low-level interface to C unistd for MOCKA Modula-2
 
 /xec
   LAUNCHSCRIPTS.md -- user info on launch scripts
