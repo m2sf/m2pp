@@ -6,6 +6,7 @@
   FILES -- this file
   LICENSE -- software license
   README.md -- project brief
+  TODO -- to do list
   m2pp-grammar.gll -- LL(1) grammar in EBNF
   option-trie-analysis.txt -- Trie analysis for command line options
 
