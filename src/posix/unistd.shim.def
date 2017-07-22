@@ -1,8 +1,8 @@
-(*!m2pim+mocka*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-DEFINITION MODULE unistd; (* MOCKA version *)
+DEFINITION MODULE unistd; (* use for ACK and MOCKA *)
 
-(* User-level Modula-2 interface to POSIX unistd *)
+(* User-level Modula-2 shim library to call POSIX unistd *)
   
 IMPORT unistd0; (* foreign interface *)
 
