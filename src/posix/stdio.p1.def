@@ -1,7 +1,6 @@
 (*!m2iso+p1*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-<*ASSIGN(Foreign,TRUE)*>
-<*ASSIGN(Calling,"CCalling")*>
+<*ASSIGN(Foreign,TRUE)*> <*ASSIGN(Calling,"CCalling")*>
 
 DEFINITION MODULE stdio; (* p1 version *)
 
@@ -119,27 +118,23 @@ PROCEDURE fputc ( c : INT; stream : FILE ) : INT;
 (* foreign declaration for fread() *)
 
 PROCEDURE fread
-  ( <*ASSIGN(Reference,TRUE)*> VAR data : ARRAY OF LOC;
-    size, items  : SizeT; stream : FILE ) : SizeT;
+  ( VAR data : ARRAY OF LOC; size, items  : SizeT; stream : FILE ) : SizeT;
 
 
 (* foreign declaration for fwrite() *)
 
 PROCEDURE fwrite
-  ( <*ASSIGN(Reference,TRUE)*> data : ARRAY OF LOC;
-    size, items  : SizeT; stream : FILE ) : SizeT;
+  ( data : ARRAY OF LOC; size, items  : SizeT; stream : FILE ) : SizeT;
 
 
 (* foreign declaration for rename() *)
 
-PROCEDURE rename
-  ( <*ASSIGN(Reference,TRUE)*> VAR old, new : ARRAY OF CHAR ) : INT;
+PROCEDURE rename ( old, new : ARRAY OF CHAR ) : INT;
 
 
 (* foreign declaration for remove() *)
 
-PROCEDURE remove
-  ( <*ASSIGN(Reference,TRUE)*> VAR path : ARRAY OF CHAR ) : INT;
+PROCEDURE remove ( path : ARRAY OF CHAR ) : INT;
 
 
 (* foreign declaration for ferror() *)
