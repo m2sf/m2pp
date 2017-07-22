@@ -7,9 +7,9 @@ Scripts
 * build configuration script for OpenVMS
 
 Adaptation Libraries
-* foreign definition modules stdio and unistd for Ulm's Modula-2 System
 * implementation of module FileSystemAdapter for Aglet Modula-2
 * implementation of module FileSystemAdapter for Clarion Modula-2
+* foreign definition modules stdio and unistd for Ulm's Modula-2 System
 
 Features
 * implement --show-settings output
@@ -17,5 +17,9 @@ Features
 Missing Functionality
 * procedure AppendSliceToArray in CharArray.iso.mod
 * procedure AppendSliceToArray in CharArray.pim.mod
+
+Bugs
+* bit width calculation in Hash.cardinal.mod
+* bit width calculation in Hash.longint.mod
 
 [END OF FILE]
