@@ -71,11 +71,16 @@ then
 # ---------------------------------------------------------------------------
 elif [ "$dialectID" = "pim" ]
 then
-  select compiler in "GNU Modula-2" "generic PIM compiler" Quit
+  select compiler in \
+    "GNU Modula-2" "MOCKA Modula-2" "generic PIM compiler" Quit
   do
     case $compiler in
       "GNU Modula-2")
         compilerID="gm2"
+        break
+        ;;
+      "MOCKA Modula-2")
+        compilerID="mocka"
         break
         ;;
       "generic PIM compiler")
@@ -121,6 +126,10 @@ then
 # ---------------------------------------------------------------------------
 # PIM io-library selection
 # ---------------------------------------------------------------------------
+elif [ "$dialectID" = "pim" ] && [ "$compilerID" = "mocka" ]
+then
+  iolibID="posix"
+#
 elif [ "$dialectID" = "pim" ]
 then
   select iolib in "POSIX I/O library" "PIM I/O library" Quit
