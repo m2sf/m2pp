@@ -1,9 +1,9 @@
-(*!m2pim+mocka*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-IMPLEMENTATION MODULE stdio; (* MOCKA version *)
+IMPLEMENTATION MODULE stdio; (* use for ACK and MOCKA *)
 
-(* User-level Modula-2 interface to POSIX stdio *)
-  
+(* User-level Modula-2 shim library to call POSIX stdio *)
+
 IMPORT stdio0; (* foreign interface *)
 
 FROM SYSTEM IMPORT ADR, BYTE;
