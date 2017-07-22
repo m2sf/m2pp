@@ -8,48 +8,6 @@ FOREIGN MODULE stdio0; (* MOCKA version *)
 FROM SYSTEM IMPORT ADDRESS (* void* *);
 
 
-CONST
-  EPERM        (* Operation not permitted *) = 1;
-  ENOENT       (* No such file or directory *) = 2;
-  EIO          (* Input/output error *) = 5;
-  ENXIO        (* Device not configured *) = 6;
-  E2BIG        (* Argument list too long *) = 7;
-  EBADF        (* Bad file descriptor *) = 9;
-  ENOMEM       (* Cannot allocate memory *) = 12;
-  EACCES       (* Permission denied *) = 13;
-  EFAULT       (* Bad address *) = 14;
-  ENOTBLK      (* Block device required *) = 15;
-  EBUSY        (* Device or resource busy *) = 16;
-  EEXIST       (* File exists *) = 17;
-  EXDEV        (* Cross-device link *) = 18;
-  ENODEV       (* Operation not supported by device *) = 19;
-  ENOTDIR      (* Not a directory *) = 20;
-  EISDIR       (* Is a directory *) = 21;
-  EINVAL       (* Invalid argument *) = 22;
-  ENFILE       (* Too many open files in system *) = 23;
-  EMFILE       (* Too many open files *) = 24;
-  ENOTTY       (* Inappropriate ioctl for device *) = 25;
-  ETXTBSY      (* Text file busy *) = 26;
-  EFBIG        (* File too large *) = 27;
-  ENOSPC       (* No space left on device *) = 28;
-  ESPIPE       (* Illegal seek *) = 29;
-  EROFS        (* Read-only file system *) = 30;
-  EMLINK       (* Too many links *) = 31;
-  EPIPE        (* Broken pipe *) = 32;
-  EAGAIN       (* Resource temporarily unavailable *) = 11;
-  EWOULDBLOCK  (* Operation would block *) = EAGAIN;
-  ELOOP        (* Too many levels of symbolic links *) = 51;
-  ENAMETOOLONG (* File name too long *) = 63;
-  ENOTEMPTY    (* Directory not empty *) = 66;
-  EFTYPE       (* Inappropriate file type or format *) = 79;
-  EPWROFF      (* Device power is off *) = 82;
-  EDEVERR      (* Device error *) = 83;
-  ENODATA      (* No message available on STREAM *) = 96;
-  ENOSR        (* No STREAM resources *) = 98;
-  ENOSTR       (* Not a STREAM *) = 99;
-  ETIME        (* STREAM ioctl timeout *) = 101;
-
-
 (* type FILE *)
 
 TYPE FILE = ADDRESS;
