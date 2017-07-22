@@ -1,0 +1,21 @@
+TO DOs
+
+Scripts
+* launch script for AmigaOS
+* build configuration script for AmigaOS
+* build configuration script for Windows
+* build configuration script for OpenVMS
+
+Adaptation Libraries
+* foreign definition modules stdio and unistd for Ulm's Modula-2 System
+* implementation of module FileSystemAdapter for Aglet Modula-2
+* implementation of module FileSystemAdapter for Clarion Modula-2
+
+Features
+* implement --show-settings output
+
+Missing Functionality
+* procedure AppendSliceToArray in CharArray.iso.mod
+* procedure AppendSliceToArray in CharArray.pim.mod
+
+[END OF FILE]
