@@ -8,6 +8,8 @@ M2PP is a simple preprocessor for the Modula-2 language.
 
 It generates Modula-2 source files from generic Modula-2 source file templates. Its primary purpose is to provide a means to write and maintain dialect independent code that is portable across different Modula-2 dialects. However, it can also be used for generic programming where the Modula-2 dialect or compiler does not support generics.
 
+M2PP is itself portable across dialects and compilers. Where necessary, adaptation libraries are provided. Thus far specifically supported compilers are ACK, ADW, GM2, MOCKA, Modulaware, p1 and XDS. In addition, PIM compilers that include modules `Terminal` and `FileSystem` will be able to compile M2PP without problems. Adaptation libraries for Aglet, Clarion and GPM will be added (contributors welcome).
+
 For more details please visit the project wiki at the URL:
 
 https://github.com/m2sf/m2pp/wiki
