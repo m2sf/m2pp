@@ -1,6 +1,6 @@
 (*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-IMPLEMENTATION MODULE Terminal; (* ISO Modula-2 only *)
+IMPLEMENTATION MODULE Terminal; (* ISO version *)
 
 (* Shim Library to adapt ISO Modula-2's STextIO to PIM Modula-2's Terminal *)
 
