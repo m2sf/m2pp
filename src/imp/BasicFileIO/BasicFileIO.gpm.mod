@@ -5,6 +5,7 @@ IMPLEMENTATION MODULE BasicFileIO; (* GPM version *)
 (* Basic File IO library for M2PP and M2BSK *)
 
 IMPORT UxFiles; (* GPM low-level I/O library *)
+IMPORT BasicFileSys;
 
 FROM SYSTEM IMPORT BYTE;
 FROM ISO646 IMPORT NUL, EOT;
@@ -79,10 +80,10 @@ PROCEDURE Open
 VAR
   uxf : UxFiles.File;
   done, found : BOOLEAN;
-  fsStatus : FileSystemAdapter.Status;
+  fsStatus : BasicFileSys.Status;
   
 BEGIN
-  found := FileSystemAdapter.fileExists(path);
+  found := BasicFileSys.fileExists(path);
   
   IF NOT found AND ((mode = Read) OR (mode = Append)) THEN
     status := FileNotFound;
@@ -95,9 +96,9 @@ BEGIN
       
   | Write :
       IF NOT Found THEN
-        FileSystemAdapter.CreateFile(path, fsStatus);
+        BasicFileSys.CreateFile(path, fsStatus);
         
-        IF fsStatus # FileSystemAdapter.Success THEN
+        IF fsStatus # BasicFileSys.Success THEN
           status := Failure;
           RETURN
         END (* IF *)
