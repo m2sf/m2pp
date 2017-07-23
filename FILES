@@ -51,7 +51,7 @@
   String.iso.def -- interface to interned strings library for ISO Modula-2
   String.pim.def -- interface to interned strings library for PIM Modula-2
   Tabulator.def -- interface to tabulator management
-  Terminal.iso.def -- shim library to adapt PIM terminal to ISO stdlib
+  Terminal.nonpim.def -- interface of PIM's Terminal module for ISO/POSIX
   Terminal.pim.txt -- user info on PIM library's Terminal module
 
 /src/dep
@@ -98,8 +98,9 @@
   String.iso.mod -- interned strings library for ISO Modula-2
   String.pim.def -- interned strings library for PIM Modula-2
   Tabulator.mod -- tabulator management
-  Terminal.iso.mod -- PIM terminal to ISO stdlib adapter
+  Terminal.iso.mod -- ISO implementation of PIM's Terminal module
   Terminal.pim.txt -- user info on PIM library's Terminal module
+  Terminal.posix.mod -- POSIX implementation of PIM's Terminal module
 
 /src/imp/BasicFileIO
   BasicFileIO.gpm.mod -- BasicFileIO implementation for GPM Modula-2
