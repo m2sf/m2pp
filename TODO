@@ -7,7 +7,6 @@ Scripts
 * build configuration script for OpenVMS
 
 Adaptation Libraries
-* implement POSIX version of module Terminal
 * implement ISO version of module BasicFileIO
 * implement module FileSystemAdapter for Aglet Modula-2
 * implement module FileSystemAdapter for Clarion Modula-2
