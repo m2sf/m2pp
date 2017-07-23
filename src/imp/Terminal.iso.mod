@@ -2,9 +2,9 @@
 
 IMPLEMENTATION MODULE Terminal; (* ISO version *)
 
-(* Shim Library to adapt ISO Modula-2's STextIO to PIM Modula-2's Terminal *)
+(* ISO emulation of PIM's Terminal library *)
 
-IMPORT STextIO; (* in ISO Modula-2's standard library *)
+IMPORT STextIO; (* ISO library *)
 
 
 (* ---------------------------------------------------------------------------
