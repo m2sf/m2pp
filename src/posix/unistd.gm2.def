@@ -4,12 +4,16 @@ DEFINITION MODULE FOR "C" unistd; (* GNU Modula-2 version *)
 
 (* Modula-2 interface to POSIX unistd *)
 
-FROM SYSTEM IMPORT INT32; (* int *)
+FROM SYSTEM IMPORT
+  ADDRESS, INT32 (* int *), CSIZE_T (* size_t *), CSSIZE_T (* ssize_t *);
 
 
 (* type int *)
 
 TYPE INT = INT32;
+
+
+TYPE SSizeT = CSSIZE_T;
 
 
 TYPE AccessMode = INT [0..7];
@@ -22,9 +26,25 @@ CONST
   Readable   = 4; (* 0b0100 *)
 
 
+CONST
+  StdIn  = 0; (* STDIN_FILENO *)
+  StdOut = 1; (* STDOUT_FILENO *)
+  StdErr = 2; (* STDERR_FILENO *)
+
+
 (* foreign declaration for access() *)
 
 PROCEDURE access ( path : ARRAY OF CHAR; mode : AccessMode ) : INT;
+
+
+(* foreign declaration for read() *)
+
+PROCEDURE read ( fildes : INT; buf : ADDRESS; nbyte : SizeT ) : SSizeT;
+
+
+(* foreign declaration for write() *)
+
+PROCEDURE write ( fildes : INT; buf : ADDRESS; nbyte : SizeT ) : SSizeT;
 
 
 (* foreign declaration for unlink() *)
