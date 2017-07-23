@@ -10,10 +10,10 @@ digraph ArgLexerImports {
   };
   
   BasicFileIO -> {
-    FileSystemAdapter ISO646 Storage
+    BasicFileSys ISO646 Storage
   };
   
-  FileSystemAdapter [shape=box];
+  BasicFileSys [shape=box];
     
   ISO646; /* no dependencies */
   

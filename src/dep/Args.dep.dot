@@ -2,8 +2,7 @@ digraph ArgsImports {
   node [fontname=helvetica];
   
   Args -> {
-    BuildParams CharArray Console FileSystemAdapter Infile ISO646 Outfile
-    String
+    BuildParams CharArray Console BasicFileSys Infile ISO646 Outfile String
   };
   
   BuildParams; /* no dependencies */
@@ -36,7 +35,7 @@ digraph ArgsImports {
   
   StrPtr; /* no dependencies */  
   
-  FileSystemAdapter [shape=box];
+  BasicFileSys [shape=box];
   
   Infile -> {
     BasicFileIO BuildParams ISO646 Storage String

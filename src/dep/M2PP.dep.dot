@@ -2,13 +2,11 @@ digraph M2PPDep {
   node [fontname=helvetica];
 
   M2PP -> {
-    Args ArgParser BuildParams FileSystemAdapter FNStr Infile Outfile
-    Preprocessor
+    Args ArgParser BuildParams BasicFileSys FNStr Infile Outfile Preprocessor
   };
   
   Args -> {
-    BuildParams CharArray Console FileSystemAdapter Infile ISO646 Outfile
-    String
+    BuildParams CharArray Console BasicFileSys Infile ISO646 Outfile String
   };
   
   BuildParams; /* no dependencies */
@@ -41,14 +39,14 @@ digraph M2PPDep {
   
   StrPtr; /* no dependencies */  
   
-  FileSystemAdapter [shape=box];
+  BasicFileSys [shape=box];
   
   Infile -> {
     BasicFileIO BuildParams ISO646 Storage String
   };
   
   BasicFileIO -> {
-    FileSystemAdapter ISO646 Storage
+    BasicFileSys ISO646 Storage
   };
   
   Outfile -> {
