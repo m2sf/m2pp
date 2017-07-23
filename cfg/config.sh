@@ -1,14 +1,14 @@
 #!/bin/bash
 # config.sh * Copyright (c) 2017 Modula-2 Software Foundation
+#
 echo "*** M2PP build configuration script for Unix/POSIX ***"
 #
-if [ "$1" = "-t" ] || [ "$1" = "--test" ]
-then
+if [ "$1" = "-t" ] || [ "$1" = "--test" ]; then
   echo ""
   echo "running in test mode, no files will be copied."
-  test=1
+  test=true
 else
-  test=0
+  test=false
 fi
 #
 # ---------------------------------------------------------------------------
@@ -22,15 +22,12 @@ do
   case $dialect in
     "ISO Modula-2")
       dialectID="iso"
-      break
-      ;;
+      break;;
     "PIM Modula-2")
       dialectID="pim"
-      break
-      ;;
+      break;;
     Quit)
-      exit
-      ;;
+      exit;;
   esac
 done
 #
@@ -40,64 +37,61 @@ done
 echo ""
 echo "Compiler Selection"
 PS3="Modula-2 compiler: "
-needsPosixShim=0
+needsPosixShim=false
 #
 # ---------------------------------------------------------------------------
 # ISO compiler selection
 # ---------------------------------------------------------------------------
-if [ "$dialectID" = "iso" ]
-then
-  select compiler in "GNU Modula-2" "p1 Modula-2" "XDS Modula-2" Quit
+if [ "$dialectID" = "iso" ]; then
+  select compiler in \
+    "GNU Modula-2" "GPM Modula-2" "p1 Modula-2" "XDS Modula-2" Quit
   do
     case $compiler in
       "GNU Modula-2")
         compilerID="gm2"
-        break
-        ;;
+        break;;
+      "GPM Modula-2")
+        compilerID="gpm"
+        break;;
       "p1 Modula-2")
         compilerID="p1"
-        break
-        ;;
+        break;;
       "XDS Modula-2")
         compilerID="xds"
-        break
-        ;;
+        break;;
       Quit)
-        exit
-        ;;
+        exit;;
     esac
   done
 #
 # ---------------------------------------------------------------------------
 # PIM compiler selection
 # ---------------------------------------------------------------------------
-elif [ "$dialectID" = "pim" ]
-then
+elif [ "$dialectID" = "pim" ]; then
   select compiler in \
-    "ACK Modula-2" "GNU Modula-2" "MOCKA Modula-2" "generic PIM compiler" Quit
+    "ACK Modula-2" "GNU Modula-2" "MOCKA Modula-2" "Ulm's Modula-2" \
+    "generic PIM compiler" Quit
   do
     case $compiler in
       "ACK Modula-2")
         compilerID="ack"
-        needsPosixShim=1
-        break
-        ;;
+        needsPosixShim=true
+        break;;
       "GNU Modula-2")
         compilerID="gm2"
-        break
-        ;;
+        break;;
       "MOCKA Modula-2")
         compilerID="mocka"
-        needsPosixShim=1
-        break
-        ;;
+        needsPosixShim=true
+        break;;
+      "Ulm's Modula-2")
+        compilerID="ulm"
+        break;;
       "generic PIM compiler")
         compilerID="pim"
-        break
-        ;;
+        break;;
       Quit)
-        exit
-        ;;
+        exit;;
     esac
   done
 fi
@@ -112,50 +106,54 @@ PS3="I/O library: "
 # ---------------------------------------------------------------------------
 # ISO io-library selection
 # ---------------------------------------------------------------------------
-if [ "$dialectID" = "iso" ]
-then
-  select iolib in "POSIX I/O library" "ISO I/O library" Quit
-  do
-    case $iolib in
-      "POSIX I/O library")
-        iolibID="posix"
-        break
-        ;;
-      "ISO I/O library")
-        iolibID="iso"
-        break
-        ;;
-      Quit)
-        exit
-        ;;
-    esac
-  done
+if [ "$dialectID" = "iso" ]; then
+  if [ "$compilerID" = "gpm" ]; then
+    iolib="vendor library"
+    iolibID="gpm"
+    echo "$iolib"
+  else # posix or iso
+    select iolib in "POSIX I/O library" "ISO I/O library" Quit
+    do
+      case $iolib in
+        "POSIX I/O library")
+          iolibID="posix"
+          break;;
+        "ISO I/O library")
+          iolibID="iso"
+          break;;
+        Quit)
+          exit;;
+      esac
+    done
+  fi
 #
 # ---------------------------------------------------------------------------
 # PIM io-library selection
 # ---------------------------------------------------------------------------
-elif [ "$dialectID" = "pim" ]
-then
-  if [ "$compilerID" = "ack" ] || [ "$compilerID" = "mocka" ]
-  then # posix only
+elif [ "$dialectID" = "pim" ]; then
+  if [ "$compilerID" = "ack" ] || [ "$compilerID" = "mocka" ]; then
+    # posix only
     iolib="POSIX I/O library"
     iolibID="posix"
     echo "$iolib"
-  else # posix or pim
+  elif [ "$compilerID" = "ulm" ]; then
+    # vendor only
+    iolib="vendor library"
+    iolibID="ulm"
+    echo "$iolib"
+  else
+    # posix or pim
     select iolib in "POSIX I/O library" "PIM I/O library" Quit
     do
       case $iolib in
         "POSIX I/O library")
           iolibID="posix"
-          break
-          ;;
+          break;;
         "PIM I/O library")
           iolibID="pim"
-          break
-          ;;
+          break;;
         Quit)
-          exit
-          ;;
+          exit;;
       esac
     done
   fi
@@ -173,27 +171,21 @@ do
   case $mm in
     "16/16 bits")
       hashlibID="cardinal"
-      break
-      ;;
+      break;;
     "16/32 bits")
       hashlibID="longint"
-      break
-      ;;
+      break;;
     "32/32 bits")
       hashlibID="cardinal"
-      break
-      ;;
+      break;;
     "32/64 bits")
       hashlibID="cardinal"
-      break
-      ;;
+      break;;
     "64/64 bits")
       hashlibID="cardinal"
-      break
-      ;;
+      break;;
     Quit)
-      exit
-      ;;
+      exit;;
   esac
 done
 #
@@ -203,20 +195,17 @@ done
 echo ""
 read -rp "Path of M2PP src directory: " srcpath
 # check path for leading ~, expand if present
-if [ "${srcpath: 1}" != "~" ]
-then
+if [ "${srcpath: 1}" != "~" ]; then
   srcpath="$HOME${srcpath:1}"
 fi
 #
 # check path for final /, add one if missing
-if [ "${srcpath:(-1)}" != "/" ]
-then
+if [ "${srcpath:(-1)}" != "/" ]; then
   srcpath="$srcpath/"
 fi
 #
 # check if directory at path exists
-if [ ! -d "$srcpath" ]
-then
+if [ ! -d "$srcpath" ]; then
   echo "directory $srcpath does not exist"
   exit
 fi
@@ -237,8 +226,7 @@ echo "M2PP src path : $srcpath"
 # ---------------------------------------------------------------------------
 echo ""
 read -rp "Are these details correct? (y/n) : " confirm
-if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]
-then
+if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
   exit
 fi
 #
@@ -253,21 +241,20 @@ echo ""
 function copy {
   echo "copying $1"
   echo "     to $2"
-  if [ ! $test ]
-  then
+  if [ "$test" != "true" ]; then
     cp $1 $2
   fi
+  echo ""
 } # end copy
 
 # remove function
 function remove {
-  if [ -f $1 ]
-  then
+  if [ -f $1 ]; then
     echo "removing $1"
-    if [ ! $test ]
-    then
+    if [ "$test" != "true" ]; then
       rm $1
     fi
+    echo ""
   fi
 } # end remove
 
@@ -284,10 +271,9 @@ copy "${srcpath}Outfile.${dialectID}.def" "${srcpath}Outfile.def"
 copy "${srcpath}String.${dialectID}.def" "${srcpath}String.def"
 
 # module Terminal
-if [ "$dialectID" = "iso" ]
-then
-  copy "${srcpath}Terminal.iso.def" "${srcpath}Terminal.def"
-  copy "${srcpath}imp/Terminal.iso.mod" "${srcpath}imp/Terminal.mod"
+if [ "$iolibID" = "iso" ] || [ "$iolibID" = "posix" ]; then
+  copy "${srcpath}Terminal.nonpim.def" "${srcpath}Terminal.def"
+  copy "${srcpath}imp/Terminal.${iolibID}.mod" "${srcpath}imp/Terminal.mod"
 else
   remove "${srcpath}Terminal.def"
   remove "${srcpath}imp/Terminal.mod"
@@ -297,21 +283,21 @@ fi
 copy "${srcpath}imp/BasicFileIO/BasicFileIO.${iolibID}.mod" \
  "${srcpath}imp/BasicFileIO.mod"
 
-# module FileSystemAdapter
-if [ "$iolibID" = "iso" ]
-then
+# module BasicFileSys
+if [ "$iolibID" = "pim" ] || [ "$iolibID" = "posix" ]; then
   copy \
-    "${srcpath}imp/FileSystemAdapter/FileSystemAdapter.${compilerID}.mod" \
-    "${srcpath}imp/FileSystemAdapter.mod"
+    "${srcpath}imp/BasicFileSys/BasicFileSys.${iolibID}.mod" \
+    "${srcpath}imp/BasicFileSys.mod"
 else
   copy \
-    "${srcpath}imp/FileSystemAdapter/FileSystemAdapter.${iolibID}.mod" \
-    "${srcpath}imp/FileSystemAdapter.mod"
+    "${srcpath}imp/BasicFileSys/BasicFileSys.${compilerID}.mod" \
+    "${srcpath}imp/BasicFileSys.mod"
 fi
 
 # posix shim libraries
-if [ $needsPosixShim ]
-then
+if [ "$needsPosixShim" = "true" ]; then
+  echo "${compiler} requires POSIX shim libraries"
+  echo ""
   copy "${srcpath}posix/stdio.shim.def" "${srcpath}stdio.def"
   copy "${srcpath}imp/posix/stdio.shim.mod" "${srcpath}imp/stdio.mod"
   copy "${srcpath}posix/unistd.shim.def" "${srcpath}unistd.def"
@@ -319,16 +305,13 @@ then
 fi
 
 # foreign interface modules stdio and unistd
-if [ "$iolibID" = "posix" ] || [ "$compilerID" = "p1" ]
-then
-  if [ "$compilerID" = "gm2" ]
-  then
+if [ "$iolibID" = "posix" ] || [ "$compilerID" = "p1" ]; then
+  if [ "$compilerID" = "gm2" ]; then
     copy "${srcpath}posix/stdio.${compilerID}.${dialectID}.def" \
       "${srcpath}stdio.def"
     copy "${srcpath}posix/unistd.${compilerID}.${dialectID}.def" \
       "${srcpath}unistd.def"
-  elif [ $needsPosixShim ]
-  then
+  elif [ "$needsPosixShim" = "true" ]; then
     copy "${srcpath}posix/stdio0.${compilerID}.def" "${srcpath}stdio0.def"
     copy "${srcpath}posix/unistd0.${compilerID}.def" "${srcpath}unistd0.def"
   else
@@ -344,7 +327,6 @@ else
   remove "${srcpath}imp/unistd.mod"
 fi
 
-echo ""
 echo "Build configuration completed."
 
 # END OF FILE
