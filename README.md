@@ -26,7 +26,7 @@ Further, any Modula-2 compiler that supports PIM3/4 and includes modules `FileSy
 * M2F Modula-2
 * TERRA Modula-2
 
-Adaptation libraries for the [Aglet Modula-2](http://aglet.web.runbox.net/) and [Clarion (formerly TopSpeed) Modula-2](http://www.softvelocity.com/) are still missing and shall be added later (contributors welcome).
+Adaptation libraries for [Aglet Modula-2](http://aglet.web.runbox.net/) and [Clarion (formerly TopSpeed) Modula-2](http://www.softvelocity.com/) are still missing and shall be added later (contributors welcome).
 
 For more details please visit the project wiki at the URL:
 
