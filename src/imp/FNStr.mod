@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE FNStr;
 
 (* Filename string operations *)
 
-IMPORT CharArray, FileSystemAdapter;
+IMPORT CharArray, BasicFileSys;
 
 FROM ISO646 IMPORT NUL, BACKSLASH;
 FROM CardMath IMPORT pow10, log10;
@@ -145,7 +145,7 @@ BEGIN
   
   CharArray.AppendArray(target, bakExt);
   
-  IF FileSystemAdapter.fileExists(target) THEN
+  IF BasicFileSys.fileExists(target) THEN
     version := 1;
     WHILE version < verLimit DO
       AppendVersionSuffix(target, version, done);
@@ -157,7 +157,7 @@ BEGIN
       END; (* IF *)
       
       (* return backup name if no such file exists *)
-      IF NOT FileSystemAdapter.fileExist(target) THEN
+      IF NOT BasicFileSys.fileExist(target) THEN
         RETURN String.forArray(target)
       END; (* IF *)
       
