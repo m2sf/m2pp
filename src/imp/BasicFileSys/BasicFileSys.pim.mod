@@ -31,6 +31,17 @@ BEGIN
 END fileExists;
 
 
+PROCEDURE GetFileSize
+  ( path : ARRAY OF CHAR; VAR size : FileSize; VAR status : Status );
+(* Obtains the size of the file at path. On success, the size is passed back
+   in size and Success is passed back in status. On failure, size remains
+   unmodified and the FileNotFound or Failure is passed back in status. *)
+
+BEGIN
+  (* TO DO *)
+END GetFileSize;
+
+
 PROCEDURE CreateFile ( path : ARRAY OF CHAR; VAR status : Status );
 (* Creates a new file with the given pathname and passes back status. *)
 
