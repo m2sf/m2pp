@@ -12,6 +12,8 @@ FROM ISO646 IMPORT NUL, EOT;
 FROM Storage IMPORT ALLOCATE, DEALLOCATE;
 
 
+CONST BufferedIO = TRUE;
+
 TYPE File = POINTER TO FileDescriptor;
 
 TYPE FileDescriptor = RECORD
@@ -92,7 +94,7 @@ BEGIN
     
   CASE mode OF
     Read :
-      done := StdIO.Open(ulmf, path, StdIO.read, TRUE)
+      done := StdIO.Open(ulmf, path, StdIO.read, BufferedIO)
       
   | Write :
       IF NOT Found THEN
@@ -104,10 +106,10 @@ BEGIN
         END (* IF *)
       END; (* IF *)
       
-      done := StdIO.Open(ulmf, path, StdIO.write, TRUE)
+      done := StdIO.Open(ulmf, path, StdIO.write, BufferedIO)
       
   | Append :
-      done := StdIO.Open(ulmf, path, StdIO.append, TRUE)
+      done := StdIO.Open(ulmf, path, StdIO.append, BufferedIO)
   END; (* CASE *)
   
   IF NOT done THEN
