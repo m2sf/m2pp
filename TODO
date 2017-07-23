@@ -18,8 +18,4 @@ Missing Functionality
 * procedure AppendSliceToArray in CharArray.iso.mod
 * procedure AppendSliceToArray in CharArray.pim.mod
 
-Bugs
-* bit width calculation in Hash.cardinal.mod
-* bit width calculation in Hash.longint.mod
-
 [END OF FILE]
