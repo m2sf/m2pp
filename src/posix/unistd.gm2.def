@@ -13,6 +13,13 @@ FROM SYSTEM IMPORT
 TYPE INT = INT32;
 
 
+(* type size_t *)
+
+TYPE SizeT = CSIZE_T;
+
+
+(* type ssize_t *)
+
 TYPE SSizeT = CSSIZE_T;
 
 
