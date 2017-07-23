@@ -18,7 +18,7 @@ TYPE INT = INTEGER;
 TYPE SizeT = CARDINAL;
 
 
-(* type int *)
+(* type ssize_t *)
 
 TYPE SSizeT = INTEGER;
 
