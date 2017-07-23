@@ -6,7 +6,7 @@ MODULE M2PP;
 
 IMPORT Args, ArgParser, BuildParams, FNStr, Infile, Outfile, Preprocessor;
  
-FROM FileSystemAdapter IMPORT fileExists, RenameFile;
+FROM BasicFileSys IMPORT fileExists, RenameFile;
 
 FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
 FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
@@ -140,7 +140,7 @@ VAR
   infile : InfileT;
   outfile : OutfileT;
   argStatus : ArgParser.Status;
-  fsStatus : FileSystemAdapter.Status;
+  fsStatus : BasicFileSys.Status;
   
 
 BEGIN (* M2PP *)
