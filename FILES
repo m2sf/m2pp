@@ -102,18 +102,21 @@
   Terminal.pim.txt -- user info on PIM library's Terminal module
 
 /src/imp/BasicFileIO
-  BasicFileIO.iso.mod -- ISO implementation of module BasicFileIO
-  BasicFileIO.pim.mod -- PIM implementation of module BasicFileIO
-  BasicFileIO.posix.mod -- POSIX implementation of module BasicFileIO
+  BasicFileIO.gpm.mod -- BasicFileIO implementation for GPM Modula-2
+  BasicFileIO.iso.mod -- BasicFileIO implementation using ISO I/O library
+  BasicFileIO.pim.mod -- BasicFileIO implementation using PIM I/O library
+  BasicFileIO.posix.mod -- BasicFileIO implementation using POSIX I/O library
+  BasicFileIO.ulm.mod -- BasicFileIO implementation for Ulm Modula-2
 
 /src/imp/BasicFileSys
-  BasicFileSys.adw.mod -- BasicFileSys for ADW Modula-2
-  BasicFileSys.gpm.mod -- BasicFileSys for GPM Modula-2
-  BasicFileSys.mw.mod -- BasicFileSys for Modulaware Modula-2
-  BasicFileSys.p1.mod -- BasicFileSys for p1 Modula-2
-  BasicFileSys.pim.mod -- BasicFileSys using only PIM library
-  BasicFileSys.posix.mod -- BasicFileSys using only POSIX library
-  BasicFileSys.xds.mod -- BasicFileSys for XDS Modula-2
+  BasicFileSys.adw.mod -- BasicFileSys implementation for ADW Modula-2
+  BasicFileSys.gpm.mod -- BasicFileSys implementation for GPM Modula-2
+  BasicFileSys.mw.mod -- BasicFileSys implementation for Modulaware Modula-2
+  BasicFileSys.p1.mod -- BasicFileSys implementation for p1 Modula-2
+  BasicFileSys.pim.mod -- BasicFileSys implementation using PIM library
+  BasicFileSys.posix.mod -- BasicFileSys implementation using POSIX library
+  BasicFileSys.ulm.mod -- BasicFileSys implementation for Ulm Modula-2
+  BasicFileSys.xds.mod -- BasicFileSys implementation for XDS Modula-2
 
 /src/imp/posix
   stdio.shim.mod -- interface for user-level shim library calling stdio0
