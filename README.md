@@ -11,7 +11,7 @@ It generates Modula-2 source files from generic Modula-2 source file templates. 
 M2PP is itself portable across dialects and compilers. Where necessary, adaptation libraries are provided. Thus far the following compilers are specifically supported:
 
 * [ACK Modula-2](http://tack.sourceforge.net/olddocs/m2ref.html)
-* [ADW Modula-2](https://www.modula2.org/adwm2/)
+* [ADW (formerly Stony Brook) Modula-2](https://www.modula2.org/adwm2/)
 * [GNU Modula-2](http://nongnu.org/gm2/homepage.html)
 * [Garden's Point Modula-2](https://github.com/k-john-gough/gpmclr)
 * [MOCKA Modula-2](http://www.info.uni-karlsruhe.de/projects.php/id=37&lang=en)
@@ -26,7 +26,7 @@ Further, any Modula-2 compiler that supports PIM3/4 and includes modules `FileSy
 * M2F Modula-2
 * TERRA Modula-2
 
-Adaptation libraries for the [Aglet](http://aglet.web.runbox.net/) and [Clarion](http://www.softvelocity.com/) Modula-2 compilers are still missing and shall be added later (contributors welcome).
+Adaptation libraries for the [Aglet](http://aglet.web.runbox.net/) and [Clarion (formerly TopSpeed)](http://www.softvelocity.com/) Modula-2 compilers are still missing and shall be added later (contributors welcome).
 
 For more details please visit the project wiki at the URL:
 
