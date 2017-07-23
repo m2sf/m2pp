@@ -5,6 +5,7 @@ IMPLEMENTATION MODULE BasicFileIO; (* ISO version *)
 (* Basic File IO library for M2PP and M2BSK *)
 
 IMPORT SYSTEM, SeqFile, RawIO, IOResult;
+IMPORT BasicFileSys;
 
 FROM ISO646 IMPORT NUL, EOT;
 FROM Storage IMPORT ALLOCATE, DEALLOCATE;
@@ -85,7 +86,7 @@ VAR
   res : SeqFile.OpenResults;
   
 BEGIN
-  found := FileSystemAdapter.fileExists(path);
+  found := BasicFileSys.fileExists(path);
   
   IF NOT found AND ((mode = Read) OR (mode = Append)) THEN
     status := FileNotFound;
