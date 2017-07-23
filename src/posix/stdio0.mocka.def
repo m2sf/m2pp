@@ -13,14 +13,14 @@ FROM SYSTEM IMPORT ADDRESS (* void* *);
 TYPE FILE = ADDRESS;
 
 
-(* type size_t *)
-
-TYPE SizeT = INTEGER;
-
-
 (* type int *)
 
 TYPE INT = INTEGER;
+
+
+(* type size_t *)
+
+TYPE SizeT = CARDINAL;
 
 
 (* foreign declaration for fopen() *)
