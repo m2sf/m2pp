@@ -11,7 +11,6 @@ Adaptation Libraries
 * implement ISO version of module BasicFileIO
 * implement module FileSystemAdapter for Aglet Modula-2
 * implement module FileSystemAdapter for Clarion Modula-2
-* foreign definition modules stdio and unistd for Ulm's Modula-2 System
 
 Missing Functionality
 * implement --show-settings output
