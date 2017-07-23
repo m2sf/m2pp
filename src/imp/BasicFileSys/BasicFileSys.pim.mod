@@ -1,6 +1,6 @@
 (*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-IMPLEMENTATION MODULE FileSystemAdapter; (* PIM version *)
+IMPLEMENTATION MODULE BasicFileSys; (* PIM version *)
 
 (* Clean file system interface to the junk that came with PIM *)
 
@@ -116,4 +116,4 @@ BEGIN
 END DeleteFile;
 
 
-END FileSystemAdapter.
+END BasicFileSys.

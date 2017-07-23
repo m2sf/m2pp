@@ -1,6 +1,6 @@
 (*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-IMPLEMENTATION MODULE FileSystemAdapter; (* POSIX version *)
+IMPLEMENTATION MODULE BasicFileSys; (* POSIX version *)
 
 (* Clean file system interface based on POSIX,
    not using any of the junk that comes with PIM and ISO *)
@@ -83,4 +83,4 @@ BEGIN
 END DeleteFile;
 
 
-END FileSystemAdapter.
+END BasicFileSys.

@@ -1,6 +1,6 @@
-(*!m2pim+gpm*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+(*!m2iso+gpm*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-IMPLEMENTATION MODULE FileSystemAdapter; (* GPM version *)
+IMPLEMENTATION MODULE BasicFileSys; (* GPM version *)
 
 IMPORT FLength, UxFiles; (* GPM specific libraries *)
 
@@ -97,4 +97,4 @@ BEGIN
 END DeleteFile;
 
 
-END FileSystemAdapter.
+END BasicFileSys.

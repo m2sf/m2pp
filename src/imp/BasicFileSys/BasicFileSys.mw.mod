@@ -1,6 +1,6 @@
 (*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-IMPLEMENTATION MODULE FileSystemAdapter; (* ModulaWare version *)
+IMPLEMENTATION MODULE BasicFileSys; (* ModulaWare version *)
 
 (* Clean file system interface to the junk that comes with ISO *)
 
@@ -116,4 +116,4 @@ BEGIN
 END DeleteFile;
 
 
-END FileSystemAdapter.
+END BasicFileSys.
