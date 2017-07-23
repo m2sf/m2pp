@@ -1,10 +1,10 @@
-(*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
 IMPLEMENTATION MODULE Args;
 
 (* Program Argument Management *)
 
-IMPORT ISO646, CharArray, Console, FileSystemAdapter, Infile, Outfile, String;
+IMPORT ISO646, CharArray, Console, BasicFileSys, Infile, Outfile, String;
 
 FROM BuildParams IMPORT ArgQueryBufferSize;
 FROM String IMPORT StringT; (* alias for String.String *)
@@ -41,11 +41,11 @@ PROCEDURE Delete;
 (* Deletes the command line argument file. *)
 
 VAR
-  status : FileSystemAdapter.Status;
+  status : BasicFileSys.Status;
   
 BEGIN
   IF NOT isOpen THEN
-    FileSystemAdapter.DeleteFile(Filename, status)
+    BasicFileSys.DeleteFile(Filename, status)
   END (* IF *)
 END Delete;
 
