@@ -7,15 +7,17 @@ Scripts
 * build configuration script for OpenVMS
 
 Adaptation Libraries
-* implementation of module FileSystemAdapter for Aglet Modula-2
-* implementation of module FileSystemAdapter for Clarion Modula-2
+* implement POSIX version of module Terminal
+* implement ISO version of module BasicFileIO
+* implement module FileSystemAdapter for Aglet Modula-2
+* implement module FileSystemAdapter for Clarion Modula-2
 * foreign definition modules stdio and unistd for Ulm's Modula-2 System
 
 Features
 * implement --show-settings output
 
 Missing Functionality
-* procedure AppendSliceToArray in CharArray.iso.mod
-* procedure AppendSliceToArray in CharArray.pim.mod
+* implement procedure AppendSliceToArray in CharArray.mod
+* implement procedure GetFileSize in all versions of BasicFileSys
 
 [END OF FILE]
