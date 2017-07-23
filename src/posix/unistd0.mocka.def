@@ -13,9 +13,29 @@ FROM SYSTEM IMPORT ADDRESS (* void* *);
 TYPE INT = INTEGER;
 
 
+(* type size_t *)
+
+TYPE SizeT = CARDINAL;
+
+
+(* type int *)
+
+TYPE SSizeT = INTEGER;
+
+
 (* foreign declaration for access() *)
 
 PROCEDURE access ( path : ADDRESS; mode : INT ) : INT;
+
+
+(* foreign declaration for read() *)
+
+PROCEDURE read ( fildes : INT; buf : ADDRESS; nbyte : SizeT ) : SSizeT;
+
+
+(* foreign declaration for write() *)
+
+PROCEDURE write ( fildes : INT; buf : ADDRESS; nbyte : SizeT ) : SSizeT;
 
 
 (* foreign declaration for unlink() *)
