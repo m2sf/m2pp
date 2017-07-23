@@ -6,12 +6,26 @@ DEFINITION MODULE ["C"] unistd; (* XDS Modula-2 version *)
 
 (* Modula-2 interface to POSIX unistd *)
 
-FROM SYSTEM IMPORT int;
+FROM SYSTEM IMPORT ADDRESS, int, size_t;
 
 
 (* type int *)
 
 TYPE INT = int;
+
+
+(* type size_t *)
+
+TYPE SizeT = size_t;
+
+
+(* type ssize_t *)
+
+<*IF(TSIZE(SizeT)=TSIZE(INTEGER))THEN*>
+TYPE SSizeT = INTEGER;
+<*ELSIF(TSIZE(SizeT)=TSIZE(LONGINT))THEN)*>
+TYPE SSizeT = LONGINT;
+<*END*>
 
 
 TYPE AccessMode = INT [0..7];
@@ -24,9 +38,25 @@ CONST
   Readable   = 4; (* 0b0100 *)
 
 
+CONST
+  StdIn  = 0; (* STDIN_FILENO *)
+  StdOut = 1; (* STDOUT_FILENO *)
+  StdErr = 2; (* STDERR_FILENO *)
+
+
 (* foreign declaration for access() *)
 
 PROCEDURE access ( path : ARRAY OF CHAR; mode : AccessMode ) : INT;
+
+
+(* foreign declaration for read() *)
+
+PROCEDURE read ( fildes : INT; buf : ADDRESS; nbyte : SizeT ) : SSizeT;
+
+
+(* foreign declaration for write() *)
+
+PROCEDURE write ( fildes : INT; buf : ADDRESS; nbyte : SizeT ) : SSizeT;
 
 
 (* foreign declaration for unlink() *)
