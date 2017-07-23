@@ -9,10 +9,6 @@ IMPORT unistd; (* POSIX library *)
 IMPORT Newline;
 FROM ISO646 IMPORT NUL, LF, CR;
 
-CONST
-  stdin  = 0;
-  stdout = 1;
-
 
 (* ---------------------------------------------------------------------------
  * procedure Read(ch)
@@ -26,7 +22,7 @@ VAR
   res : unistd.INT;
   
 BEGIN
-  res := unistd.read(stdin, ADR(ch), 1);
+  res := unistd.read(unistd.StdIn, ADR(ch), 1);
 END Read;
 
 
@@ -42,7 +38,7 @@ VAR
   res : unistd.INT;
   
 BEGIN
-  res := stdio.write(stdout, ADR(ch), 1)
+  res := stdio.write(unistd.StdOut, ADR(ch), 1)
 END Write;
 
 
@@ -69,7 +65,7 @@ BEGIN
     len := len + 1
   END; (* WHILE *)
   
-  res := unistd.write(stdout, ADR(array), len)
+  res := unistd.write(unistd.StdOut, ADR(array), len)
 END WriteString;
 
 
