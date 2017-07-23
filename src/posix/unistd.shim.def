@@ -12,6 +12,16 @@ IMPORT unistd0; (* foreign interface *)
 TYPE INT = unistd0.INT;
 
 
+(* type size_t *)
+
+TYPE SizeT = unistd0.SizeT;
+
+
+(* type ssize_t *)
+
+TYPE SSizeT = unistd0.SSizeT;
+
+
 TYPE AccessMode = INT [0..7];
 
 
@@ -22,9 +32,25 @@ CONST
   Readable   = 4; (* 0b0100 *)
 
 
+CONST
+  StdIn  = 0; (* STDIN_FILENO *)
+  StdOut = 1; (* STDOUT_FILENO *)
+  StdErr = 2; (* STDERR_FILENO *)
+
+
 (* access() *)
 
 PROCEDURE access ( path : ARRAY OF CHAR; mode : AccessMode ) : INT;
+
+
+(* read() *)
+
+CONST read = stdio0.read;
+
+
+(* write() *)
+
+CONST write = stdio0.write;
 
 
 (* unlink() *)
