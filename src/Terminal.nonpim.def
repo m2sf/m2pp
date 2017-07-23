@@ -1,8 +1,12 @@
-(*!m2iso*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-DEFINITION MODULE Terminal; (* ISO Modula-2 only *)
+DEFINITION MODULE Terminal; (* PIM Library Substitute *)
 
-(* Shim Library to adapt ISO Modula-2's STextIO to PIM Modula-2's Terminal *)
+(* This module is part of PIM Modula-2. Thus PIM compilers generally ship with
+   a vendor provided library that includes Terminal. This substitute library
+   is provided for ISO compilers that do not ship with Terminal or for POSIX
+   systems when a purely POSIX based build configuration is desired to avoid
+   dependencies on PIM libraries. *)
 
 
 (* ---------------------------------------------------------------------------
