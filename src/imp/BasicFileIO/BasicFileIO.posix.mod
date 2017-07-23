@@ -4,6 +4,8 @@ IMPLEMENTATION MODULE BasicFileIO; (* POSIX version *)
 
 (* Basic File IO library for M2PP and M2BSK *)
 
+IMPORT BasicFileSys;
+
 FROM ISO646 IMPORT NUL, EOT;
 FROM Storage IMPORT ALLOCATE, DEALLOCATE;
 FROM stdio IMPORT FILE, INT, fopen, fclose, feof, fgetc, fputc;
@@ -79,7 +81,7 @@ VAR
   found : BOOLEAN;
   
 BEGIN
-  found := FileSystemAdapter.fileExists(path);
+  found := BasicFileSys.fileExists(path);
   
   IF NOT found AND ((mode = Read) OR (mode = Append)) THEN
     status := FileNotFound;
