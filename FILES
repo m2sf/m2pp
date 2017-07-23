@@ -28,13 +28,14 @@
   ArgParser.def -- interface for command line argument parser
   Args.def -- interface to command line argument handling
   BasicFileIO.def -- File I/O interface
+  BasicFileSys.cardinal.def -- file system interface using CARDINAL file size
+  BasicFileSys.longint.def -- file system interface using LONGINT file size
   BuildParams.def -- Build parameter definitions
   CardMath.def -- interface to cardinal math functions
   CharArray -- interface to character array operations
   Console.def -- interface to console I/O
   Dicitionary.def -- interface to global key/value dictionary
   FNStr.def -- interface to filename string operations
-  FileSystemAdapter.def -- file system interface
   Hash.cardinal.def -- 32-bit hash function using CARDINAL type
   Hash.longint.def -- 31-bit hash function using LONGINT type
   ISO646.def -- ISO646 (aka ASCII) character code constant definitions
@@ -77,7 +78,7 @@
   
 /src/imp
   /src/imp/BasicFileIO -- subdir for BasicFileIO implementations
-  /src/imp/FileSystemAdapter -- subdir for FileSystemAdapter implementations
+  /src/imp/BasicFileSys -- subdir for BasicFileSys implementations
   ArgLexer.mod -- command line argument lexer
   ArgParser.mod -- command line argument parser
   Args.mod -- command line argument handler
@@ -105,13 +106,14 @@
   BasicFileIO.pim.mod -- PIM implementation of module BasicFileIO
   BasicFileIO.posix.mod -- POSIX implementation of module BasicFileIO
 
-/src/imp/FileSystemAdapter
-  FileSystemAdapter.adw.mod -- FileSystemAdapter for ADW Modula-2
-  FileSystemAdapter.gpm.mod -- FileSystemAdapter for GPM Modula-2
-  FileSystemAdapter.mw.mod -- FileSystemAdapter for Modulaware Modula-2
-  FileSystemAdapter.p1.mod -- FileSystemAdapter for p1 Modula-2
-  FileSystemAdapter.pim.mod -- FileSystemAdapter for any PIM Modula-2 compiler
-  FileSystemAdapter.xds.mod -- FileSystemAdapter for XDS Modula-2
+/src/imp/BasicFileSys
+  BasicFileSys.adw.mod -- BasicFileSys for ADW Modula-2
+  BasicFileSys.gpm.mod -- BasicFileSys for GPM Modula-2
+  BasicFileSys.mw.mod -- BasicFileSys for Modulaware Modula-2
+  BasicFileSys.p1.mod -- BasicFileSys for p1 Modula-2
+  BasicFileSys.pim.mod -- BasicFileSys using only PIM library
+  BasicFileSys.posix.mod -- BasicFileSys using only POSIX library
+  BasicFileSys.xds.mod -- BasicFileSys for XDS Modula-2
 
 /src/imp/posix
   stdio.shim.mod -- interface for user-level shim library calling stdio0
