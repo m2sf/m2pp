@@ -12,8 +12,10 @@
 
 /cfg
   /cfg/utils
-  config.bat -- build configuration script for Windows and OS/2
-  config.com -- build configuration script for OpenVMS
+  BUILDCONFIGSCRIPTS.md -- user info on config scripts
+  config.samples.txt -- sample configuration session log
+  config.bat -- build configuration script for Windows and OS/2 (TO DO)
+  config.com -- build configuration script for OpenVMS (TO DO)
   config.sh -- build configuration script for Unix/POSIX systems
 
 /cfg/utils
