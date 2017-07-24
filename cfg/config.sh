@@ -1,5 +1,7 @@
 #!/bin/bash
 # config.sh * Copyright (c) 2017 Modula-2 Software Foundation
+# usage:
+#  config [clean] [--test | -t]
 
 # ---------------------------------------------------------------------------
 # main script
