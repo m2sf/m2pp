@@ -56,6 +56,11 @@ CONST
   ETIME        (* STREAM ioctl timeout *) = 101;
 
 
+(* type int *)
+
+TYPE INT = INT32;
+
+
 (* type FILE *)
 
 TYPE FILE = ADDRESS;
@@ -78,11 +83,6 @@ TYPE SizeT = CARD64;
 <*ELSE*>
 (* unsupported architecture *)
 <*END*>
-
-
-(* type int *)
-
-TYPE INT = INT32;
 
 
 (* foreign declaration for fopen() *)
