@@ -24,6 +24,7 @@
   /src/dep -- dependencies directory
   /src/imp -- implementation directory
   /src/posix -- foreign interface directory for POSIX
+  /src/templates -- template directory
   ArgLexer.def -- interface for command line argument lexer
   ArgParser.def -- interface for command line argument parser
   Args.def -- interface to command line argument handling
@@ -124,6 +125,7 @@
   unistd.shim.mod -- interface for user-level shim library calling unistd0
 
 /src/posix
+  templates -- POSIX template directory
   stdio.gm2.iso.def -- foreign function interface to C stdio for GNU Modula-2
   stdio.gm2.pim.def -- foreign function interface to C stdio for GNU Modula-2
   stdio.shim.def -- user-level shim library calling into low-level stdio0
@@ -137,6 +139,16 @@
   unistd.xds.def -- foreign function interface to C unistd for XDS Modula-2
   unistd0.ack.def -- low-level interface to C unistd for ACK Modula-2
   unistd0.mocka.def -- low-level interface to C unistd for MOCKA Modula-2
+  
+/src/posix/templates
+  stdio.gm2.gen.def -- template for GNU Modula-2 stdio.def
+  stdio0.gen.def -- template for stdio0.def
+  unistd0.gen.def -- template for unistd0.def
+
+/src/templates
+  Hash.gen.def -- template for Hash.def
+  Infile.gen.def -- template for Infile.def
+  Outfile.gen.def -- template for Outfile.def
 
 /xec
   LAUNCHSCRIPTS.md -- user info on launch scripts
@@ -144,4 +156,4 @@
   m2pp.com -- launch script for OpenVMS
   m2pp.sh -- launch script for Unix/POSIX systems
   
-+++
+[END OF FILE]
