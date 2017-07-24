@@ -8,14 +8,14 @@ FOREIGN MODULE stdio0; (* MOCKA version *)
 FROM SYSTEM IMPORT ADDRESS (* void* *);
 
 
-(* type FILE *)
-
-TYPE FILE = ADDRESS;
-
-
 (* type int *)
 
 TYPE INT = INTEGER;
+
+
+(* type FILE *)
+
+TYPE FILE = ADDRESS;
 
 
 (* type size_t *)

@@ -9,6 +9,11 @@ DEFINITION MODULE stdio0; (* ACK version *)
 FROM SYSTEM IMPORT ADDRESS;
 
 
+(* type int *)
+
+TYPE INT = INTEGER;
+
+
 (* type FILE *)
 
 TYPE FILE = ADDRESS;
@@ -17,11 +22,6 @@ TYPE FILE = ADDRESS;
 (* type size_t *)
 
 TYPE SizeT = CARDINAL;
-
-
-(* type int *)
-
-TYPE INT = INTEGER;
 
 
 (* foreign declaration for fopen() *)
