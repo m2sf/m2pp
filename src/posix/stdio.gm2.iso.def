@@ -84,7 +84,7 @@ TYPE INT = INT32;
 
 (* foreign declaration for fopen() *)
 
-PROCEDURE fopen ( VAR (* CONST *) filename, mode : ARRAY OF CHAR ) : FILE;
+PROCEDURE fopen ( filename, mode : ARRAY OF CHAR ) : FILE;
 
 
 (* foreign declaration for fflush() *)
@@ -126,12 +126,12 @@ PROCEDURE fwrite
 
 (* foreign declaration for rename() *)
 
-PROCEDURE rename ( VAR (* CONST *) old, new : ARRAY OF CHAR ) : INT;
+PROCEDURE rename ( old, new : ARRAY OF CHAR ) : INT;
 
 
 (* foreign declaration for remove() *)
 
-PROCEDURE remove ( VAR (* CONST *) path : ARRAY OF CHAR ) : INT;
+PROCEDURE remove ( path : ARRAY OF CHAR ) : INT;
 
 
 (* foreign declaration for ferror() *)
