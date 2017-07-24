@@ -13,3 +13,6 @@ Special thanks to:
 
 * Fons De Wolf
   for providing info how to delete and rename files with ADW Modula-2
+
+* Gaius Mulley
+  for adding CSIZE_T and CSSIZE_T to GNU Modula-2's SYSTEM module
