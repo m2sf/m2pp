@@ -1,6 +1,6 @@
 (*!m2##ver##*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-DEFINITION MODULE Outfile; (* ISO version *)
+DEFINITION MODULE Outfile; (* ##VER## version *)
 
 (* I/O library for writing text files with tab expansion *)
 
