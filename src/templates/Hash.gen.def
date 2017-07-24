@@ -1,0 +1,48 @@
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation. *)
+
+DEFINITION MODULE Hash; (* ##VER## version *)
+
+(* General Purpose ##bitwidth##-bit Hash Function *)
+
+TYPE Key = ##KeyType##; (* must be at least ##bitwidth## bits wide *)
+
+(* Library will abort the client program if ##KeyType## is less than ##bitwidth##-bit. *)
+
+
+(* ---------------------------------------------------------------------------
+ * function Hash.initialValue()
+ * ---------------------------------------------------------------------------
+ * Returns the initial hash value for incremental hash calculation.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE initialValue ( ) : Key;
+
+
+(* ---------------------------------------------------------------------------
+ * function Hash.valueForNextChar(hash, ch)
+ * ---------------------------------------------------------------------------
+ * Returns the next incremental hash value for incremental hash calculation.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE valueForNextChar ( hash : Key; ch : CHAR ) : Key;
+
+
+(* ---------------------------------------------------------------------------
+ * function Hash.finalValue( hash )
+ * ---------------------------------------------------------------------------
+ * Returns the final hash value for incremental hash calculation.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE finalValue ( hash : Key ) : Key;
+
+
+(* ---------------------------------------------------------------------------
+ * function Hash.valueForArray( array )
+ * ---------------------------------------------------------------------------
+ * Returns the final hash value for the given character array.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE valueForArray ( VAR (* CONST *) array : ARRAY OF CHAR ) : Key;
+
+
+END Hash.
