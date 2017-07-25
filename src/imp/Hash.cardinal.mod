@@ -152,7 +152,7 @@ PROCEDURE initialValue ( ) : Key;
 
 BEGIN
   RETURN 0
-END initalValue;
+END initialValue;
 
 
 (* ---------------------------------------------------------------------------
@@ -179,6 +179,7 @@ BEGIN
       ClearBitsInclAndAbove(hash, KeyBitwidth-1)
     ELSE
       hash := hash - KeyMSBWeight
+    END (* IF *)
   END; (* IF *)
   
   RETURN hash
@@ -203,7 +204,7 @@ BEGIN
   index := 0;
   hash := initialValue();
   
-  ch := array[index]
+  ch := array[index];
   WHILE (ch # NUL) AND (index < HIGH(array)) DO
     hash := ORD(ch) + SHL(hash, A) + SHL(hash, B) - hash;
     index := index + 1;
@@ -216,6 +217,7 @@ BEGIN
       ClearBitsInclAndAbove(hash, KeyBitwidth-1)
     ELSE
       hash := hash - KeyMSBWeight
+    END (* IF *)
   END; (* IF *)
   
   RETURN hash
