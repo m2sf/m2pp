@@ -4,15 +4,19 @@ IMPLEMENTATION MODULE NumStr;
 
 (* Numeric String Conversion Library *)
 
+IMPORT String;
+FROM String IMPORT StringT; (* alias for String.String *)
+
 
 PROCEDURE ToCard
-  ( numStr : String; VAR value : CARDINAL; VAR status : Status );
+  ( numStr : StringT; VAR value : CARDINAL; VAR status : Status );
 (* Converts the value represented by numStr to type CARDINAL. *)
 
 VAR
   ch : CHAR;
   overflow : BOOLEAN;
-  accumulator, digitIndex, minIndex, digitWeight, digitValue : CARDINAL;
+  index, minIndex, digitIndex,
+  accumulator, digitWeight, digitValue : CARDINAL;
   
 BEGIN
   (* check sign *)
@@ -75,13 +79,14 @@ END ToCard;
 
 
 PROCEDURE ToInt
-  ( numStr : String; VAR value : INTEGER; VAR status : Status );
+  ( numStr : StringT; VAR value : INTEGER; VAR status : Status );
 (* Converts the value represented by numStr to type INTEGER. *)
 
 VAR
   ch : CHAR;
   overflow, negative : BOOLEAN;
-  accumulator, digitIndex, minIndex, digitWeight, digitValue : INTEGER;
+  index, minIndex, digitIndex : CARDINAL;
+  accumulator, digitWeight, digitValue : INTEGER;
   
 BEGIN
   (* check sign *)
@@ -100,7 +105,7 @@ BEGIN
   IF digitIndex > 0 THEN
     digitIndex := digitIndex - 1
   END; (* IF *)
-      
+  
   accumulator := 0;
   digitWeight := 1;
   
@@ -185,7 +190,7 @@ END addCard;
 PROCEDURE addInt ( VAR i : INTEGER; j : INTEGER; VAR overflow : BOOLEAN );
 
 BEGIN
-  IF (i > 0) AND (i > MAX(INTEGER) - m) THEN
+  IF (i > 0) AND (i > MAX(INTEGER) - j) THEN
     overflow := TRUE
   ELSE
     overflow := FALSE;
