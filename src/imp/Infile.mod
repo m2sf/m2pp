@@ -85,12 +85,16 @@ END Close;
 
 
 (* ---------------------------------------------------------------------------
- * procedure ReadChar(infile, ch)
+ * procedure consumeChar(infile)
  * ---------------------------------------------------------------------------
- * Reads a character from the input file and passes it back in ch
+ * Consumes the current lookahead character in infile. Returns the resulting
+ * new lookahead character without consuming it.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE ReadChar( infile : Infile; VAR ch : CHAR );
+PROCEDURE consumeChar ( infile : Infile ) : CHAR;
+
+VAR
+  ch : CHAR;
   
 BEGIN
   BasicFileIO.ReadChar(infile.file, ch);
@@ -125,14 +129,16 @@ BEGIN
     
     (* update column counter *)
     infile.column := infile^.column + 1
-  END (* IF *)
-END ReadChar;
+  END; (* IF *)
+  
+  RETURN lookaheadChar(infile)
+END consumeChar;
 
 
 (* ---------------------------------------------------------------------------
  * procedure lookaheadChar(infile)
  * ---------------------------------------------------------------------------
- * Returns the next character in infile without consuming it.
+ * Returns the current lookahead char in infile without consuming any char.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE lookaheadChar ( infile : Infile ) : CHAR;
