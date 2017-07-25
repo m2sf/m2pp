@@ -7,6 +7,7 @@ IMPLEMENTATION MODULE Terminal; (* POSIX version *)
 IMPORT unistd; (* POSIX library *)
 
 IMPORT Newline;
+FROM SYSTEM IMPORT ADR;
 FROM ISO646 IMPORT NUL, LF, CR;
 
 
@@ -38,7 +39,7 @@ VAR
   res : unistd.INT;
   
 BEGIN
-  res := stdio.write(unistd.StdOut, ADR(ch), 1)
+  res := unistd.write(unistd.StdOut, ADR(ch), 1)
 END Write;
 
 
