@@ -99,20 +99,18 @@ END forSlice;
 
 
 (* ---------------------------------------------------------------------------
- * function forConcatenation(string1, string2)
+ * function concat(string1, string2)
  * ---------------------------------------------------------------------------
  * Looks up the product of concatenating string1 and string2 and returns the
  * matching interned string if an entry exists. Creates and returns a new
  * interned string with the concatenation product if no match is found.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE forConcatenation ( string1, string2 : String ) : String;
+PROCEDURE concat ( string1, string2 : String ) : String;
 
 BEGIN
-  
   (* TO DO *)
-  
-END forConcatenation;
+END concat;
 
 
 (* ---------------------------------------------------------------------------
