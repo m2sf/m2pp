@@ -112,8 +112,12 @@ TYPE AOC1279 =  ARRAY [0..1279] OF CHAR; (* capacity 1279, size 1280 *)
 TYPE AOC1535 =  ARRAY [0..1535] OF CHAR; (* capacity 1535, size 1536 *)
 TYPE AOC1791 =  ARRAY [0..1791] OF CHAR; (* capacity 1791, size 1792 *)
 TYPE AOC2047 =  ARRAY [0..2047] OF CHAR; (* capacity 2047, size 2048 *)
+
+(* size increments of 512 *)
 TYPE AOC2559 =  ARRAY [0..2559] OF CHAR; (* capacity 2559, size 2560 *)
 TYPE AOC3071 =  ARRAY [0..3071] OF CHAR; (* capacity 3071, size 3072 *)
+
+(* size increment of 1024 *)
 TYPE AOC4095 =  ARRAY [0..4095] OF CHAR; (* capacity 4095, size 4096 *)
 
 
