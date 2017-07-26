@@ -16,7 +16,7 @@ digraph InfileDep {
   BuildParams; /* no dependencies */
   
   String -> {
-    Hash ISO646 Storage StrPtr
+    Hash ISO646 Storage StrBlank
   };
   
   edge [style=dotted];
@@ -26,5 +26,7 @@ digraph InfileDep {
   edge [style=none];
   
   Terminal [shape=box]; /* stdlib */
+  
+  StrBlank; /* no dependencies */
   
 } /* InfileDep */

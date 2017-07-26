@@ -10,7 +10,7 @@ digraph ConsoleDep {
   ISO646; /* no dependencies */
   
   String -> {
-    Hash ISO646 Storage StrPtr
+    Hash ISO646 Storage StrBlank
   };
   
   edge [style=dotted];
@@ -21,7 +21,7 @@ digraph ConsoleDep {
     
   Storage [shape=box]; /* stdlib */
   
-  StrPtr; /* no dependencies */  
+  StrBlank; /* no dependencies */  
   
   Terminal [shape=box]; /* stdlib */
   

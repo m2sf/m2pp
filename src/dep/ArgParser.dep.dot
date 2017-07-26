@@ -26,7 +26,7 @@ digraph ArgParserImports {
   BuildParams; /* no dependencies */
   
   String -> {
-    Hash ISO646 Storage StrPtr
+    Hash ISO646 Storage StrBlank
   };
   
   edge [style=dotted];
@@ -37,7 +37,7 @@ digraph ArgParserImports {
   
   Terminal [shape=box]; /* stdlib */
   
-  StrPtr; /* no dependencies */  
+  StrBlank; /* no dependencies */  
   
   Newline; /* no dependencies */
   

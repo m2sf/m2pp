@@ -20,7 +20,7 @@ digraph ArgsImports {
   CardMath; /* no dependencies */
   
   String -> {
-    Hash ISO646 Storage StrPtr
+    Hash ISO646 Storage StrBlank
   };
   
   edge [style=dotted];
@@ -33,7 +33,7 @@ digraph ArgsImports {
   
   Storage [shape=box]; /* stdlib */
   
-  StrPtr; /* no dependencies */  
+  StrBlank; /* no dependencies */  
   
   BasicFileSys [shape=box];
   

@@ -12,7 +12,7 @@ digraph PreprocessorDep {
   Storage [shape=box]; /* stdlib */
     
   String -> {
-    Hash ISO646 Storage StrPtr
+    Hash ISO646 Storage StrBlank
   };
   
   edge [style=dotted];
@@ -25,7 +25,7 @@ digraph PreprocessorDep {
   
   ISO646; /* no dependencies */
   
-  StrPtr; /* no dependencies */  
+  StrBlank; /* no dependencies */  
   
   Infile -> {
     BasicFileIO BuildParams ISO646 Storage String

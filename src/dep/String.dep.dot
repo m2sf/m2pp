@@ -2,7 +2,7 @@ digraph StringDep {
   node [fontname=helvetica];
   
   String -> {
-    Hash ISO646 Storage StrPtr
+    Hash ISO646 Storage StrBlank
   };
   
   edge [style=dotted];
@@ -17,6 +17,6 @@ digraph StringDep {
   
   Storage [shape=box]; /* stdlib */
   
-  StrPtr; /* no dependencies */  
+  StrBlank; /* no dependencies */  
   
 } /* StringDep */

@@ -1,4 +1,4 @@
-digraph NewlineDep {
+digraph NumStrDep {
   node [fontname=helvetica];
   
   NumStr -> {
@@ -6,7 +6,7 @@ digraph NewlineDep {
   };
   
   String -> {
-    Hash ISO646 Storage StrPtr
+    Hash ISO646 Storage StrBlank
   };
   
   edge [style=dotted];
@@ -21,6 +21,6 @@ digraph NewlineDep {
   
   Storage [shape=box]; /* stdlib */
   
-  StrPtr; /* no dependencies */  
+  StrBlank; /* no dependencies */  
       
-} /* NewlineDep */
+} /* NumStrDep */

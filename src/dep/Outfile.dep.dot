@@ -16,7 +16,7 @@ digraph OutfileDep {
   Newline; /* no dependencies */  
   
   String -> {
-    Hash ISO646 Storage StrPtr
+    Hash ISO646 Storage StrBlank
   };
   
   edge [style=dotted];
@@ -25,7 +25,7 @@ digraph OutfileDep {
   };
   edge [style=none];
   
-  StrPtr; /* no dependencies */
+  StrBlank; /* no dependencies */
   
   Tabulator; /* no dependencies */  
   

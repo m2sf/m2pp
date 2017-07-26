@@ -22,7 +22,7 @@ digraph ArgLexerImports {
   BuildParams; /* no dependencies */
     
   String -> {
-    Hash ISO646 Storage StrPtr
+    Hash ISO646 Storage StrBlank
   };
   
   edge [style=dotted];
@@ -33,6 +33,6 @@ digraph ArgLexerImports {
   
   Terminal [shape=box]; /* stdlib */
   
-  StrPtr; /* no dependencies */  
+  StrBlank; /* no dependencies */  
   
 } /* ArgLexerImports */
