@@ -2,7 +2,7 @@
 
 IMPLEMENTATION MODULE StrPtr;
 
-(* Character Array Pointer Types and Allocation Sizes used by Module String *)
+(* ARRAY OF CHAR Pointer Types and Allocation Sizes used by Module String *)
 
 
 (* ---------------------------------------------------------------------------
