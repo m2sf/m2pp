@@ -13,7 +13,7 @@ Adaptation Libraries
 
 Missing Functionality
 * implement --show-settings output
-* implement procedure AppendSliceToArray in CharArray.mod
-* implement procedure GetFileSize in all versions of BasicFileSys
+* implement fromConcatenation() and comparison() in String.mod
+* implement GetFileSize() in all versions of BasicFileSys library
 
 [END OF FILE]
