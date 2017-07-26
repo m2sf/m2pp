@@ -1,16 +1,16 @@
 (*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-IMPLEMENTATION MODULE StrPtr;
+IMPLEMENTATION MODULE StrBlank;
 
-(* ARRAY OF CHAR Pointer Types and Allocation Sizes used by Module String *)
+(* String Blanks used internally by Module String *)
 
 
 (* ---------------------------------------------------------------------------
  * function allocSizeForStrLen(strlen)
  * ---------------------------------------------------------------------------
- * Returns the allocation size for an AOC type of length strlen as follows:
+ * Returns the allocation size for a blank of length strlen as follows:
  * 
- * case | strlen       | offset | size      | type
+ * case | strlen       | offset | size      | blank type
  * -----+--------------+--------+-----------+-----------
  *  (0) |    0 ..   79 |     +1 |  strlen+1 | AOC0-AOC79
  * -----+--------------+--------+-----------+-----------
@@ -113,4 +113,4 @@ BEGIN
 END allocSizeForStrLen;
 
 
-END StrPtr.
+END StrBlank.
