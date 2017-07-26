@@ -382,6 +382,7 @@ END comparison;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE WithCharsDo ( string : String; proc : CharArrayProc );
+<*ASSIGN(Warnings,FALSE)*>(*p1*)
 
 BEGIN
   (* check pre-conditions *)
@@ -394,8 +395,8 @@ BEGIN
   (* we need to cast intern to the AOC type matching its allocation length
      before passing it to proc, or else the compiler will use an incorrect
      value for HIGH and intern won't be type safe within proc. Note that
-     some compilers will issue warnings for this cast. *)
-  
+     some compilers will issue warnings for these casts. *)
+    
   IF string^.length < 80 THEN
     CASE string^.length OF
        0 : proc(CAST(StrBlank.AOC0, string^.intern^))
@@ -542,6 +543,7 @@ BEGIN
       END (* IF *)
     END (* IF *)
   END (* IF *)
+<*ASSIGN(Warnings,TRUE)*>(*p1*)
 END WithCharsDo;
 
 
