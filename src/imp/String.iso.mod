@@ -246,7 +246,7 @@ PROCEDURE AppendSliceToArray
     VAR charsCopied : CARDINAL );
 
 VAR
-  len : CARDINAL;
+  len, arrIndex, strIndex, reqSize : CARDINAL;
   
 BEGIN
   (* check pre-conditions *)
@@ -385,7 +385,7 @@ PROCEDURE WithCharsDo ( string : String; proc : CharArrayProc );
 
 BEGIN
   (* check pre-conditions *)
-  IF (string = NIL) OR (proc = NIL) THEN
+  IF (string = NIL) OR (proc = NILPROC) THEN
     RETURN
   END; (* IF *)
   
@@ -393,120 +393,120 @@ BEGIN
   
   (* we need to cast intern to the AOC type matching its allocation length
      before passing it to proc, or else the compiler will use an incorrect
-     value for HIGH and intern won't be type safe within proc. *)
-    
+     value for HIGH and intern won't be type safe within proc. Note that
+     some compilers will issue warnings for this cast. *)
+  
   IF string^.length < 80 THEN
     CASE string^.length OF
-       0 : proc(CAST(StrBlank.AOC0, string^.intern^)
-    |  1 : proc(CAST(StrBlank.AOC1, string^.intern^)
-    |  2 : proc(CAST(StrBlank.AOC2, string^.intern^)
-    |  3 : proc(CAST(StrBlank.AOC3, string^.intern^)
-    |  4 : proc(CAST(StrBlank.AOC4, string^.intern^)
-    |  5 : proc(CAST(StrBlank.AOC5, string^.intern^)
-    |  6 : proc(CAST(StrBlank.AOC6, string^.intern^)
-    |  7 : proc(CAST(StrBlank.AOC7, string^.intern^)
-    |  8 : proc(CAST(StrBlank.AOC8, string^.intern^)
-    |  9 : proc(CAST(StrBlank.AOC9, string^.intern^)
-    | 10 : proc(CAST(StrBlank.AOC10, string^.intern^)
-    | 11 : proc(CAST(StrBlank.AOC11, string^.intern^)
-    | 12 : proc(CAST(StrBlank.AOC12, string^.intern^)
-    | 13 : proc(CAST(StrBlank.AOC13, string^.intern^)
-    | 14 : proc(CAST(StrBlank.AOC14, string^.intern^)
-    | 15 : proc(CAST(StrBlank.AOC14, string^.intern^)
-    | 16 : proc(CAST(StrBlank.AOC16, string^.intern^)
-    | 17 : proc(CAST(StrBlank.AOC17, string^.intern^)
-    | 18 : proc(CAST(StrBlank.AOC18, string^.intern^)
-    | 19 : proc(CAST(StrBlank.AOC19, string^.intern^)
-    | 20 : proc(CAST(StrBlank.AOC20, string^.intern^)
-    | 21 : proc(CAST(StrBlank.AOC21, string^.intern^)
-    | 22 : proc(CAST(StrBlank.AOC22, string^.intern^)
-    | 23 : proc(CAST(StrBlank.AOC23, string^.intern^)
-    | 24 : proc(CAST(StrBlank.AOC24, string^.intern^)
-    | 25 : proc(CAST(StrBlank.AOC25, string^.intern^)
-    | 26 : proc(CAST(StrBlank.AOC26, string^.intern^)
-    | 27 : proc(CAST(StrBlank.AOC27, string^.intern^)
-    | 28 : proc(CAST(StrBlank.AOC28, string^.intern^)
-    | 29 : proc(CAST(StrBlank.AOC29, string^.intern^)
-    | 20 : proc(CAST(StrBlank.AOC30, string^.intern^)
-    | 31 : proc(CAST(StrBlank.AOC31, string^.intern^)
-    | 32 : proc(CAST(StrBlank.AOC32, string^.intern^)
-    | 33 : proc(CAST(StrBlank.AOC33, string^.intern^)
-    | 34 : proc(CAST(StrBlank.AOC34, string^.intern^)
-    | 35 : proc(CAST(StrBlank.AOC35, string^.intern^)
-    | 36 : proc(CAST(StrBlank.AOC36, string^.intern^)
-    | 37 : proc(CAST(StrBlank.AOC37, string^.intern^)
-    | 38 : proc(CAST(StrBlank.AOC38, string^.intern^)
-    | 39 : proc(CAST(StrBlank.AOC39, string^.intern^)
-    | 40 : proc(CAST(StrBlank.AOC40, string^.intern^)
-    | 41 : proc(CAST(StrBlank.AOC41, string^.intern^)
-    | 42 : proc(CAST(StrBlank.AOC42, string^.intern^)
-    | 43 : proc(CAST(StrBlank.AOC43, string^.intern^)
-    | 44 : proc(CAST(StrBlank.AOC44, string^.intern^)
-    | 45 : proc(CAST(StrBlank.AOC45, string^.intern^)
-    | 46 : proc(CAST(StrBlank.AOC46, string^.intern^)
-    | 47 : proc(CAST(StrBlank.AOC47, string^.intern^)
-    | 48 : proc(CAST(StrBlank.AOC48, string^.intern^)
-    | 49 : proc(CAST(StrBlank.AOC49, string^.intern^)
-    | 50 : proc(CAST(StrBlank.AOC50, string^.intern^)
-    | 51 : proc(CAST(StrBlank.AOC51, string^.intern^)
-    | 52 : proc(CAST(StrBlank.AOC52, string^.intern^)
-    | 53 : proc(CAST(StrBlank.AOC53, string^.intern^)
-    | 54 : proc(CAST(StrBlank.AOC54, string^.intern^)
-    | 55 : proc(CAST(StrBlank.AOC55, string^.intern^)
-    | 56 : proc(CAST(StrBlank.AOC56, string^.intern^)
-    | 57 : proc(CAST(StrBlank.AOC57, string^.intern^)
-    | 58 : proc(CAST(StrBlank.AOC58, string^.intern^)
-    | 59 : proc(CAST(StrBlank.AOC59, string^.intern^)
-    | 60 : proc(CAST(StrBlank.AOC60, string^.intern^)
-    | 61 : proc(CAST(StrBlank.AOC61, string^.intern^)
-    | 62 : proc(CAST(StrBlank.AOC62, string^.intern^)
-    | 63 : proc(CAST(StrBlank.AOC63, string^.intern^)
-    | 64 : proc(CAST(StrBlank.AOC64, string^.intern^)
-    | 65 : proc(CAST(StrBlank.AOC65, string^.intern^)
-    | 66 : proc(CAST(StrBlank.AOC66, string^.intern^)
-    | 67 : proc(CAST(StrBlank.AOC67, string^.intern^)
-    | 68 : proc(CAST(StrBlank.AOC68, string^.intern^)
-    | 69 : proc(CAST(StrBlank.AOC69, string^.intern^)
-    | 70 : proc(CAST(StrBlank.AOC70, string^.intern^)
-    | 71 : proc(CAST(StrBlank.AOC71, string^.intern^)
-    | 72 : proc(CAST(StrBlank.AOC72, string^.intern^)
-    | 73 : proc(CAST(StrBlank.AOC73, string^.intern^)
-    | 74 : proc(CAST(StrBlank.AOC74, string^.intern^)
-    | 75 : proc(CAST(StrBlank.AOC75, string^.intern^)
-    | 76 : proc(CAST(StrBlank.AOC76, string^.intern^)
-    | 77 : proc(CAST(StrBlank.AOC77, string^.intern^)
-    | 78 : proc(CAST(StrBlank.AOC78, string^.intern^)
-    | 79 : proc(CAST(StrBlank.AOC79, string^.intern^)
+       0 : proc(CAST(StrBlank.AOC0, string^.intern^))
+    |  1 : proc(CAST(StrBlank.AOC1, string^.intern^))
+    |  2 : proc(CAST(StrBlank.AOC2, string^.intern^))
+    |  3 : proc(CAST(StrBlank.AOC3, string^.intern^))
+    |  4 : proc(CAST(StrBlank.AOC4, string^.intern^))
+    |  5 : proc(CAST(StrBlank.AOC5, string^.intern^))
+    |  6 : proc(CAST(StrBlank.AOC6, string^.intern^))
+    |  7 : proc(CAST(StrBlank.AOC7, string^.intern^))
+    |  8 : proc(CAST(StrBlank.AOC8, string^.intern^))
+    |  9 : proc(CAST(StrBlank.AOC9, string^.intern^))
+    | 10 : proc(CAST(StrBlank.AOC10, string^.intern^))
+    | 11 : proc(CAST(StrBlank.AOC11, string^.intern^))
+    | 12 : proc(CAST(StrBlank.AOC12, string^.intern^))
+    | 13 : proc(CAST(StrBlank.AOC13, string^.intern^))
+    | 14 : proc(CAST(StrBlank.AOC14, string^.intern^))
+    | 15 : proc(CAST(StrBlank.AOC14, string^.intern^))
+    | 16 : proc(CAST(StrBlank.AOC16, string^.intern^))
+    | 17 : proc(CAST(StrBlank.AOC17, string^.intern^))
+    | 18 : proc(CAST(StrBlank.AOC18, string^.intern^))
+    | 19 : proc(CAST(StrBlank.AOC19, string^.intern^))
+    | 20 : proc(CAST(StrBlank.AOC20, string^.intern^))
+    | 21 : proc(CAST(StrBlank.AOC21, string^.intern^))
+    | 22 : proc(CAST(StrBlank.AOC22, string^.intern^))
+    | 23 : proc(CAST(StrBlank.AOC23, string^.intern^))
+    | 24 : proc(CAST(StrBlank.AOC24, string^.intern^))
+    | 25 : proc(CAST(StrBlank.AOC25, string^.intern^))
+    | 26 : proc(CAST(StrBlank.AOC26, string^.intern^))
+    | 27 : proc(CAST(StrBlank.AOC27, string^.intern^))
+    | 28 : proc(CAST(StrBlank.AOC28, string^.intern^))
+    | 29 : proc(CAST(StrBlank.AOC29, string^.intern^))
+    | 30 : proc(CAST(StrBlank.AOC30, string^.intern^))
+    | 31 : proc(CAST(StrBlank.AOC31, string^.intern^))
+    | 32 : proc(CAST(StrBlank.AOC32, string^.intern^))
+    | 33 : proc(CAST(StrBlank.AOC33, string^.intern^))
+    | 34 : proc(CAST(StrBlank.AOC34, string^.intern^))
+    | 35 : proc(CAST(StrBlank.AOC35, string^.intern^))
+    | 36 : proc(CAST(StrBlank.AOC36, string^.intern^))
+    | 37 : proc(CAST(StrBlank.AOC37, string^.intern^))
+    | 38 : proc(CAST(StrBlank.AOC38, string^.intern^))
+    | 39 : proc(CAST(StrBlank.AOC39, string^.intern^))
+    | 40 : proc(CAST(StrBlank.AOC40, string^.intern^))
+    | 41 : proc(CAST(StrBlank.AOC41, string^.intern^))
+    | 42 : proc(CAST(StrBlank.AOC42, string^.intern^))
+    | 43 : proc(CAST(StrBlank.AOC43, string^.intern^))
+    | 44 : proc(CAST(StrBlank.AOC44, string^.intern^))
+    | 45 : proc(CAST(StrBlank.AOC45, string^.intern^))
+    | 46 : proc(CAST(StrBlank.AOC46, string^.intern^))
+    | 47 : proc(CAST(StrBlank.AOC47, string^.intern^))
+    | 48 : proc(CAST(StrBlank.AOC48, string^.intern^))
+    | 49 : proc(CAST(StrBlank.AOC49, string^.intern^))
+    | 50 : proc(CAST(StrBlank.AOC50, string^.intern^))
+    | 51 : proc(CAST(StrBlank.AOC51, string^.intern^))
+    | 52 : proc(CAST(StrBlank.AOC52, string^.intern^))
+    | 53 : proc(CAST(StrBlank.AOC53, string^.intern^))
+    | 54 : proc(CAST(StrBlank.AOC54, string^.intern^))
+    | 55 : proc(CAST(StrBlank.AOC55, string^.intern^))
+    | 56 : proc(CAST(StrBlank.AOC56, string^.intern^))
+    | 57 : proc(CAST(StrBlank.AOC57, string^.intern^))
+    | 58 : proc(CAST(StrBlank.AOC58, string^.intern^))
+    | 59 : proc(CAST(StrBlank.AOC59, string^.intern^))
+    | 60 : proc(CAST(StrBlank.AOC60, string^.intern^))
+    | 61 : proc(CAST(StrBlank.AOC61, string^.intern^))
+    | 62 : proc(CAST(StrBlank.AOC62, string^.intern^))
+    | 63 : proc(CAST(StrBlank.AOC63, string^.intern^))
+    | 64 : proc(CAST(StrBlank.AOC64, string^.intern^))
+    | 65 : proc(CAST(StrBlank.AOC65, string^.intern^))
+    | 66 : proc(CAST(StrBlank.AOC66, string^.intern^))
+    | 67 : proc(CAST(StrBlank.AOC67, string^.intern^))
+    | 68 : proc(CAST(StrBlank.AOC68, string^.intern^))
+    | 69 : proc(CAST(StrBlank.AOC69, string^.intern^))
+    | 70 : proc(CAST(StrBlank.AOC70, string^.intern^))
+    | 71 : proc(CAST(StrBlank.AOC71, string^.intern^))
+    | 72 : proc(CAST(StrBlank.AOC72, string^.intern^))
+    | 73 : proc(CAST(StrBlank.AOC73, string^.intern^))
+    | 74 : proc(CAST(StrBlank.AOC74, string^.intern^))
+    | 75 : proc(CAST(StrBlank.AOC75, string^.intern^))
+    | 76 : proc(CAST(StrBlank.AOC76, string^.intern^))
+    | 77 : proc(CAST(StrBlank.AOC77, string^.intern^))
+    | 78 : proc(CAST(StrBlank.AOC78, string^.intern^))
+    | 79 : proc(CAST(StrBlank.AOC79, string^.intern^))
     END (* CASE *)
   ELSE
     IF string^.length < 768 THEN
       IF string^.length < 128 THEN
         IF string^.length < 96 THEN
           IF string^.length < 88 THEN
-            proc(CAST(StrBlank.AOC87, string^.intern^)
+            proc(CAST(StrBlank.AOC87, string^.intern^))
           ELSE (* string^.length >= 88 *)
-            proc(CAST(StrBlank.AOC95, string^.intern^)
+            proc(CAST(StrBlank.AOC95, string^.intern^))
           END (* IF *)
         ELSE (* string^.length >= 96 *)
           IF string^.length < 112 THEN
-            proc(CAST(StrBlank.AOC111, string^.intern^)
+            proc(CAST(StrBlank.AOC111, string^.intern^))
           ELSE (* string^.length >= 112 *)
-            proc(CAST(StrBlank.AOC127, string^.intern^)
+            proc(CAST(StrBlank.AOC127, string^.intern^))
           END (* IF *)
         END (* IF *)
       ELSE (* string^.length >= 128 *)
         IF string^.length < 256 THEN
           IF string^.length < 192 THEN
-            proc(CAST(StrBlank.AOC191, string^.intern^)
+            proc(CAST(StrBlank.AOC191, string^.intern^))
           ELSE (* string^.length >= 192 *)
-            proc(CAST(StrBlank.AOC255, string^.intern^)
+            proc(CAST(StrBlank.AOC255, string^.intern^))
           END (* IF *)
         ELSE (* string^.length >= 256 *)
           IF string^.length < 512 THEN
-            proc(CAST(StrBlank.AOC511, string^.intern^)
+            proc(CAST(StrBlank.AOC511, string^.intern^))
           ELSE (* string^.length >= 512 *)
-            (* case 8 *) size := 768
-            proc(CAST(StrBlank.AOC767, string^.intern^)
+            proc(CAST(StrBlank.AOC767, string^.intern^))
           END (* IF *)
         END (* IF *)
       END (* IF *)
@@ -514,29 +514,29 @@ BEGIN
       IF string^.length < 1792 THEN
         IF string^.length < 1280 THEN
           IF string^.length < 1024 THEN
-            proc(CAST(StrBlank.AOC1023, string^.intern^)
+            proc(CAST(StrBlank.AOC1023, string^.intern^))
           ELSE (* string^.length >= 1024 *)
-            proc(CAST(StrBlank.AOC1279, string^.intern^)
+            proc(CAST(StrBlank.AOC1279, string^.intern^))
           END (* IF *)
         ELSE (* string^.length >= 1280 *)
           IF string^.length < 1536 THEN
-            proc(CAST(StrBlank.AOC1535, string^.intern^)
+            proc(CAST(StrBlank.AOC1535, string^.intern^))
           ELSE (* string^.length >= 1536 *)
-            proc(CAST(StrBlank.AOC1791, string^.intern^)
+            proc(CAST(StrBlank.AOC1791, string^.intern^))
           END (* IF *)
         END (* IF *)
       ELSE (* string^.length >= 1792 *)
         IF string^.length < 2560 THEN
           IF string^.length < 2048 THEN
-            proc(CAST(StrBlank.AOC2047, string^.intern^)
+            proc(CAST(StrBlank.AOC2047, string^.intern^))
           ELSE (* string^.length >= 2048 *)
-            proc(CAST(StrBlank.AOC2559, string^.intern^)
+            proc(CAST(StrBlank.AOC2559, string^.intern^))
           END (* IF *)
         ELSE (* string^.length >= 2560 *)
           IF string^.length < 3072 THEN
-            proc(CAST(StrBlank.AOC3071, string^.intern^)
+            proc(CAST(StrBlank.AOC3071, string^.intern^))
           ELSE (* string^.length >= 3072 *)
-            proc(CAST(StrBlank.Largest, string^.intern^)
+            proc(CAST(StrBlank.Largest, string^.intern^))
           END (* IF *)
         END (* IF *)
       END (* IF *)
@@ -560,7 +560,7 @@ VAR
   
 BEGIN
   (* check pre-conditions *)
-  IF (string = NIL) OR (proc = NIL) OR
+  IF (string = NIL) OR (proc = NILPROC) OR
     (start > end) OR (end >= string^.length) THEN
     RETURN
   END; (* IF *)
@@ -608,7 +608,7 @@ BEGIN
   
   (* initialise table buckets *)
   FOR index := 0 TO BucketCount - 1 DO
-    strTable[index] := NIL
+    strTable.bucket[index] := NIL
   END (* FOR *)
 END InitTable;
 
@@ -660,13 +660,13 @@ BEGIN
   bucketIndex := hash MOD BucketCount;
   
   (* check if bucket is empty *)
-  IF bucket[bucketIndex] = NIL THEN
+  IF strTable.bucket[bucketIndex] = NIL THEN
     NewTableEntry(newEntry, hash, array, start, end);
-    bucket[bucketIndex] := newEntry;
+    strTable.bucket[bucketIndex] := newEntry;
     RETURN newEntry^.string
     
   ELSE (* bucket not empty *)
-    thisEntry := bucket[bucketIndex];
+    thisEntry := strTable.bucket[bucketIndex];
     LOOP
       (* check for matching entry *)
       IF (hash = thisEntry^.hash) AND
@@ -676,13 +676,13 @@ BEGIN
       END; (* IF *)
       
       (* no match -- move to next entry *)
-      IF thisEntry^.next # NIL
+      IF thisEntry^.next # NIL THEN
         thisEntry := thisEntry^.next
       ELSE (* no more entries -- exit *)
         EXIT
       END (* IF *)
-    END (* LOOP *) thisEntry^.next = NIL;
-    
+    END; (* LOOP *)
+        
     (* no matching entry found -- insert new entry *)
     NewTableEntry(newEntry, hash, array, start, end);
     thisEntry^.next := newEntry;
@@ -710,14 +710,14 @@ END lookupOrInsert;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE NewTableEntry
-  ( VAR        : entry : TableEntry; (* out : new table entry or NIL *)
-    hash       : Hash.Key;           (* in  : hash key of array[start..end] *)
-    VAR array  : ARRAY OF CHAR;      (* in  : char array for initialisation *)
-    start,                           (* in  : start index of slice to copy *)
-    end        : CARDINAL );         (* in  : end index of slice to copy *)
+  ( VAR entry  : TableEntry;    (* out : new table entry or NIL *)
+    hash       : Hash.Key;      (* in  : hash key of array[start..end] *)
+    VAR array  : ARRAY OF CHAR; (* in  : char array for initialisation *)
+    start,                      (* in  : start index of slice to copy *)
+    end        : CARDINAL );    (* in  : end index of slice to copy *)
 
 VAR
-  string : Str
+  string : String;
   newEntry : TableEntry;
   
 BEGIN
@@ -781,7 +781,7 @@ BEGIN
   END; (* IF *)
   
   (* determine allocation size *)
-  size := allocSizeForStrLen(strlen);
+  size := StrBlank.allocSizeForStrLen(strlen);
   
   (* allocate space for intern *)
   ALLOCATE(addr, size);
@@ -803,7 +803,7 @@ BEGIN
   END; (* IF *)
   
   (* NUL terminate the intern *)
-  ptr^[strlen] := NUL
+  ptr^[strlen] := NUL;
   
   (* bail out if allocation failed *)
   IF addr = NIL THEN

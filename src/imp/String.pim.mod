@@ -426,7 +426,7 @@ BEGIN
     | 27 : proc(StrBlank.AOC27(string^.intern^))
     | 28 : proc(StrBlank.AOC28(string^.intern^))
     | 29 : proc(StrBlank.AOC29(string^.intern^))
-    | 20 : proc(StrBlank.AOC30(string^.intern^))
+    | 30 : proc(StrBlank.AOC30(string^.intern^))
     | 31 : proc(StrBlank.AOC31(string^.intern^))
     | 32 : proc(StrBlank.AOC32(string^.intern^))
     | 33 : proc(StrBlank.AOC33(string^.intern^))
@@ -504,7 +504,6 @@ BEGIN
           IF string^.length < 512 THEN
             proc(StrBlank.AOC511(string^.intern^))
           ELSE (* string^.length >= 512 *)
-            (* case 8 *) size := 768
             proc(StrBlank.AOC767(string^.intern^))
           END (* IF *)
         END (* IF *)
@@ -607,7 +606,7 @@ BEGIN
   
   (* initialise table buckets *)
   FOR index := 0 TO BucketCount - 1 DO
-    strTable[index] := NIL
+    strTable.bucket[index] := NIL
   END (* FOR *)
 END InitTable;
 
@@ -675,12 +674,12 @@ BEGIN
       END; (* IF *)
       
       (* no match -- move to next entry *)
-      IF thisEntry^.next # NIL
+      IF thisEntry^.next # NIL THEN
         thisEntry := thisEntry^.next
       ELSE (* no more entries -- exit *)
         EXIT
       END (* IF *)
-    END (* LOOP *) thisEntry^.next = NIL;
+    END; (* LOOP *)
     
     (* no matching entry found -- insert new entry *)
     NewTableEntry(newEntry, hash, array, start, end);
@@ -709,14 +708,14 @@ END lookupOrInsert;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE NewTableEntry
-  ( VAR        : entry : TableEntry; (* out : new table entry or NIL *)
-    hash       : Hash.Key;           (* in  : hash key of array[start..end] *)
-    VAR array  : ARRAY OF CHAR;      (* in  : char array for initialisation *)
-    start,                           (* in  : start index of slice to copy *)
-    end        : CARDINAL );         (* in  : end index of slice to copy *)
+  ( VAR entry  : TableEntry;    (* out : new table entry or NIL *)
+    hash       : Hash.Key;      (* in  : hash key of array[start..end] *)
+    VAR array  : ARRAY OF CHAR; (* in  : char array for initialisation *)
+    start,                      (* in  : start index of slice to copy *)
+    end        : CARDINAL );    (* in  : end index of slice to copy *)
 
 VAR
-  string : Str
+  string : String;
   newEntry : TableEntry;
   
 BEGIN
@@ -780,7 +779,7 @@ BEGIN
   END; (* IF *)
   
   (* determine allocation size *)
-  size := allocSizeForStrLen(strlen);
+  size := StrBlank.allocSizeForStrLen(strlen);
   
   (* allocate space for intern *)
   ALLOCATE(addr, size);
@@ -802,7 +801,7 @@ BEGIN
   END; (* IF *)
   
   (* NUL terminate the intern *)
-  ptr^[strlen] := NUL
+  ptr^[strlen] := NUL;
   
   (* bail out if allocation failed *)
   IF addr = NIL THEN
