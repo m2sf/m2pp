@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE String; (* PIM version *)
 
 (* Interned Strings *)
 
-IMPORT SYSTEM, StrPtr, Hash;
+IMPORT SYSTEM, StrBlank, Hash;
 
 FROM ISO646 IMPORT NUL;
 FROM Storage IMPORT ALLOCATE;
@@ -14,9 +14,11 @@ FROM Storage IMPORT ALLOCATE;
 
 TYPE String = POINTER TO StringDescriptor;
 
+TYPE Passepartout = POINTER TO StrBlank.Largest;
+
 TYPE StringDescriptor = RECORD
   length : CARDINAL;
-  intern : StrPtr.Largest
+  intern : Passepartout
 END; (* StringDescriptor *)
 
 
@@ -26,7 +28,7 @@ CONST BucketCount = 1021; (* prime closest to 1K *)
 
 TYPE StringTable = RECORD
   count  : CARDINAL; (* number of entries *)
-  bucket : ARRAY BucketCount OF TableEntry
+  bucket : ARRAY [0..BucketCount-1] OF TableEntry
 END; (* StringTable *)
 
 
@@ -394,116 +396,116 @@ BEGIN
   
   IF string^.length < 80 THEN
     CASE string^.length OF
-       0 : proc(StrPtr.AOC0(string^.intern)^)
-    |  1 : proc(StrPtr.AOC1(string^.intern)^)
-    |  2 : proc(StrPtr.AOC2(string^.intern)^)
-    |  3 : proc(StrPtr.AOC3(string^.intern)^)
-    |  4 : proc(StrPtr.AOC4(string^.intern)^)
-    |  5 : proc(StrPtr.AOC5(string^.intern)^)
-    |  6 : proc(StrPtr.AOC6(string^.intern)^)
-    |  7 : proc(StrPtr.AOC7(string^.intern)^)
-    |  8 : proc(StrPtr.AOC8(string^.intern)^)
-    |  9 : proc(StrPtr.AOC9(string^.intern)^)
-    | 10 : proc(StrPtr.AOC10(string^.intern)^)
-    | 11 : proc(StrPtr.AOC11(string^.intern)^)
-    | 12 : proc(StrPtr.AOC12(string^.intern)^)
-    | 13 : proc(StrPtr.AOC13(string^.intern)^)
-    | 14 : proc(StrPtr.AOC14(string^.intern)^)
-    | 15 : proc(StrPtr.AOC14(string^.intern)^)
-    | 16 : proc(StrPtr.AOC16(string^.intern)^)
-    | 17 : proc(StrPtr.AOC17(string^.intern)^)
-    | 18 : proc(StrPtr.AOC18(string^.intern)^)
-    | 19 : proc(StrPtr.AOC19(string^.intern)^)
-    | 20 : proc(StrPtr.AOC20(string^.intern)^)
-    | 21 : proc(StrPtr.AOC21(string^.intern)^)
-    | 22 : proc(StrPtr.AOC22(string^.intern)^)
-    | 23 : proc(StrPtr.AOC23(string^.intern)^)
-    | 24 : proc(StrPtr.AOC24(string^.intern)^)
-    | 25 : proc(StrPtr.AOC25(string^.intern)^)
-    | 26 : proc(StrPtr.AOC26(string^.intern)^)
-    | 27 : proc(StrPtr.AOC27(string^.intern)^)
-    | 28 : proc(StrPtr.AOC28(string^.intern)^)
-    | 29 : proc(StrPtr.AOC29(string^.intern)^)
-    | 20 : proc(StrPtr.AOC30(string^.intern)^)
-    | 31 : proc(StrPtr.AOC31(string^.intern)^)
-    | 32 : proc(StrPtr.AOC32(string^.intern)^)
-    | 33 : proc(StrPtr.AOC33(string^.intern)^)
-    | 34 : proc(StrPtr.AOC34(string^.intern)^)
-    | 35 : proc(StrPtr.AOC35(string^.intern)^)
-    | 36 : proc(StrPtr.AOC36(string^.intern)^)
-    | 37 : proc(StrPtr.AOC37(string^.intern)^)
-    | 38 : proc(StrPtr.AOC38(string^.intern)^)
-    | 39 : proc(StrPtr.AOC39(string^.intern)^)
-    | 40 : proc(StrPtr.AOC40(string^.intern)^)
-    | 41 : proc(StrPtr.AOC41(string^.intern)^)
-    | 42 : proc(StrPtr.AOC42(string^.intern)^)
-    | 43 : proc(StrPtr.AOC43(string^.intern)^)
-    | 44 : proc(StrPtr.AOC44(string^.intern)^)
-    | 45 : proc(StrPtr.AOC45(string^.intern)^)
-    | 46 : proc(StrPtr.AOC46(string^.intern)^)
-    | 47 : proc(StrPtr.AOC47(string^.intern)^)
-    | 48 : proc(StrPtr.AOC48(string^.intern)^)
-    | 49 : proc(StrPtr.AOC49(string^.intern)^)
-    | 50 : proc(StrPtr.AOC50(string^.intern)^)
-    | 51 : proc(StrPtr.AOC51(string^.intern)^)
-    | 52 : proc(StrPtr.AOC52(string^.intern)^)
-    | 53 : proc(StrPtr.AOC53(string^.intern)^)
-    | 54 : proc(StrPtr.AOC54(string^.intern)^)
-    | 55 : proc(StrPtr.AOC55(string^.intern)^)
-    | 56 : proc(StrPtr.AOC56(string^.intern)^)
-    | 57 : proc(StrPtr.AOC57(string^.intern)^)
-    | 58 : proc(StrPtr.AOC58(string^.intern)^)
-    | 59 : proc(StrPtr.AOC59(string^.intern)^)
-    | 60 : proc(StrPtr.AOC60(string^.intern)^)
-    | 61 : proc(StrPtr.AOC61(string^.intern)^)
-    | 62 : proc(StrPtr.AOC62(string^.intern)^)
-    | 63 : proc(StrPtr.AOC63(string^.intern)^)
-    | 64 : proc(StrPtr.AOC64(string^.intern)^)
-    | 65 : proc(StrPtr.AOC65(string^.intern)^)
-    | 66 : proc(StrPtr.AOC66(string^.intern)^)
-    | 67 : proc(StrPtr.AOC67(string^.intern)^)
-    | 68 : proc(StrPtr.AOC68(string^.intern)^)
-    | 69 : proc(StrPtr.AOC69(string^.intern)^)
-    | 70 : proc(StrPtr.AOC70(string^.intern)^)
-    | 71 : proc(StrPtr.AOC71(string^.intern)^)
-    | 72 : proc(StrPtr.AOC72(string^.intern)^)
-    | 73 : proc(StrPtr.AOC73(string^.intern)^)
-    | 74 : proc(StrPtr.AOC74(string^.intern)^)
-    | 75 : proc(StrPtr.AOC75(string^.intern)^)
-    | 76 : proc(StrPtr.AOC76(string^.intern)^)
-    | 77 : proc(StrPtr.AOC77(string^.intern)^)
-    | 78 : proc(StrPtr.AOC78(string^.intern)^)
-    | 79 : proc(StrPtr.AOC79(string^.intern)^)
+       0 : proc(StrBlank.AOC0(string^.intern^))
+    |  1 : proc(StrBlank.AOC1(string^.intern^))
+    |  2 : proc(StrBlank.AOC2(string^.intern^))
+    |  3 : proc(StrBlank.AOC3(string^.intern^))
+    |  4 : proc(StrBlank.AOC4(string^.intern^))
+    |  5 : proc(StrBlank.AOC5(string^.intern^))
+    |  6 : proc(StrBlank.AOC6(string^.intern^))
+    |  7 : proc(StrBlank.AOC7(string^.intern^))
+    |  8 : proc(StrBlank.AOC8(string^.intern^))
+    |  9 : proc(StrBlank.AOC9(string^.intern^))
+    | 10 : proc(StrBlank.AOC10(string^.intern^))
+    | 11 : proc(StrBlank.AOC11(string^.intern^))
+    | 12 : proc(StrBlank.AOC12(string^.intern^))
+    | 13 : proc(StrBlank.AOC13(string^.intern^))
+    | 14 : proc(StrBlank.AOC14(string^.intern^))
+    | 15 : proc(StrBlank.AOC14(string^.intern^))
+    | 16 : proc(StrBlank.AOC16(string^.intern^))
+    | 17 : proc(StrBlank.AOC17(string^.intern^))
+    | 18 : proc(StrBlank.AOC18(string^.intern^))
+    | 19 : proc(StrBlank.AOC19(string^.intern^))
+    | 20 : proc(StrBlank.AOC20(string^.intern^))
+    | 21 : proc(StrBlank.AOC21(string^.intern^))
+    | 22 : proc(StrBlank.AOC22(string^.intern^))
+    | 23 : proc(StrBlank.AOC23(string^.intern^))
+    | 24 : proc(StrBlank.AOC24(string^.intern^))
+    | 25 : proc(StrBlank.AOC25(string^.intern^))
+    | 26 : proc(StrBlank.AOC26(string^.intern^))
+    | 27 : proc(StrBlank.AOC27(string^.intern^))
+    | 28 : proc(StrBlank.AOC28(string^.intern^))
+    | 29 : proc(StrBlank.AOC29(string^.intern^))
+    | 20 : proc(StrBlank.AOC30(string^.intern^))
+    | 31 : proc(StrBlank.AOC31(string^.intern^))
+    | 32 : proc(StrBlank.AOC32(string^.intern^))
+    | 33 : proc(StrBlank.AOC33(string^.intern^))
+    | 34 : proc(StrBlank.AOC34(string^.intern^))
+    | 35 : proc(StrBlank.AOC35(string^.intern^))
+    | 36 : proc(StrBlank.AOC36(string^.intern^))
+    | 37 : proc(StrBlank.AOC37(string^.intern^))
+    | 38 : proc(StrBlank.AOC38(string^.intern^))
+    | 39 : proc(StrBlank.AOC39(string^.intern^))
+    | 40 : proc(StrBlank.AOC40(string^.intern^))
+    | 41 : proc(StrBlank.AOC41(string^.intern^))
+    | 42 : proc(StrBlank.AOC42(string^.intern^))
+    | 43 : proc(StrBlank.AOC43(string^.intern^))
+    | 44 : proc(StrBlank.AOC44(string^.intern^))
+    | 45 : proc(StrBlank.AOC45(string^.intern^))
+    | 46 : proc(StrBlank.AOC46(string^.intern^))
+    | 47 : proc(StrBlank.AOC47(string^.intern^))
+    | 48 : proc(StrBlank.AOC48(string^.intern^))
+    | 49 : proc(StrBlank.AOC49(string^.intern^))
+    | 50 : proc(StrBlank.AOC50(string^.intern^))
+    | 51 : proc(StrBlank.AOC51(string^.intern^))
+    | 52 : proc(StrBlank.AOC52(string^.intern^))
+    | 53 : proc(StrBlank.AOC53(string^.intern^))
+    | 54 : proc(StrBlank.AOC54(string^.intern^))
+    | 55 : proc(StrBlank.AOC55(string^.intern^))
+    | 56 : proc(StrBlank.AOC56(string^.intern^))
+    | 57 : proc(StrBlank.AOC57(string^.intern^))
+    | 58 : proc(StrBlank.AOC58(string^.intern^))
+    | 59 : proc(StrBlank.AOC59(string^.intern^))
+    | 60 : proc(StrBlank.AOC60(string^.intern^))
+    | 61 : proc(StrBlank.AOC61(string^.intern^))
+    | 62 : proc(StrBlank.AOC62(string^.intern^))
+    | 63 : proc(StrBlank.AOC63(string^.intern^))
+    | 64 : proc(StrBlank.AOC64(string^.intern^))
+    | 65 : proc(StrBlank.AOC65(string^.intern^))
+    | 66 : proc(StrBlank.AOC66(string^.intern^))
+    | 67 : proc(StrBlank.AOC67(string^.intern^))
+    | 68 : proc(StrBlank.AOC68(string^.intern^))
+    | 69 : proc(StrBlank.AOC69(string^.intern^))
+    | 70 : proc(StrBlank.AOC70(string^.intern^))
+    | 71 : proc(StrBlank.AOC71(string^.intern^))
+    | 72 : proc(StrBlank.AOC72(string^.intern^))
+    | 73 : proc(StrBlank.AOC73(string^.intern^))
+    | 74 : proc(StrBlank.AOC74(string^.intern^))
+    | 75 : proc(StrBlank.AOC75(string^.intern^))
+    | 76 : proc(StrBlank.AOC76(string^.intern^))
+    | 77 : proc(StrBlank.AOC77(string^.intern^))
+    | 78 : proc(StrBlank.AOC78(string^.intern^))
+    | 79 : proc(StrBlank.AOC79(string^.intern^))
     END (* CASE *)
   ELSE
     IF string^.length < 768 THEN
       IF string^.length < 128 THEN
         IF string^.length < 96 THEN
           IF string^.length < 88 THEN
-            proc(StrPtr.AOC87(string^.intern)^)
+            proc(StrBlank.AOC87(string^.intern^))
           ELSE (* string^.length >= 88 *)
-            proc(StrPtr.AOC95(string^.intern)^)
+            proc(StrBlank.AOC95(string^.intern^))
           END (* IF *)
         ELSE (* string^.length >= 96 *)
           IF string^.length < 112 THEN
-            proc(StrPtr.AOC111(string^.intern)^)
+            proc(StrBlank.AOC111(string^.intern^))
           ELSE (* string^.length >= 112 *)
-            proc(StrPtr.AOC127(string^.intern)^)
+            proc(StrBlank.AOC127(string^.intern^))
           END (* IF *)
         END (* IF *)
       ELSE (* string^.length >= 128 *)
         IF string^.length < 256 THEN
           IF string^.length < 192 THEN
-            proc(StrPtr.AOC191(string^.intern)^)
+            proc(StrBlank.AOC191(string^.intern^))
           ELSE (* string^.length >= 192 *)
-            proc(StrPtr.AOC255(string^.intern)^)
+            proc(StrBlank.AOC255(string^.intern^))
           END (* IF *)
         ELSE (* string^.length >= 256 *)
           IF string^.length < 512 THEN
-            proc(StrPtr.AOC511(string^.intern)^)
+            proc(StrBlank.AOC511(string^.intern^))
           ELSE (* string^.length >= 512 *)
             (* case 8 *) size := 768
-            proc(StrPtr.AOC767(string^.intern)^)
+            proc(StrBlank.AOC767(string^.intern^))
           END (* IF *)
         END (* IF *)
       END (* IF *)
@@ -511,29 +513,29 @@ BEGIN
       IF string^.length < 1792 THEN
         IF string^.length < 1280 THEN
           IF string^.length < 1024 THEN
-            proc(StrPtr.AOC1023(string^.intern)^)
+            proc(StrBlank.AOC1023(string^.intern^))
           ELSE (* string^.length >= 1024 *)
-            proc(StrPtr.AOC1279(string^.intern)^)
+            proc(StrBlank.AOC1279(string^.intern^))
           END (* IF *)
         ELSE (* string^.length >= 1280 *)
           IF string^.length < 1536 THEN
-            proc(StrPtr.AOC1535(string^.intern)^)
+            proc(StrBlank.AOC1535(string^.intern^))
           ELSE (* string^.length >= 1536 *)
-            proc(StrPtr.AOC1791(string^.intern)^)
+            proc(StrBlank.AOC1791(string^.intern^))
           END (* IF *)
         END (* IF *)
       ELSE (* string^.length >= 1792 *)
         IF string^.length < 2560 THEN
           IF string^.length < 2048 THEN
-            proc(StrPtr.AOC2047(string^.intern)^)
+            proc(StrBlank.AOC2047(string^.intern^))
           ELSE (* string^.length >= 2048 *)
-            proc(StrPtr.AOC2559(string^.intern)^)
+            proc(StrBlank.AOC2559(string^.intern^))
           END (* IF *)
         ELSE (* string^.length >= 2560 *)
           IF string^.length < 3072 THEN
-            proc(StrPtr.AOC3071(string^.intern)^)
+            proc(StrBlank.AOC3071(string^.intern^))
           ELSE (* string^.length >= 3072 *)
-            proc(StrPtr.Largest(string^.intern)^)
+            proc(StrBlank.Largest(string^.intern^))
           END (* IF *)
         END (* IF *)
       END (* IF *)
@@ -765,10 +767,10 @@ PROCEDURE NewStrWithArraySlice
 
 VAR
   newString : String;
-  ptr : StrPtr.Largest;
+  ptr : Passepartout;
   addr : SYSTEM.ADDRESS;
   strlen, size, srcIndex, tgtIndex : CARDINAL;
- 
+
 BEGIN  
   (* determine length of new string *)
   IF array[0] # NUL THEN
@@ -788,7 +790,7 @@ BEGIN
   END; (* IF *)
   
   (* cast to largest possible AOC pointer *)
-  ptr := StrPtr.Largest(addr);
+  ptr := Passepartout(addr);
   
   (* initialise intern with array[start..end] *)
   IF strlen > 0 THEN
@@ -821,7 +823,7 @@ BEGIN
   newString^.length := strlen;
   
   (* cast newString^.intern to target field type and link it *)
-  newString^.intern := StrPtr.Largest(addr);
+  newString^.intern := Passepartout(addr);
   
   string := newString
 END NewStrWithArraySlice;
