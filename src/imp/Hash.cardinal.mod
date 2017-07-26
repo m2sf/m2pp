@@ -190,10 +190,9 @@ END finalValue;
  * function:  Hash.valueForArray( array )
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE valueForArray ( VAR (* CONST *) array : ARRAY OF CHAR ) : Key;
+CONST NUL = CHR(0);
 
-CONST
-  NUL = CHR(0);
+PROCEDURE valueForArray ( VAR (* CONST *) array : ARRAY OF CHAR ) : Key;
   
 VAR
   ch : CHAR;
@@ -222,6 +221,48 @@ BEGIN
   
   RETURN hash
 END valueForArray;
+
+
+(* ---------------------------------------------------------------------------
+ * function Hash.valueForArraySlice( array, start, end )
+ * ---------------------------------------------------------------------------
+ * Returns the final hash value for the given character array slice.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE valueForArraySlice
+  ( VAR (* CONST *) array : ARRAY OF CHAR; start, end : CARDINAL ) : Key;
+
+VAR
+  ch : CHAR;
+  hash : Key;
+  index : CARDINAL; (* char index *)
+  
+BEGIN
+  IF (start > end) OR (end > HIGH(array)) THEN
+    RETURN 0
+  END; (* IF *)
+  
+  index := start;
+  hash := initialValue();
+  
+  ch := array[index];
+  WHILE (ch # NUL) AND (index <= end) DO
+    hash := ORD(ch) + SHL(hash, A) + SHL(hash, B) - hash;
+    index := index + 1;
+    ch := array[index]
+  END; (* WHILE *)
+  
+  (* Clear bits [MSB..KeyBitwidth-1] in hash value *)
+  IF hash >= KeyMSBWeight THEN
+    IF CardBitwidth > KeyBitwidth THEN
+      ClearBitsInclAndAbove(hash, KeyBitwidth-1)
+    ELSE
+      hash := hash - KeyMSBWeight
+    END (* IF *)
+  END; (* IF *)
+  
+  RETURN hash
+END valueForArraySlice;
 
 
 (* ************************************************************************ *
