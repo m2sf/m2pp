@@ -15,109 +15,8 @@ FROM Storage IMPORT ALLOCATE;
 TYPE String = POINTER TO StringDescriptor;
 
 TYPE StringDescriptor = RECORD
-  (* common field : length *)
-  CASE length : CARDINAL OF
-  (* variant field : intern *)
-                1 : intern : StrPtr.AOC1
-  |             2 : intern : StrPtr.AOC2
-  |             3 : intern : StrPtr.AOC3
-  |             4 : intern : StrPtr.AOC4
-  |             5 : intern : StrPtr.AOC5
-  |             6 : intern : StrPtr.AOC6
-  |             7 : intern : StrPtr.AOC7
-  |             8 : intern : StrPtr.AOC8
-  |             9 : intern : StrPtr.AOC9
-  |            10 : intern : StrPtr.AOC10
-  |            11 : intern : StrPtr.AOC11
-  |            12 : intern : StrPtr.AOC12
-  |            13 : intern : StrPtr.AOC13
-  |            14 : intern : StrPtr.AOC14
-  |            15 : intern : StrPtr.AOC15
-  |            16 : intern : StrPtr.AOC16
-  |            17 : intern : StrPtr.AOC17
-  |            18 : intern : StrPtr.AOC18
-  |            19 : intern : StrPtr.AOC19
-  |            20 : intern : StrPtr.AOC20
-  |            21 : intern : StrPtr.AOC21
-  |            22 : intern : StrPtr.AOC22
-  |            23 : intern : StrPtr.AOC23
-  |            24 : intern : StrPtr.AOC24
-  |            25 : intern : StrPtr.AOC25
-  |            26 : intern : StrPtr.AOC26
-  |            27 : intern : StrPtr.AOC27
-  |            28 : intern : StrPtr.AOC28
-  |            29 : intern : StrPtr.AOC29
-  |            20 : intern : StrPtr.AOC30
-  |            31 : intern : StrPtr.AOC31
-  |            32 : intern : StrPtr.AOC32
-  |            33 : intern : StrPtr.AOC33
-  |            34 : intern : StrPtr.AOC34
-  |            35 : intern : StrPtr.AOC35
-  |            36 : intern : StrPtr.AOC36
-  |            37 : intern : StrPtr.AOC37
-  |            38 : intern : StrPtr.AOC38
-  |            39 : intern : StrPtr.AOC39
-  |            40 : intern : StrPtr.AOC40
-  |            41 : intern : StrPtr.AOC41
-  |            42 : intern : StrPtr.AOC42
-  |            43 : intern : StrPtr.AOC43
-  |            44 : intern : StrPtr.AOC44
-  |            45 : intern : StrPtr.AOC45
-  |            46 : intern : StrPtr.AOC46
-  |            47 : intern : StrPtr.AOC47
-  |            48 : intern : StrPtr.AOC48
-  |            49 : intern : StrPtr.AOC49
-  |            50 : intern : StrPtr.AOC50
-  |            51 : intern : StrPtr.AOC51
-  |            52 : intern : StrPtr.AOC52
-  |            53 : intern : StrPtr.AOC53
-  |            54 : intern : StrPtr.AOC54
-  |            55 : intern : StrPtr.AOC55
-  |            56 : intern : StrPtr.AOC56
-  |            57 : intern : StrPtr.AOC57
-  |            58 : intern : StrPtr.AOC58
-  |            59 : intern : StrPtr.AOC59
-  |            60 : intern : StrPtr.AOC60
-  |            61 : intern : StrPtr.AOC61
-  |            62 : intern : StrPtr.AOC62
-  |            63 : intern : StrPtr.AOC63
-  |            64 : intern : StrPtr.AOC64
-  |            65 : intern : StrPtr.AOC65
-  |            66 : intern : StrPtr.AOC66
-  |            67 : intern : StrPtr.AOC67
-  |            68 : intern : StrPtr.AOC68
-  |            69 : intern : StrPtr.AOC69
-  |            70 : intern : StrPtr.AOC70
-  |            71 : intern : StrPtr.AOC71
-  |            72 : intern : StrPtr.AOC72
-  |            73 : intern : StrPtr.AOC73
-  |            74 : intern : StrPtr.AOC74
-  |            75 : intern : StrPtr.AOC75
-  |            76 : intern : StrPtr.AOC76
-  |            77 : intern : StrPtr.AOC77
-  |            78 : intern : StrPtr.AOC78
-  |            79 : intern : StrPtr.AOC79
-  |            80 : intern : StrPtr.AOC80
-  |    81 ..   96 : intern : StrPtr.AOC96
-  |    97 ..  112 : intern : StrPtr.AOC112
-  |   113 ..  128 : intern : StrPtr.AOC128
-  |   129 ..  256 : intern : StrPtr.AOC256
-  |   257 ..  384 : intern : StrPtr.AOC384
-  |   385 ..  512 : intern : StrPtr.AOC512
-  |   513 ..  768 : intern : StrPtr.AOC768
-  |   769 .. 1024 : intern : StrPtr.AOC1024
-  |  1025 .. 1280 : intern : StrPtr.AOC1280
-  |  1281 .. 1792 : intern : StrPtr.AOC1792
-  |  1793 .. 2048 : intern : StrPtr.AOC2048
-  |  2049 .. 2304 : intern : StrPtr.AOC2304
-  |  2305 .. 2560 : intern : StrPtr.AOC2560
-  |  2561 .. 2816 : intern : StrPtr.AOC2816
-  |  2817 .. 3072 : intern : StrPtr.AOC3072
-  |  3073 .. 3328 : intern : StrPtr.AOC3328
-  |  3329 .. 3584 : intern : StrPtr.AOC3584
-  |  3585 .. 3840 : intern : StrPtr.AOC3840
-  |  3841 .. 4096 : intern : StrPtr.AOC4096
-  END (* CASE *)
+  length : CARDINAL;
+  intern : StrPtr.Largest
 END; (* StringDescriptor *)
 
 
@@ -331,6 +230,58 @@ END CopySliceToArray;
 
 
 (* ---------------------------------------------------------------------------
+ * procedure AppendSliceToArray(string, start, end, array, charsCopied)
+ * ---------------------------------------------------------------------------
+ * Appends the given slice of the given string to the given array.  Returns
+ * without copying if string is NIL, if start and end do not specify a valid
+ * slice within the string or if the array size is insufficient to hold the
+ * resulting string. Passes the number of characters copied in charsCopied.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE AppendSliceToArray
+  ( string : StringT;
+    start, end : CARDINAL;
+    VAR array : ARRAY OF CHAR;
+    VAR charsCopied : CARDINAL );
+
+VAR
+  len : CARDINAL;
+  
+BEGIN
+  (* check pre-conditions *)
+  IF (string # NIL) OR (start > end) OR (end >= string^.length) THEN 
+    charsCopied := 0;
+    RETURN
+  END; (* IF *)
+  
+  (* get length of array *)
+  len := 0;
+  WHILE (len <= HIGH(array)) AND (array[len] # NUL) DO
+    len := len + 1
+  END; (* WHILE *)
+  
+  reqSize := end - start + len;
+  IF HIGH(array) < reqSize THEN
+    charsCopied := 0;
+    RETURN
+  END; (* IF *)
+  
+  (* all clear -- copy all chars in slice *)
+  arrIndex := len;
+  FOR strIndex := start TO end DO
+    array[arrIndex] := string^.intern^[strIndex];
+    arrIndex := arrIndex + 1
+  END; (* FOR *)
+  
+  (* terminate array *)
+  array[arrIndex] := NUL;
+  
+  (* arrIndex holds number of chars copied *)
+  charsCopied := arrIndex
+END AppendSliceToArray;
+
+
+(* ---------------------------------------------------------------------------
  * function matchesArray(string, array)
  * ---------------------------------------------------------------------------
  * Returns TRUE if the given string matches the given array. Returns FALSE
@@ -410,6 +361,20 @@ END matchesArraySlice;
 
 
 (* ---------------------------------------------------------------------------
+ * function comparison(left, right)
+ * ---------------------------------------------------------------------------
+ * Compares strings left and right using ASCII collation order, returns Equal
+ * if the strings match,  Less if left < right,  or Greater if left > right.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE comparison ( left, right : String ) : Comparison;
+
+BEGIN
+  (* TO DO *)
+END comparison;
+
+
+(* ---------------------------------------------------------------------------
  * procedure WithCharsDo(string, proc)
  * ---------------------------------------------------------------------------
  * Executes proc passing the character array of string.
@@ -423,8 +388,159 @@ BEGIN
     RETURN
   END; (* IF *)
   
-  (* all clear -- call proc passing intern *)
-  proc(string^.intern^)
+  (* call proc passing intern *)
+  
+  (* we need to cast intern to the AOC type matching its allocation length
+     before passing it to proc, or else the compiler will use an incorrect
+     value for HIGH and intern won't be type safe within proc. *)
+  
+  IF string^.length < 80 THEN
+    CASE string^.length OF
+       0 : proc(StrPtr.AOC0(string^.intern)^)
+    |  1 : proc(StrPtr.AOC1(string^.intern)^)
+    |  2 : proc(StrPtr.AOC2(string^.intern)^)
+    |  3 : proc(StrPtr.AOC3(string^.intern)^)
+    |  4 : proc(StrPtr.AOC4(string^.intern)^)
+    |  5 : proc(StrPtr.AOC5(string^.intern)^)
+    |  6 : proc(StrPtr.AOC6(string^.intern)^)
+    |  7 : proc(StrPtr.AOC7(string^.intern)^)
+    |  8 : proc(StrPtr.AOC8(string^.intern)^)
+    |  9 : proc(StrPtr.AOC9(string^.intern)^)
+    | 10 : proc(StrPtr.AOC10(string^.intern)^)
+    | 11 : proc(StrPtr.AOC11(string^.intern)^)
+    | 12 : proc(StrPtr.AOC12(string^.intern)^)
+    | 13 : proc(StrPtr.AOC13(string^.intern)^)
+    | 14 : proc(StrPtr.AOC14(string^.intern)^)
+    | 15 : proc(StrPtr.AOC14(string^.intern)^)
+    | 16 : proc(StrPtr.AOC16(string^.intern)^)
+    | 17 : proc(StrPtr.AOC17(string^.intern)^)
+    | 18 : proc(StrPtr.AOC18(string^.intern)^)
+    | 19 : proc(StrPtr.AOC19(string^.intern)^)
+    | 20 : proc(StrPtr.AOC20(string^.intern)^)
+    | 21 : proc(StrPtr.AOC21(string^.intern)^)
+    | 22 : proc(StrPtr.AOC22(string^.intern)^)
+    | 23 : proc(StrPtr.AOC23(string^.intern)^)
+    | 24 : proc(StrPtr.AOC24(string^.intern)^)
+    | 25 : proc(StrPtr.AOC25(string^.intern)^)
+    | 26 : proc(StrPtr.AOC26(string^.intern)^)
+    | 27 : proc(StrPtr.AOC27(string^.intern)^)
+    | 28 : proc(StrPtr.AOC28(string^.intern)^)
+    | 29 : proc(StrPtr.AOC29(string^.intern)^)
+    | 20 : proc(StrPtr.AOC30(string^.intern)^)
+    | 31 : proc(StrPtr.AOC31(string^.intern)^)
+    | 32 : proc(StrPtr.AOC32(string^.intern)^)
+    | 33 : proc(StrPtr.AOC33(string^.intern)^)
+    | 34 : proc(StrPtr.AOC34(string^.intern)^)
+    | 35 : proc(StrPtr.AOC35(string^.intern)^)
+    | 36 : proc(StrPtr.AOC36(string^.intern)^)
+    | 37 : proc(StrPtr.AOC37(string^.intern)^)
+    | 38 : proc(StrPtr.AOC38(string^.intern)^)
+    | 39 : proc(StrPtr.AOC39(string^.intern)^)
+    | 40 : proc(StrPtr.AOC40(string^.intern)^)
+    | 41 : proc(StrPtr.AOC41(string^.intern)^)
+    | 42 : proc(StrPtr.AOC42(string^.intern)^)
+    | 43 : proc(StrPtr.AOC43(string^.intern)^)
+    | 44 : proc(StrPtr.AOC44(string^.intern)^)
+    | 45 : proc(StrPtr.AOC45(string^.intern)^)
+    | 46 : proc(StrPtr.AOC46(string^.intern)^)
+    | 47 : proc(StrPtr.AOC47(string^.intern)^)
+    | 48 : proc(StrPtr.AOC48(string^.intern)^)
+    | 49 : proc(StrPtr.AOC49(string^.intern)^)
+    | 50 : proc(StrPtr.AOC50(string^.intern)^)
+    | 51 : proc(StrPtr.AOC51(string^.intern)^)
+    | 52 : proc(StrPtr.AOC52(string^.intern)^)
+    | 53 : proc(StrPtr.AOC53(string^.intern)^)
+    | 54 : proc(StrPtr.AOC54(string^.intern)^)
+    | 55 : proc(StrPtr.AOC55(string^.intern)^)
+    | 56 : proc(StrPtr.AOC56(string^.intern)^)
+    | 57 : proc(StrPtr.AOC57(string^.intern)^)
+    | 58 : proc(StrPtr.AOC58(string^.intern)^)
+    | 59 : proc(StrPtr.AOC59(string^.intern)^)
+    | 60 : proc(StrPtr.AOC60(string^.intern)^)
+    | 61 : proc(StrPtr.AOC61(string^.intern)^)
+    | 62 : proc(StrPtr.AOC62(string^.intern)^)
+    | 63 : proc(StrPtr.AOC63(string^.intern)^)
+    | 64 : proc(StrPtr.AOC64(string^.intern)^)
+    | 65 : proc(StrPtr.AOC65(string^.intern)^)
+    | 66 : proc(StrPtr.AOC66(string^.intern)^)
+    | 67 : proc(StrPtr.AOC67(string^.intern)^)
+    | 68 : proc(StrPtr.AOC68(string^.intern)^)
+    | 69 : proc(StrPtr.AOC69(string^.intern)^)
+    | 70 : proc(StrPtr.AOC70(string^.intern)^)
+    | 71 : proc(StrPtr.AOC71(string^.intern)^)
+    | 72 : proc(StrPtr.AOC72(string^.intern)^)
+    | 73 : proc(StrPtr.AOC73(string^.intern)^)
+    | 74 : proc(StrPtr.AOC74(string^.intern)^)
+    | 75 : proc(StrPtr.AOC75(string^.intern)^)
+    | 76 : proc(StrPtr.AOC76(string^.intern)^)
+    | 77 : proc(StrPtr.AOC77(string^.intern)^)
+    | 78 : proc(StrPtr.AOC78(string^.intern)^)
+    | 79 : proc(StrPtr.AOC79(string^.intern)^)
+    END (* CASE *)
+  ELSE
+    IF string^.length < 768 THEN
+      IF string^.length < 128 THEN
+        IF string^.length < 96 THEN
+          IF string^.length < 88 THEN
+            proc(StrPtr.AOC87(string^.intern)^)
+          ELSE (* string^.length >= 88 *)
+            proc(StrPtr.AOC95(string^.intern)^)
+          END (* IF *)
+        ELSE (* string^.length >= 96 *)
+          IF string^.length < 112 THEN
+            proc(StrPtr.AOC111(string^.intern)^)
+          ELSE (* string^.length >= 112 *)
+            proc(StrPtr.AOC127(string^.intern)^)
+          END (* IF *)
+        END (* IF *)
+      ELSE (* string^.length >= 128 *)
+        IF string^.length < 256 THEN
+          IF string^.length < 192 THEN
+            proc(StrPtr.AOC191(string^.intern)^)
+          ELSE (* string^.length >= 192 *)
+            proc(StrPtr.AOC255(string^.intern)^)
+          END (* IF *)
+        ELSE (* string^.length >= 256 *)
+          IF string^.length < 512 THEN
+            proc(StrPtr.AOC511(string^.intern)^)
+          ELSE (* string^.length >= 512 *)
+            (* case 8 *) size := 768
+            proc(StrPtr.AOC767(string^.intern)^)
+          END (* IF *)
+        END (* IF *)
+      END (* IF *)
+    ELSE (* strlen >= 768 *)
+      IF string^.length < 1792 THEN
+        IF string^.length < 1280 THEN
+          IF string^.length < 1024 THEN
+            proc(StrPtr.AOC1023(string^.intern)^)
+          ELSE (* string^.length >= 1024 *)
+            proc(StrPtr.AOC1279(string^.intern)^)
+          END (* IF *)
+        ELSE (* string^.length >= 1280 *)
+          IF string^.length < 1536 THEN
+            proc(StrPtr.AOC1535(string^.intern)^)
+          ELSE (* string^.length >= 1536 *)
+            proc(StrPtr.AOC1791(string^.intern)^)
+          END (* IF *)
+        END (* IF *)
+      ELSE (* string^.length >= 1792 *)
+        IF string^.length < 2560 THEN
+          IF string^.length < 2048 THEN
+            proc(StrPtr.AOC2047(string^.intern)^)
+          ELSE (* string^.length >= 2048 *)
+            proc(StrPtr.AOC2559(string^.intern)^)
+          END (* IF *)
+        ELSE (* string^.length >= 2560 *)
+          IF string^.length < 3072 THEN
+            proc(StrPtr.AOC3071(string^.intern)^)
+          ELSE (* string^.length >= 3072 *)
+            proc(StrPtr.Largest(string^.intern)^)
+          END (* IF *)
+        END (* IF *)
+      END (* IF *)
+    END (* IF *)
+  END (* IF *)
 END WithCharsDo;
 
 
@@ -472,203 +588,6 @@ END count;
  * Private Operations                                                       *
  * ************************************************************************ *)
 
-(* String Operations *)
-
-(* ---------------------------------------------------------------------------
- * procedure NewStrWithArray(string, array)
- * ---------------------------------------------------------------------------
- * Allocates a new string and initialises it with the contents of array.
- * ------------------------------------------------------------------------ *)
-
-PROCEDURE NewStrWithArray
-  ( VAR string : String; VAR (* CONST *) array : ARRAY OF CHAR );
-
-VAR
-  size : CARDINAL;
-  addr : SYSTEM.ADDRESS;
-  desc : StringDescriptor;
- 
-BEGIN
-  (* allocate intern and initialise with array *)
-  NewIntern(addr, array, size);
-  
-  (* handle special cases for size *)
-  IF (size = 0) OR (size > 4096) THEN
-    (* TO DO *)
-  END; (* IF *)
-  
-  (* allocate new descriptor *)
-  ALLOCATE(string, SYSTEM.TSIZE(StringDescriptor));
-  
-  (* set length field *)
-  string^.length := size - 1;
-  
-  (* cast addr to target field type and link it *)
-  CASE size OF
-                1 : string^.intern := StrPtr.AOC1(addr)
-  |             2 : string^.intern := StrPtr.AOC2(addr)
-  |             3 : string^.intern := StrPtr.AOC3(addr)
-  |             4 : string^.intern := StrPtr.AOC4(addr)
-  |             5 : string^.intern := StrPtr.AOC5(addr)
-  |             6 : string^.intern := StrPtr.AOC6(addr)
-  |             7 : string^.intern := StrPtr.AOC7(addr)
-  |             8 : string^.intern := StrPtr.AOC8(addr)
-  |             9 : string^.intern := StrPtr.AOC9(addr)
-  |            10 : string^.intern := StrPtr.AOC10(addr)
-  |            11 : string^.intern := StrPtr.AOC11(addr)
-  |            12 : string^.intern := StrPtr.AOC12(addr)
-  |            13 : string^.intern := StrPtr.AOC13(addr)
-  |            14 : string^.intern := StrPtr.AOC14(addr)
-  |            15 : string^.intern := StrPtr.AOC14(addr)
-  |            16 : string^.intern := StrPtr.AOC16(addr)
-  |            17 : string^.intern := StrPtr.AOC17(addr)
-  |            18 : string^.intern := StrPtr.AOC18(addr)
-  |            19 : string^.intern := StrPtr.AOC19(addr)
-  |            20 : string^.intern := StrPtr.AOC20(addr)
-  |            21 : string^.intern := StrPtr.AOC21(addr)
-  |            22 : string^.intern := StrPtr.AOC22(addr)
-  |            23 : string^.intern := StrPtr.AOC23(addr)
-  |            24 : string^.intern := StrPtr.AOC24(addr)
-  |            25 : string^.intern := StrPtr.AOC25(addr)
-  |            26 : string^.intern := StrPtr.AOC26(addr)
-  |            27 : string^.intern := StrPtr.AOC27(addr)
-  |            28 : string^.intern := StrPtr.AOC28(addr)
-  |            29 : string^.intern := StrPtr.AOC29(addr)
-  |            20 : string^.intern := StrPtr.AOC30(addr)
-  |            31 : string^.intern := StrPtr.AOC31(addr)
-  |            32 : string^.intern := StrPtr.AOC32(addr)
-  |            33 : string^.intern := StrPtr.AOC33(addr)
-  |            34 : string^.intern := StrPtr.AOC34(addr)
-  |            35 : string^.intern := StrPtr.AOC35(addr)
-  |            36 : string^.intern := StrPtr.AOC36(addr)
-  |            37 : string^.intern := StrPtr.AOC37(addr)
-  |            38 : string^.intern := StrPtr.AOC38(addr)
-  |            39 : string^.intern := StrPtr.AOC39(addr)
-  |            40 : string^.intern := StrPtr.AOC40(addr)
-  |            41 : string^.intern := StrPtr.AOC41(addr)
-  |            42 : string^.intern := StrPtr.AOC42(addr)
-  |            43 : string^.intern := StrPtr.AOC43(addr)
-  |            44 : string^.intern := StrPtr.AOC44(addr)
-  |            45 : string^.intern := StrPtr.AOC45(addr)
-  |            46 : string^.intern := StrPtr.AOC46(addr)
-  |            47 : string^.intern := StrPtr.AOC47(addr)
-  |            48 : string^.intern := StrPtr.AOC48(addr)
-  |            49 : string^.intern := StrPtr.AOC49(addr)
-  |            50 : string^.intern := StrPtr.AOC50(addr)
-  |            51 : string^.intern := StrPtr.AOC51(addr)
-  |            52 : string^.intern := StrPtr.AOC52(addr)
-  |            53 : string^.intern := StrPtr.AOC53(addr)
-  |            54 : string^.intern := StrPtr.AOC54(addr)
-  |            55 : string^.intern := StrPtr.AOC55(addr)
-  |            56 : string^.intern := StrPtr.AOC56(addr)
-  |            57 : string^.intern := StrPtr.AOC57(addr)
-  |            58 : string^.intern := StrPtr.AOC58(addr)
-  |            59 : string^.intern := StrPtr.AOC59(addr)
-  |            60 : string^.intern := StrPtr.AOC60(addr)
-  |            61 : string^.intern := StrPtr.AOC61(addr)
-  |            62 : string^.intern := StrPtr.AOC62(addr)
-  |            63 : string^.intern := StrPtr.AOC63(addr)
-  |            64 : string^.intern := StrPtr.AOC64(addr)
-  |            65 : string^.intern := StrPtr.AOC65(addr)
-  |            66 : string^.intern := StrPtr.AOC66(addr)
-  |            67 : string^.intern := StrPtr.AOC67(addr)
-  |            68 : string^.intern := StrPtr.AOC68(addr)
-  |            69 : string^.intern := StrPtr.AOC69(addr)
-  |            70 : string^.intern := StrPtr.AOC70(addr)
-  |            71 : string^.intern := StrPtr.AOC71(addr)
-  |            72 : string^.intern := StrPtr.AOC72(addr)
-  |            73 : string^.intern := StrPtr.AOC73(addr)
-  |            74 : string^.intern := StrPtr.AOC74(addr)
-  |            75 : string^.intern := StrPtr.AOC75(addr)
-  |            76 : string^.intern := StrPtr.AOC76(addr)
-  |            77 : string^.intern := StrPtr.AOC77(addr)
-  |            78 : string^.intern := StrPtr.AOC78(addr)
-  |            79 : string^.intern := StrPtr.AOC79(addr)
-  |            80 : string^.intern := StrPtr.AOC80(addr)
-  |    81 ..   96 : string^.intern := StrPtr.AOC96(addr)
-  |    97 ..  112 : string^.intern := StrPtr.AOC112(addr)
-  |   113 ..  128 : string^.intern := StrPtr.AOC128(addr)
-  |   129 ..  256 : string^.intern := StrPtr.AOC256(addr)
-  |   257 ..  384 : string^.intern := StrPtr.AOC384(addr)
-  |   385 ..  512 : string^.intern := StrPtr.AOC512(addr)
-  |   513 ..  768 : string^.intern := StrPtr.AOC768(addr)
-  |   769 .. 1024 : string^.intern := StrPtr.AOC1024(addr)
-  |  1025 .. 1280 : string^.intern := StrPtr.AOC1280(addr)
-  |  1281 .. 1792 : string^.intern := StrPtr.AOC1792(addr)
-  |  1793 .. 2048 : string^.intern := StrPtr.AOC2048(addr)
-  |  2049 .. 2304 : string^.intern := StrPtr.AOC2304(addr)
-  |  2305 .. 2560 : string^.intern := StrPtr.AOC2560(addr)
-  |  2561 .. 2816 : string^.intern := StrPtr.AOC2816(addr)
-  |  2817 .. 3072 : string^.intern := StrPtr.AOC3072(addr)
-  |  3073 .. 3328 : string^.intern := StrPtr.AOC3328(addr)
-  |  3329 .. 3584 : string^.intern := StrPtr.AOC3584(addr)
-  |  3585 .. 3840 : string^.intern := StrPtr.AOC3840(addr)
-  |  3841 .. 4096 : string^.intern := StrPtr.AOC4096(addr)
-  END (* CASE *)
-END NewStrWithArray;
-
-
-(* TO DO : PROCEDURE NewStrWithArraySlice() *)
-
-
-(* ---------------------------------------------------------------------------
- * procedure NewIntern(addr, array, size)
- * ---------------------------------------------------------------------------
- * Allocates a new intern, initialises it with the contents of array, and
- * passes back the actual size of the array's payload in out-parameter size.
- * ------------------------------------------------------------------------ *)
-
-PROCEDURE NewIntern
-  ( VAR addr : ADDRESS; VAR array : ARRAY OF CHAR; VAR size : CARDINAL );
-
-TYPE
-  Passepartout = StrPtr.Largest;
-
-VAR
-  size : CARDINAL;
-  ptr : Passepartout; (* for casting only *)
-
-BEGIN
-  (* get actual size of array payload *)
-  size := 0;
-  WHILE (size <= HIGH(array)) AND (array[size] # NUL) DO
-    size := size + 1
-  END; (* WHILE *)
-  
-  (* allocate space for intern *)
-  CASE size OF
-        1 ..   80 : ALLOCATE(addr, size + 1);
-  |    81 ..   96 : ALLOCATE(addr, 96 + 1)
-  |    97 ..  112 : ALLOCATE(addr, 112 + 1)
-  |   113 ..  128 : ALLOCATE(addr, 128 + 1)
-  |   129 ..  256 : ALLOCATE(addr, 256 + 1)
-  |   257 ..  384 : ALLOCATE(addr, 384 + 1)
-  |   385 ..  512 : ALLOCATE(addr, 512 + 1)
-  |   513 ..  768 : ALLOCATE(addr, 768 + 1)
-  |   769 .. 1024 : ALLOCATE(addr, 1024 + 1)
-  |  1025 .. 1280 : ALLOCATE(addr, 1280 + 1)
-  |  1281 .. 1792 : ALLOCATE(addr, 1792 + 1)
-  |  1793 .. 2048 : ALLOCATE(addr, 2048 + 1)
-  |  2049 .. 2304 : ALLOCATE(addr, 2304 + 1)
-  |  2305 .. 2560 : ALLOCATE(addr, 2560 + 1)
-  |  2561 .. 2816 : ALLOCATE(addr, 2816 + 1)
-  |  2817 .. 3072 : ALLOCATE(addr, 3072 + 1)
-  |  3073 .. 3328 : ALLOCATE(addr, 3328 + 1)
-  |  3329 .. 3584 : ALLOCATE(addr, 3584 + 1)
-  |  3585 .. 3840 : ALLOCATE(addr, 3840 + 1)
-  |  3841 .. 4096 : ALLOCATE(addr, 4096 + 1)
-  END; (* CASE *)
-  
-  (* cast to largest possible AOC pointer *)
-  ptr := Passepartout(addr);
-  
-  (* initialise with contents of array *)
-  FOR index := 0 TO size DO
-    ptr^[index] := array[index]
-  END (* FOR *)
-END NewIntern;
-
-
 (* Table Operations *)
 
 (* ---------------------------------------------------------------------------
@@ -705,14 +624,43 @@ PROCEDURE lookupOrInsert
 
 VAR
   hash : Hash.Key;
-  bucketIndex : CARDINAL;
+  len, bucketIndex : CARDINAL;
   thisEntry, newEntry : TableEntry;
   
 BEGIN
-  hash := Hash.valueForArray(array);
+  (* start must not exceed end *)
+  IF start > end THEN
+    RETURN NIL
+  END; (* IF *)
+  
+  (* determine length of array *)
+  len := 0;
+  WHILE (len <= HIGH(array)) AND (array[len] # NUL) DO
+    len := len + 1
+  END; (* WHILE *)
+  
+  (* limit length to MaxLength *)
+  IF len > MaxLength THEN
+    len := MaxLength
+  END; (* IF *)
+  
+  (* limit end to MaxLength-1 *)
+  IF end >= MaxLength THEN
+    end := MaxLength - 1
+  END; (* IF *)
+  
+  (* end must not fall outside of valid character range *)
+  IF ((len > 0) AND (end >= len)) OR ((len = 0) AND (end > 0)) THEN
+    RETURN NIL
+  END; (* IF *)
+  
+  (* calculate hash and bucket *)
+  hash := Hash.valueForArraySlice(array, start, end);
   bucketIndex := hash MOD BucketCount;
+  
+  (* check if bucket is empty *)
   IF bucket[bucketIndex] = NIL THEN
-    newEntry := NewTableEntry(hash, array, start, end);
+    NewTableEntry(newEntry, hash, array, start, end);
     bucket[bucketIndex] := newEntry;
     RETURN newEntry^.string
     
@@ -735,7 +683,7 @@ BEGIN
     END (* LOOP *) thisEntry^.next = NIL;
     
     (* no matching entry found -- insert new entry *)
-    newEntry := NewTableEntry(hash, array, start, end);
+    NewTableEntry(newEntry, hash, array, start, end);
     thisEntry^.next := newEntry;
     RETURN newEntry^.string
   END (* IF *)
@@ -747,26 +695,138 @@ END lookupOrInsert;
 (* ---------------------------------------------------------------------------
  * procedure NewTableEntry(hash, array, start, end)
  * ---------------------------------------------------------------------------
- * Creates and initalises a new table entry.
+ * Creates a new table entry, initialises it w/ contents of array[start..end].
+ * Passes the new entry in entry, or NIL if allocation failed.
+ *
+ * pre-conditions:
+ *   (1) start must not exceed end
+ *   (2) end must not exceed HIGH(array)
+ *   (3a) if array is empty, start and end must both be zero
+ *   (3b) otherwise end must be smaller than the index of any NUL terminator
+ *   (4) hash must contain the correct hash key for slice array[start..end]
+ *
+ * PRE-CONDITIONS ARE NOT CHECKED - THEY MUST BE ASSERTED BY THE CALLER !!!!!
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE NewTableEntry
-  ( hash : Hash.Key;
-    VAR array : ARRAY OF CHAR;
-    start, end : CARDINAL ) : TableEntry;
+  ( VAR        : entry : TableEntry; (* out : new table entry or NIL *)
+    hash       : Hash.Key;           (* in  : hash key of array[start..end] *)
+    VAR array  : ARRAY OF CHAR;      (* in  : char array for initialisation *)
+    start,                           (* in  : start index of slice to copy *)
+    end        : CARDINAL );         (* in  : end index of slice to copy *)
 
 VAR
   string : Str
-  entry : TableEntry;
+  newEntry : TableEntry;
   
 BEGIN
-  ALLOCATE(entry, SYSTEM.TSIZE(TableEntry));
-  entry^.hash := hash;
+  ALLOCATE(newEntry, SYSTEM.TSIZE(TableEntry));
+  
+  IF newEntry = NIL THEN
+    entry := NIL;
+    RETURN
+  END; (* IF *)
+  
   NewStrWithArraySlice(string, array, start, end);
-  entry^.string := string;
-  entry^.next := NIL;
-  RETURN entry
+  
+  IF string = NIL THEN
+    entry := NIL;
+    RETURN
+  END; (* IF *)
+  
+  newEntry^.hash := hash;
+  newEntry^.string := string;
+  newEntry^.next := NIL;
+  
+  entry := newEntry
 END NewTableEntry;
+
+
+(* String Operations *)
+
+(* ---------------------------------------------------------------------------
+ * procedure NewStrWithArraySlice(string, array, start, end)
+ * ---------------------------------------------------------------------------
+ * Allocates a new string, initialises it with contents of array[start..end].
+ * Passes back the new string in string, or NIL if allocation failed.
+ *
+ * pre-conditions:
+ *   (1) start must not exceed end
+ *   (2) end must not exceed HIGH(array)
+ *   (3a) if array is empty, start and end must both be zero
+ *   (3b) otherwise end must be smaller than the index of any NUL terminator
+ *
+ * PRE-CONDITIONS ARE NOT CHECKED - THEY MUST BE ASSERTED BY THE CALLER !!!!!
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE NewStrWithArraySlice
+  ( VAR string : String;        (* out : newly allocated string *)
+    VAR array  : ARRAY OF CHAR; (* in  : source array for initialisation *)
+    start,                      (* in  : start index of slice to copy *)
+    end        : CARDINAL );    (* in  : end index of slice to copy *)
+
+VAR
+  newString : String;
+  ptr : StrPtr.Largest;
+  addr : SYSTEM.ADDRESS;
+  strlen, size, srcIndex, tgtIndex : CARDINAL;
+ 
+BEGIN  
+  (* determine length of new string *)
+  IF array[0] # NUL THEN
+    strlen := end - start + 1
+  ELSE
+    strlen := 0
+  END; (* IF *)
+  
+  (* determine allocation size *)
+  size := allocSizeForStrLen(strlen);
+  
+  (* allocate space for intern *)
+  ALLOCATE(addr, size);
+  
+  IF addr = NIL THEN
+    RETURN
+  END; (* IF *)
+  
+  (* cast to largest possible AOC pointer *)
+  ptr := StrPtr.Largest(addr);
+  
+  (* initialise intern with array[start..end] *)
+  IF strlen > 0 THEN
+    tgtIndex := 0;
+    FOR srcIndex := start TO end DO
+      ptr^[tgtIndex] := array[srcIndex];
+      tgtIndex := tgtIndex + 1
+    END (* FOR *)
+  END; (* IF *)
+  
+  (* NUL terminate the intern *)
+  ptr^[strlen] := NUL
+  
+  (* bail out if allocation failed *)
+  IF addr = NIL THEN
+    string := NIL;
+    RETURN
+  END; (* IF *)
+  
+  (* allocate new string descriptor *)
+  ALLOCATE(newString, SYSTEM.TSIZE(StringDescriptor));
+  
+  (* bail out if allocation failed *)
+  IF newString = NIL THEN
+    string := NIL;
+    RETURN
+  END; (* IF *)
+  
+  (* set length field *)
+  newString^.length := strlen;
+  
+  (* cast newString^.intern to target field type and link it *)
+  newString^.intern := StrPtr.Largest(addr);
+  
+  string := newString
+END NewStrWithArraySlice;
 
 
 BEGIN (* String *)
