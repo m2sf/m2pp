@@ -1,0 +1,10 @@
+(*!m2pim*) DEFINITION MODULE BuildInfo; (* auto-generated file *)
+
+CONST
+  Platform = ##platform##;
+  Dialect = ##dialect##;
+  Compiler = ##compiler##;
+  IOLibrary = ##iolib##;
+  MemModel = ##mm##;
+
+END BuildInfo.
