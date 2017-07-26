@@ -4,13 +4,13 @@ DEFINITION MODULE String; (* ISO version *)
 
 (* Interned Strings *)
 
-IMPORT StrPtr;
+IMPORT StrBlank;
 FROM SYSTEM IMPORT CAST;
 
 
 (* Maximum String Length *)
 
-CONST MaxLength = StrPtr.MaxLength;
+CONST MaxLength = StrBlank.MaxLength;
 
 
 (* String Type *)

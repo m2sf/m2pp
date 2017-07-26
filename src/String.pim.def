@@ -4,12 +4,12 @@ DEFINITION MODULE String; (* PIM version *)
 
 (* Interned Strings *)
 
-IMPORT StrPtr;
+IMPORT StrBlank;
 
 
 (* Maximum String Length *)
 
-CONST MaxLength = StrPtr.MaxLength;
+CONST MaxLength = StrBlank.MaxLength;
 
 
 (* String Type *)
