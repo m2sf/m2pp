@@ -16,4 +16,7 @@ Missing Functionality
 * implement concat() and comparison() in module String
 * implement GetFileSize() in all versions of module BasicFileSys
 
+Misc
+* update dependency diagrams
+
 [END OF FILE]
