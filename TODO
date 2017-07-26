@@ -13,7 +13,7 @@ Adaptation Libraries
 
 Missing Functionality
 * implement --show-settings output
-* implement fromConcatenation() and comparison() in String.mod
-* implement GetFileSize() in all versions of BasicFileSys library
+* implement concat() and comparison() in module String
+* implement GetFileSize() in all versions of module BasicFileSys
 
 [END OF FILE]
