@@ -359,6 +359,7 @@ function copyFiles {
   
   # module Hash
   copy "${srcpath}Hash.${mmID}.def" "${srcpath}Hash.def"
+  copy "${srcpath}imp/Hash.${mmID}.mod" "${srcpath}imp/Hash.mod"
   
   # module Infile
   copy "${srcpath}Infile.${dialectID}.def" "${srcpath}Infile.def"
@@ -454,6 +455,7 @@ function cleanFiles {
   
   # module Hash
   remove "${srcpath}Hash.def"
+  remove "${srcpath}imp/Hash.mod"
   
   # module Infile
   remove "${srcpath}Infile.def"
@@ -463,6 +465,7 @@ function cleanFiles {
   
   # module String
   remove "${srcpath}String.def"
+  remove "${srcpath}imp/String.mod"
   
   # module Terminal
   remove "${srcpath}Terminal.def"
