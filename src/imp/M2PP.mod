@@ -4,10 +4,11 @@ MODULE M2PP;
 
 (* Modula-2 Preprocessor Driver *)
 
-IMPORT Args, ArgParser, BuildParams, FNStr, Infile, Outfile, Preprocessor;
+IMPORT
+  Args, ArgParser, BuildInfo, BuildParams,
+  FNStr, Infile, Outfile, Preprocessor;
  
 FROM BasicFileSys IMPORT fileExists, RenameFile;
-
 FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
 FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
 
@@ -63,6 +64,23 @@ BEGIN
   Console.WriteChars("mode:\n");
   Console.WriteChars(" cr | lf | crlf\n\n")
 END PrintUsage;
+
+
+PROCEDURE PrintBuildInfo;
+
+BEGIN
+  Console.WriteChars("Built on    : ");
+  Console.WriteChars(BuildInfo.Platform);
+  Console.WriteChars("\nDialect     : ");
+  Console.WriteChars(BuildInfo.Dialect);
+  Console.WriteChars("\nCompiler    : ");
+  Console.WriteChars(BuildInfo.Compiler);
+  Console.WriteChars("\nI/O library : ");
+  Console.WriteChars(BuildInfo.IOLibrary);
+  Console.WriteChars("\nMemory Model: ");
+  Console.WriteChars(BuildInfo.MemModel);
+  Console.WriteLn
+END PrintBuildInfo;
 
 
 PROCEDURE PreflightCheck
@@ -178,6 +196,9 @@ BEGIN (* M2PP *)
   | LicenseRequested :
       Console.WriteChars(Copyright);
       Console.WriteChars(License)
+      
+  | BuildInfoRequested :
+      PrintBuildInfo
       
   | ErrorsEncountered :
       (* TO DO *)
