@@ -22,6 +22,7 @@ TYPE Token = (
   Help,                 (* --help, -h *)
   Version,              (* --version, -V *)
   License,              (* --license *)
+  BuildInfo,            (* --build-info *)
   
   (* expansion options *)
   
@@ -99,12 +100,12 @@ PROCEDURE isParameter ( token : Token ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
- * function isDiagnosticsOption(token)
+ * function isDiagnosticOption(token)
  * ---------------------------------------------------------------------------
- * Returns TRUE if token represents a diagnostics option, else FALSE.
+ * Returns TRUE if token represents a diagnostic option, else FALSE.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE isDiagnosticsOption ( token : Token ) : BOOLEAN;
+PROCEDURE isDiagnosticOption ( token : Token ) : BOOLEAN;
 
 
 END ArgLexer.
