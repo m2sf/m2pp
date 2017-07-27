@@ -23,6 +23,7 @@ function main {
     querySourcePath
     getConfirmation
     copyFiles
+    genBuildInfo
   fi
 } # end main
 
@@ -481,6 +482,8 @@ function cleanFiles {
   remove "${srcpath}imp/stdio.mod"
   remove "${srcpath}imp/unistd.mod"
   
+  remove "${srcpath}BuildInfo.def"
+  
   echo "Clean configuration completed."
 } # end clean
 
@@ -499,6 +502,25 @@ function remove {
     echo ""
   fi
 } # end remove
+
+
+# ---------------------------------------------------------------------------
+# generate build info file
+# ---------------------------------------------------------------------------
+# expands template BuildInfo.gen.def with build configuration parameters
+#
+function genBuildInfo {
+  local osname="$(uname -rs)"
+  local hardware="$(uname -m)"
+  local platform="${osname} (${hardware})"
+  local sub1="s|##platform##|\"${platform}\"|;"
+  local sub2="s|##dialect##|\"${dialect}\"|;"
+  local sub3="s|##compiler##|\"${compiler}\"|;"
+  local sub4="s|##iolib##|\"${iolib}\"|;"
+  local sub5="s|##mm##|\"${mm}\"|;"
+  sed -e "${sub1}${sub2}${sub3}${sub4}${sub5}" \
+    "${srcpath}templates/BuildInfo.gen.def" > "${srcpath}BuildInfo.def"
+} # end genBuildInfo
 
 
 # ---------------------------------------------------------------------------
