@@ -12,7 +12,6 @@ Adaptation Libraries
 * implement module BasicFileSys for Clarion Modula-2
 
 Missing Functionality
-* implement --build-info output
 * implement --show-settings output
 * implement concat() and comparison() in module String
 * implement GetFileSize() in all versions of module BasicFileSys
