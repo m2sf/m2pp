@@ -39,7 +39,8 @@ BEGIN
   Console.WriteChars("infoRequest:\n");
   Console.WriteChars(" --help, -h           : print help\n");
   Console.WriteChars(" --version, -V        : print version\n");
-  Console.WriteChars(" --license            : print license info\n\n");
+  Console.WriteChars(" --license            : print license info\n");
+  Console.WriteChars(" --build-info         : print build configuration\n\n");
   
   Console.WriteChars("option:\n");  
   Console.WriteChars(" --outfile targetFile : define outfile\n");
