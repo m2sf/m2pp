@@ -98,6 +98,10 @@ BEGIN
   (* --license *)
   | ArgLexer.License :
       status := Status.LicenseRequested
+  
+  (* --build-info *)
+  | ArgLexer.BuildInfo :
+      status := Status.BuildInfoRequested
   END; (* CASE *)
   
   RETURN ArgLexer.nextToken()
