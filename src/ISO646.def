@@ -53,7 +53,7 @@ CONST
   EXCLAMATION  = CHR(33);  (* ! *)
   DOUBLEQUOTE  = CHR(34);  (* " *)
   OCTOTHORPE   = CHR(35);  (* # *)
-  DOLLAR       = CHR(36);  (* $ *)
+  DOLLAR       = CHR(36);  (*_$_*)
   PERCENT      = CHR(37);  (* % *)
   AMPERSAND    = CHR(38);  (* & *)
   SINGLEQUOTE  = CHR(39);  (* ' *)
