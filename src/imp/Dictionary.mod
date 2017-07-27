@@ -10,20 +10,6 @@ FROM Storage IMPORT ALLOCATE, DEALLOCATE;
 FROM String IMPORT StringT; (* alias for String.String *)
 
 
-TYPE Tree = RECORD;
-  entries    : CARDINAL;
-  root       : Node;
-  lastSearch : Cache;
-  lastStatus : Status
-END; (* Tree *)
-
-
-TYPE Cache = RECORD
-  key   : Key;
-  value : Value
-END; (* Cache *)
-
-
 TYPE Node = POINTER TO NodeDescriptor;
 
 TYPE NodeDescriptor = RECORD
@@ -33,6 +19,20 @@ TYPE NodeDescriptor = RECORD
   left,
   right : Node
 END; (* NodeDescriptor *)
+
+
+TYPE Cache = RECORD
+  key   : Key;
+  value : Value
+END; (* Cache *)
+
+
+TYPE Tree = RECORD;
+  entries    : CARDINAL;
+  root       : Node;
+  lastSearch : Cache;
+  lastStatus : Status
+END; (* Tree *)
 
 
 VAR
@@ -207,7 +207,7 @@ BEGIN
   
   (* check key before getting interned string for value *)  
   IF lookup(dictionary.root, key, dictionary.lastStatus) = NilValue THEN
-    value := String.fromArray(array);
+    value := String.forArray(array);
     
     IF value = NilValue THEN
       dictionary.lastStatus := NilNotPermitted;
@@ -246,7 +246,7 @@ BEGIN
   
   IF dictionary.lastStatus = Success THEN
     dictionary.root := newRoot;
-    dictionary.entries := dictionary.entries - 1
+    dictionary.entries := dictionary.entries - 1;
     
     (* clear cache if removed key is in cache *)
     IF key = dictionary.lastSearch.key THEN
@@ -270,7 +270,7 @@ END RemoveKey;
 PROCEDURE WithKeyValuePairsDo ( p : VisitorProc );
 
 BEGIN
-  IF p = NIL THEN
+  IF p = NILPROC THEN
     dictionary.lastStatus := NilNotPermitted;
     RETURN
   END; (* IF *)
@@ -382,7 +382,7 @@ VAR
   
 BEGIN
   (* rotate left if there are two right children on same level *)
-  IF node^level = node^.right^.right^.level THEN
+  IF node^.level = node^.right^.right^.level THEN
     tempNode := node;
     node := node^.right;
     tempNode^.right := node^.left;
@@ -405,7 +405,7 @@ END split;
 
 PROCEDURE insert
   ( node       : Node;
-    key        : ARRAY OF CHAR;
+    key,
     value      : StringT;
     VAR status : Status ) : Node;
 
@@ -438,7 +438,7 @@ BEGIN
     (* key already exists *)
       String.Equal :
         status := KeyAlreadyPresent;
-        RETURN NilKey
+        RETURN NIL
     
     (* key < node^.key *)
     | String.Less :
@@ -481,14 +481,14 @@ BEGIN
   (* exit when bottom reached *)
   IF node = bottom THEN
     status := EntryNotFound;
-    RETURN NilKey;
+    RETURN NIL;
   END; (* IF *)
   
   (* move down recursively until key is found or bottom is reached *)
   prevNode := node;
   
   (* move down left if search key is less than that of current node *)
-  IF keyComparison(key, node^.key) = Less THEN
+  IF String.comparison(key, node^.key) = String.Less THEN
     node := remove(node^.left, key, status)
     
   (* move down right if search key is not less than that of current node *)
@@ -511,7 +511,7 @@ BEGIN
     
   (* rebalance on the way back up *)
   ELSIF
-    (node^.level - 1 > node^.left) OR
+    (node^.level - 1 > node^.left^.level) OR
     (node^.level -1 < node^.right^.level) THEN
     
     node^.level := node^.level - 1;
@@ -573,7 +573,7 @@ BEGIN
   (* init dictionary *)
   (* dictionary := { 0, bottom, NIL, NIL, Success } *)
   dictionary.entries := 0;
-  dictionary.root := bottom
+  dictionary.root := bottom;
   dictionary.lastSearch.key := NilKey;
   dictionary.lastSearch.value := NilValue;
   dictionary.lastStatus := Success;
