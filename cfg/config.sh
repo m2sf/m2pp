@@ -369,6 +369,7 @@ function copyFiles {
   
   # module String
   copy "${srcpath}String.${dialectID}.def" "${srcpath}String.def"
+  copy "${srcpath}imp/String.${dialectID}.mod" "${srcpath}imp/String.mod"
   
   # module Terminal
   if [ "$iolibID" = "iso" ] || [ "$iolibID" = "posix" ]; then
