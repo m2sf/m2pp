@@ -52,8 +52,8 @@ BEGIN
         GetOption(next, token, lexeme);
         
         CASE token OF
-          Help .. License :
-            pathExpected := TRUE
+          Help .. BuildInfo :
+            pathExpected := FALSE
             
         | Outfile :
             pathExpected := TRUE
@@ -133,7 +133,7 @@ END lastArg;
 PROCEDURE isInfoRequest ( token : Token ) : BOOLEAN;
 
 BEGIN
-  RETURN (token >= Help) AND (token <= License)
+  RETURN (token >= Help) AND (token <= BuildInfo)
 END isInfoRequest;
 
 
@@ -164,16 +164,16 @@ END isParameter;
 
 
 (* ---------------------------------------------------------------------------
- * function ArgLexer.isDiagnosticsOption(token)
+ * function ArgLexer.isDiagnosticOption(token)
  * ---------------------------------------------------------------------------
- * Returns TRUE if token represents a diagnostics option, else FALSE.
+ * Returns TRUE if token represents a diagnostic option, else FALSE.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE isDiagnosticsOption ( token : Token ) : BOOLEAN;
+PROCEDURE isDiagnosticOption ( token : Token ) : BOOLEAN;
 
 BEGIN
   RETURN (token >= Verbose) AND (token <= ShowSettings)
-END isDiagnosticsOption;
+END isDiagnosticOption;
 
 
 (* ************************************************************************ *
@@ -281,6 +281,11 @@ BEGIN
   | 10 :
       IF String.matchesArray(lexeme, "--tabwidth") THEN
         RETURN TabWidth
+      END (* IF *)
+      
+  | 12 :
+      IF String.matchesArray(lexeme, "--build-info") THEN
+        RETURN BuildInfo
       END (* IF *)
       
   | 15 :
