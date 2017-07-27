@@ -6,6 +6,8 @@ IMPLEMENTATION MODULE Settings;
 
 IMPORT String, Newline, Tabulator;
 
+FROM String IMPORT StringT; (* alias for String.String *)
+
 
 TYPE Settings = SET OF Setting;
 
@@ -33,24 +35,24 @@ PROCEDURE Reset ( setting : Setting );
 BEGIN
   CASE setting OF
     Infile :
-      infile := InfileDefault
+      infileStr := InfileDefault
   | Outfile :
-      outfile := OutfileDefault
+      outfileStr := OutfileDefault
   | TabWidth :
       Tabulator.SetTabWidth(TabWidthDefault)
   | NewlineMode :
       Newline.SetMode(NewlineModeDefault)
   | Verbose :
-      verbose := VerboseDefault
+      verboseFlag := VerboseDefault
   | ShowSettings :
-      showSettings := ShowSettingsDefault
+      showSettingsFlag := ShowSettingsDefault
   END; (* CASE *)
   
   EXCL(modifiedSettings, setting)
 END Reset;
 
 
-PROCEDURE alreadySet ( setting : Setting );
+PROCEDURE alreadySet ( setting : Setting ) : BOOLEAN;
 (* Returns TRUE if setting has been modified since last reset, else FALSE. *)
 
 BEGIN
@@ -67,7 +69,7 @@ BEGIN
 END SetInfile;
 
 
-PROCEDURE infile ( ) : StringT;
+PROCEDURE infile () : StringT;
 (* Returns the infile setting. *)
 
 BEGIN
@@ -84,7 +86,7 @@ BEGIN
 END SetOutfile;
 
 
-PROCEDURE outfile ( ) : StringT;
+PROCEDURE outfile () : StringT;
 (* Returns the outfile setting. *)
 
 BEGIN
@@ -101,11 +103,11 @@ BEGIN
 END SetTabWidth;
 
 
-PROCEDURE tabWidth ( ) : Tabluator.TabWidth;
+PROCEDURE tabWidth () : Tabulator.TabWidth;
 (* Returns the tabwidth setting. *)
 
 BEGIN
-  RETURN Tabulator.tabWidth
+  RETURN Tabulator.tabWidth()
 END tabWidth;
 
 
@@ -118,11 +120,11 @@ BEGIN
 END SetNewlineMode;
 
 
-PROCEDURE newlineMode ( ) : Newline.Mode;
+PROCEDURE newlineMode () : Newline.Mode;
 (* Returns the newline mode setting. *)
 
 BEGIN
-  RETURN Newline.mode
+  RETURN Newline.mode()
 END newlineMode;
 
 
@@ -135,7 +137,7 @@ BEGIN
 END SetVerbose;
 
 
-PROCEDURE verbose ( ) : BOOLEAN;
+PROCEDURE verbose () : BOOLEAN;
 (* Returns the verbose setting. *)
 
 BEGIN
@@ -149,10 +151,10 @@ PROCEDURE SetShowSettings ( value : BOOLEAN );
 BEGIN
   showSettingsFlag := value;
   INCL(modifiedSettings, ShowSettings)
-END SetVerbose;
+END SetShowSettings;
 
 
-PROCEDURE showSettings ( ) : BOOLEAN;
+PROCEDURE showSettings () : BOOLEAN;
 (* Returns the show-settings setting. *)
 
 BEGIN
@@ -174,7 +176,7 @@ END ResetAll;
 
 
 BEGIN (* Settings *)
-  modifiedSettings := { };
+  modifiedSettings := Settings {};
   infileStr := InfileDefault;
   outfileStr := OutfileDefault;
   verboseFlag := VerboseDefault;
