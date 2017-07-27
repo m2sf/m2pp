@@ -16,7 +16,7 @@ PROCEDURE Reset ( setting : Setting );
 (* Resets setting to its default. *)
 
 
-PROCEDURE alreadySet ( setting : Setting );
+PROCEDURE alreadySet ( setting : Setting ) : BOOLEAN;
 (* Returns TRUE if setting has been modified since last reset, else FALSE. *)
 
 
