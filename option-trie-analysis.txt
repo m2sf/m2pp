@@ -3,11 +3,12 @@ Option Trie Analysis
 Length=2
 
 0 1
+-|B
 -|V
 -|h
 -|v
 ---
-3 0
+4 0
   *
 
 
