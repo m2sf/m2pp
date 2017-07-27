@@ -50,7 +50,7 @@
   Outile.pim.def -- interface to target file writer for PIM Modula-2
   Preprocessor.def -- interface to preprocessor
   Settings.def -- interface to program settings management
-  StrPtr.def -- type definitions for module String
+  StrBlank.def -- type definitions for module String
   String.iso.def -- interface to interned strings library for ISO Modula-2
   String.pim.def -- interface to interned strings library for PIM Modula-2
   Tabulator.def -- interface to tabulator management
@@ -98,6 +98,7 @@
   Outfile.mod -- target file writer
   Preprocessor.mod -- preprocessor
   Settings.mod -- program settings management
+  StrBlank.mod -- allocation size function for module String
   String.iso.mod -- interned strings library for ISO Modula-2
   String.pim.def -- interned strings library for PIM Modula-2
   Tabulator.mod -- tabulator management
@@ -148,6 +149,7 @@
   unistd0.gen.def -- template for unistd0.def
 
 /src/templates
+  BuildInfo.gen.def -- template to generate build info constants
   Hash.gen.def -- template for Hash.def
   Infile.gen.def -- template for Infile.def
   Outfile.gen.def -- template for Outfile.def
