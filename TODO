@@ -8,15 +8,13 @@ Scripts
 
 Adaptation Libraries
 * implement ISO version of module BasicFileIO
-* implement module FileSystemAdapter for Aglet Modula-2
-* implement module FileSystemAdapter for Clarion Modula-2
+* implement module BasicFileSys for Aglet Modula-2
+* implement module BasicFileSys for Clarion Modula-2
 
 Missing Functionality
+* add --show-build-info
 * implement --show-settings output
 * implement concat() and comparison() in module String
 * implement GetFileSize() in all versions of module BasicFileSys
-
-Misc
-* update dependency diagrams
 
 [END OF FILE]
