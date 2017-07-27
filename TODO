@@ -7,6 +7,7 @@ Scripts
 * build configuration script for OpenVMS
 
 Adaptation Libraries
+* add a module defining NILPROC for PIM
 * implement ISO version of module BasicFileIO
 * implement module BasicFileSys for Aglet Modula-2
 * implement module BasicFileSys for Clarion Modula-2
