@@ -12,6 +12,7 @@ TYPE Status = (
   HelpRequested,
   VersionRequested,
   LicenseRequested,
+  BuildInfoRequested,
   ErrorsEncountered );
 
 
