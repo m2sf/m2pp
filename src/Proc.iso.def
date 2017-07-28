@@ -1,0 +1,5 @@
+(*!m2pim*) DEFINITION MODULE Proc; (* ISO version *)
+
+CONST Nil = NILPROC;
+
+END Proc.
