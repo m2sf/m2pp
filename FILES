@@ -78,6 +78,7 @@
   NumStr.dep.dot -- dependency graph for module NumStr
   Outfile.dep.dot -- dependency graph for module Outfile
   Preprocessor.dep.dot -- dependency graph for module Preprocessor
+  Proc.dep.dot -- dependency graph for module Proc
   Settings.dep.dot -- dependency graph for module Settings
   Tabulator.dep.dot -- dependency graph for module Tabulator
   
