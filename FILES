@@ -48,6 +48,8 @@
   NumStr.def -- interface to numeric string conversions
   Outfile.iso.def -- interface to target file writer for ISO Modula-2
   Outile.pim.def -- interface to target file writer for PIM Modula-2
+  Proc.iso.def -- NIL procedure constant for ISO Modula-2
+  Proc.pim.def -- NIL procedure constant for PIM Modula-2
   Preprocessor.def -- interface to preprocessor
   Settings.def -- interface to program settings management
   StrBlank.def -- type definitions for module String
