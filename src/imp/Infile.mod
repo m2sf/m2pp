@@ -14,6 +14,18 @@ FROM Storage IMPORT ALLOCATE, DEALLOCATE;
 
 
 (* ---------------------------------------------------------------------------
+ * type LexemeBuffer
+ * ---------------------------------------------------------------------------
+ * Stores length and up to MaxLineLength characters plus NUL terminator.
+ * ------------------------------------------------------------------------ *)
+
+TYPE LexemeBuffer = RECORD
+  length : CARDINAL;
+  array  : ARRAY [0..MaxLineLength] OF CHAR
+END; (* LexemeBuffer *)
+
+
+(* ---------------------------------------------------------------------------
  * hidden declaration of opaque type
  * ------------------------------------------------------------------------ *)
 
@@ -44,7 +56,7 @@ VAR
   s : BasicFileIO.Status;
   
 BEGIN
-  BasicFileIO.Open(file, path, BasicFileIO.Mode.Read, s);
+  BasicFileIO.Open(file, path, BasicFileIO.Read, s);
   
   IF s # BasicFileIO.Success THEN
     status := s;
@@ -97,7 +109,7 @@ VAR
   ch : CHAR;
   
 BEGIN
-  BasicFileIO.ReadChar(infile.file, ch);
+  BasicFileIO.ReadChar(infile^.file, ch);
   
   IF ch = LF THEN
     (* newline terminates symbols *)
@@ -116,7 +128,7 @@ BEGIN
     infile^.line := infile^.line + 1;
     
     (* get next character *)
-    ch := BasicFileIO.ReadChar(infile^.file, ch);
+    BasicFileIO.ReadChar(infile^.file, ch);
     
     (* any LF following a CR is ignored *)
     IF ch # LF THEN
@@ -128,7 +140,7 @@ BEGIN
     AppendChar(infile^.lexbuf, ch);
     
     (* update column counter *)
-    infile.column := infile^.column + 1
+    infile^.column := infile^.column + 1
   END; (* IF *)
   
   RETURN lookaheadChar(infile)
@@ -147,7 +159,7 @@ VAR
   ch : CHAR;
   
 BEGIN
-  ch := BasicFileIO.ReadChar(infile^.file, ch);
+  BasicFileIO.ReadChar(infile^.file, ch);
   BasicFileIO.InsertChar(infile^.file, ch);
   
   (* CR is always interpreted as LF *)
@@ -278,18 +290,6 @@ END lexeme;
  * ************************************************************************ *)
 
 (* ---------------------------------------------------------------------------
- * private type LexemeBuffer
- * ---------------------------------------------------------------------------
- * Stores length and up to MaxLineLength characters plus NUL terminator.
- * ------------------------------------------------------------------------ *)
-
-TYPE LexemeBuffer = RECORD
-  length : CARDINAL;
-  array  : ARRAY [0..MaxLineLength] OF CHAR
-END; (* LexemeBuffer *)
-
-
-(* ---------------------------------------------------------------------------
  * private procedure Clear(lexbuf)
  * ---------------------------------------------------------------------------
  * Resets and clears lexeme buffer lexbuf.
@@ -337,7 +337,7 @@ VAR
   
 BEGIN
   IF (lexbuf.length = 0) OR (lexbuf.array[0] = NUL) THEN
-    RETURN String.NilString
+    RETURN String.Nil
   END; (* IF *)
   
   (* obtain interned string for array in lexbuf and return it *)
