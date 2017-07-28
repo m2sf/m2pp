@@ -4,10 +4,9 @@ IMPLEMENTATION MODULE BasicFileSys; (* p1 version *)
 
 (* Clean file system interface to the junk that comes with ISO *)
 
-IMPORT ChanConsts, StreamFile; (* ISO libraries *)
+IMPORT ChanConsts, RndFile; (* ISO libraries *)
 
-FROM SYSTEM IMPORT INT32;
-FROM stdio IMPORT rename, remove;
+FROM stdio IMPORT INT, rename, remove;
 
 
 CONST
@@ -22,8 +21,8 @@ PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
 
 VAR
   found : BOOLEAN;
-  f : StreamFile.ChanId;
-  res : StreamFile.OpenResults;
+  f : RndFile.ChanId;
+  res : RndFile.OpenResults;
 
   (* The ISO library doesn't provide any file lookup function. So we have
      no choice but to open a file just to see if it exists, and if it does
@@ -33,7 +32,7 @@ BEGIN
   (* Why do we need to decide between sequential, stream and random access
      when all we want is check if a file exists? Incredibly bad design. *)
      
-  StreamFile.OpenRead(f, path, StreamFile.read+StreamFile.old, res);
+  RndFile.OpenOld(f, path, RndFile.read+RndFile.old, res);
   
   (* There are plenty of failure result codes that do not actually tell us
      whether or not the file exists. We have no choice but to deem that it
@@ -45,9 +44,9 @@ BEGIN
     (res = OpenAlready);
     
   IF res = Opened THEN
-    StreamFile.Close(f)
+    RndFile.Close(f)
   END; (* IF *)
-  
+    
   RETURN found
 END fileExists;
 
@@ -56,10 +55,38 @@ PROCEDURE GetFileSize
   ( path : ARRAY OF CHAR; VAR size : FileSize; VAR status : Status );
 (* Obtains the size of the file at path. On success, the size is passed back
    in size and Success is passed back in status. On failure, size remains
-   unmodified and the FileNotFound or Failure is passed back in status. *)
+   unmodified and FileNotFound or Failure is passed back in status. *)
+
+VAR
+  found : BOOLEAN;
+  f : RndFile.ChanId;
+  res : RndFile.OpenResults;
 
 BEGIN
-  (* TO DO *)
+  RndFile.OpenOld(f, path, RndFile.read+RndFile.old, res);
+  
+  found :=
+    (res = Opened) OR
+    (res = ExistsAlready) OR
+    (res = OpenAlready);
+  
+  IF NOT found THEN
+    status := FileNotFound;
+    RETURN
+  END; (* IF *)
+      
+  IF res # Opened THEN
+    status := Failure;
+    RETURN
+  END; (* IF *)
+  
+  (* this doesn't work ...
+  size := RndFile.EndPos(f);
+  ... and how could it work anyway, FilePos is an array. WTF ?! *)
+  RndFile.Close(f);
+  
+  (* for now, people who use the ISO library will not get any size *)
+  status := Failure
 END GetFileSize;
 
 
@@ -67,15 +94,15 @@ PROCEDURE CreateFile ( path : ARRAY OF CHAR; VAR status : Status );
 (* Creates a new file with the given pathname and passes back status. *)
 
 VAR
-  f : StreamFile.ChanId;
-  res : StreamFile.OpenResults;
+  f : RndFile.ChanId;
+  res : RndFile.OpenResults;
 
 BEGIN
-  StreamFile.Open(f, path, write, res);
+  RndFile.OpenClean(f, path, RndFile.write, res);
   
   IF res = Opened THEN
     status := Success;
-    StreamFile.Close(f)
+    RndFile.Close(f)
     
   ELSIF (res = ExistsAlready) OR (res = OpenAlready) THEN
     status := FileAlreadyExists
@@ -89,7 +116,7 @@ PROCEDURE RenameFile ( path, newPath : ARRAY OF CHAR; VAR status : Status );
 (* Renames the file at path to newPath and passes back status. *)
 
 VAR
-  res : INT32;
+  res : INT;
   
 BEGIN
   IF NOT fileExists(path) THEN
@@ -116,7 +143,7 @@ PROCEDURE DeleteFile ( path : ARRAY OF CHAR; VAR status : Status );
 (* Deletes the file at path and passes status in done. *)
 
 VAR
-  res : INT32;
+  res : INT;
   
 BEGIN
   IF NOT fileExists(path) THEN
