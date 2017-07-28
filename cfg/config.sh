@@ -367,6 +367,9 @@ function copyFiles {
   # module Outfile
   copy "${srcpath}Outfile.${dialectID}.def" "${srcpath}Outfile.def"
   
+  # module Proc
+  copy "${srcpath}Proc.${dialectID}.def" "${srcpath}Proc.def"
+  
   # module String
   copy "${srcpath}String.${dialectID}.def" "${srcpath}String.def"
   copy "${srcpath}imp/String.${dialectID}.mod" "${srcpath}imp/String.mod"
@@ -463,6 +466,9 @@ function cleanFiles {
   
   # module Outfile
   remove "${srcpath}Outfile.def"
+  
+  # module Proc
+  remove "${srcpath}Proc.def"
   
   # module String
   remove "${srcpath}String.def"
