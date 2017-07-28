@@ -2,8 +2,10 @@ digraph DictionaryDep {
   node [fontname=helvetica];
   
   Dictionary -> {
-    Storage String
+    Proc Storage String
   };
+  
+  Proc; /* no dependencies */
   
   Storage [shape=box]; /* stdlib */
     

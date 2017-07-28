@@ -84,7 +84,9 @@ digraph M2PPDep {
   };
   
   Dictionary -> {
-    Storage String
+    Proc Storage String
   };
+  
+  Proc; /* no dependencies */
   
 } /* M2PPDep */

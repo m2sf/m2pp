@@ -1,0 +1,6 @@
+digraph ProcDep {
+  node [fontname=helvetica];
+  
+  Proc; /* no dependencies */
+      
+} /* ProcDep */

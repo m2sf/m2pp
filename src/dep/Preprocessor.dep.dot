@@ -6,8 +6,10 @@ digraph PreprocessorDep {
   };
   
   Dictionary -> {
-    Storage String
+    Proc Storage String
   };
+  
+  Proc; /* no dependencies */
   
   Storage [shape=box]; /* stdlib */
     
