@@ -42,7 +42,7 @@ END; (* InsertBuffer *)
  * Close             | yes     yes     yes    | n/a
  * ------------------+------------------------+-------
  * GetMode           | yes     yes     yes    | no
- * GetStatus         | yes     yes     yes    | no
+ * status            | yes     yes     yes    | no
  * insertBufferFull  | yes     no*     no*    | no
  * eof               | yes     no*     no*    | no
  * ------------------+------------------------+-------
@@ -170,25 +170,24 @@ END GetMode;
 
 
 (* ---------------------------------------------------------------------------
- * procedure GetStatus(file, status)
+ * function status(file)
  * ---------------------------------------------------------------------------
- * Passes the status of the last operation on file in status.
+ * Returns the status of the last operation on file in status.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE GetStatus ( file : File; VAR status : Status );
+PROCEDURE status ( file : File ) : Status;
 
 BEGIN
   IF file = NIL THEN
-    status := InvalidFileRef;
-    RETURN
+    RETURN InvalidFileRef
   END; (* IF *)
   
-  status := file^.status
-END GetStatus;
+  RETURN file^.status
+END status;
 
 
 (* ---------------------------------------------------------------------------
- * procedure insertBufferFull(file)
+ * function insertBufferFull(file)
  * ---------------------------------------------------------------------------
  * Returns TRUE if the internal insert buffer of file is full, else FALSE.
  * ------------------------------------------------------------------------ *)
@@ -205,7 +204,7 @@ END insertBufferFull;
 
 
 (* ---------------------------------------------------------------------------
- * procedure eof(file)
+ * function eof(file)
  * ---------------------------------------------------------------------------
  * Returns TRUE if the end of file has been reached, otherwise FALSE.
  * ------------------------------------------------------------------------ *)
