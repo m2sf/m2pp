@@ -4,8 +4,10 @@ IMPLEMENTATION MODULE Outfile;
 
 (* I/O library for writing text files with tab expansion *)
 
-IMPORT BasicFileIO, Tabulator, Newline;
+IMPORT BasicFileIO, String, Tabulator, Newline;
 
+FROM SYSTEM IMPORT TSIZE;
+FROM Storage IMPORT ALLOCATE, DEALLOCATE;
 FROM ISO646 IMPORT NUL, TAB, LF, CR, SPACE, DEL;
 FROM String IMPORT StringT; (* alias for String.String *)
 
@@ -42,14 +44,14 @@ VAR
   s : BasicFileIO.Status;
   
 BEGIN
-  BasicFileIO.Open(file, path, BasicFileIO.Mode.Write, s);
+  BasicFileIO.Open(file, path, BasicFileIO.Write, s);
   
   IF s # BasicFileIO.Success THEN
     status := s;
     RETURN
   END; (* IF *)
   
-  ALLOCATE(infile, TSIZE(OutfileDescriptor));
+  ALLOCATE(outfile, TSIZE(OutfileDescriptor));
   
   outfile^.file := file;
   outfile^.line := 1;
@@ -133,7 +135,7 @@ PROCEDURE WriteChar ( outfile : Outfile; ch : CHAR );
 BEGIN
   (* write ch to outfile if printable char *)
   IF (ch >= SPACE) AND (ch # DEL) THEN
-    BasicFileIO.Write(outfile, ch);
+    BasicFileIO.WriteChar(outfile^.file, ch);
     outfile^.column := outfile^.column + 1
   END (* IF *)
 END WriteChar;
@@ -164,7 +166,7 @@ BEGIN
     
     (* write ch to outfile if printable char *)
     IF (ch >= SPACE) AND (ch # DEL) THEN
-      BasicFileIO.Write(outfile, ch);
+      BasicFileIO.WriteChar(outfile^.file, ch);
       outfile^.column := outfile^.column + 1
     END (* IF *)
   END (* FOR *)
@@ -179,14 +181,21 @@ END WriteChars;
 
 PROCEDURE WriteString ( outfile : Outfile; string : StringT );
 
-PROCEDURE WriteCharsToOutfile ( array : ARRAY OF CHAR );
-
+VAR
+  ch : CHAR;
+  index : CARDINAL;
+  
 BEGIN
-  WriteChars(outfile, array)
-END WriteCharsToOutfile;
-
-BEGIN
-  String.withCharsDo(string, WriteCharsToOutfile)
+  FOR index := 0 TO String.length(string) DO
+    (* get next char *)
+    ch := String.charAtIndex(string, index);
+    
+    (* write ch to outfile if printable char *)
+    IF (ch >= SPACE) AND (ch # DEL) THEN
+      BasicFileIO.WriteChar(outfile^.file, ch);
+      outfile^.column := outfile^.column + 1
+    END (* IF *)
+  END (* FOR *)
 END WriteString;
 
 
@@ -210,8 +219,8 @@ BEGIN
   ELSE (* tabwidth > 0 -- expand to spaces *)
     spaces := outfile^.tabwidth - (outfile^.column - 1) MOD outfile^.tabwidth;
     FOR counter := 1 TO spaces DO
-      BasicFileIO.WriteChar(outfile^.file, SPACE);
-    END (* FOR *)
+      BasicFileIO.WriteChar(outfile^.file, SPACE)
+    END; (* FOR *)
     (* update column counter *)
     outfile^.column := outfile^.column + spaces
   END (* IF *)
@@ -254,7 +263,7 @@ PROCEDURE status ( outfile : Outfile ) : BasicFileIO.Status;
 
 BEGIN
   RETURN BasicFileIO.status(outfile^.file)
-END status
+END status;
 
 
 (* ---------------------------------------------------------------------------
@@ -280,7 +289,7 @@ PROCEDURE column ( outfile : Outfile ) : CARDINAL;
 
 BEGIN
   RETURN outfile^.column
-END line;
+END column;
 
 
 END Outfile.
