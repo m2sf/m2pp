@@ -447,7 +447,7 @@ VAR
 BEGIN
   len := CharArray.length(path);
   
-  (* bail out if array is empty *)
+  (* bail out if path is empty *)
   IF len = 0 THEN
     RETURN
   END; (* IF *)
