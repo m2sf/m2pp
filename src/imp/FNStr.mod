@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE FNStr;
 
 (* Filename string operations *)
 
-IMPORT BuildParams, CharArray, BasicFileSys;
+IMPORT BuildParams, CharArray, BasicFileSys, String;
 
 FROM ISO646 IMPORT NUL, BACKSLASH;
 FROM CardMath IMPORT pow10, log10;
@@ -44,18 +44,18 @@ PROCEDURE targetName ( sourceName : StringT ) : StringT;
 
 VAR
   found, genFound, extFound : BOOLEAN;
-  fnPos, genPos, extPos, srcIndex, tgtIndex, len, count : CARDINAL;
+  fnPos, genPos, extPos, srcIndex, tgtIndex, len, charsCopied : CARDINAL;
   target : ARRAY [0..BuildParams.MaxPathLen] OF CHAR;
 
 BEGIN
   (* bail out if source is NIL *)
-  IF (sourceName = String.Nil) THEN
+  IF sourceName = String.Nil THEN
     RETURN String.Nil
   END; (* IF *)
   
   (* bail out if source is empty *)
   len := String.length(sourceName);
-  IF (len = 0) THEN
+  IF len = 0 THEN
     RETURN String.Nil
   END; (* IF *)
   
@@ -65,7 +65,7 @@ BEGIN
     RETURN String.Nil
   END; (* IF *)
   
-  FindFilename(target, found, fnPos);
+  FindFilename(target, charsCopied, found, fnPos);
   IF NOT found THEN
     RETURN String.Nil
   END; (* IF *)
@@ -115,7 +115,8 @@ END targetName;
 PROCEDURE backupName ( origName : StringT ) : StringT;
 
 VAR
-  len, index : CARDINAL;
+  done : BOOLEAN;
+  len, charsCopied, version : CARDINAL;
   target : ARRAY [0..BuildParams.MaxPathLen] OF CHAR;
   
 BEGIN
@@ -126,7 +127,7 @@ BEGIN
   
   (* bail out if original is empty *)
   len := String.length(origName);
-  IF (len = 0) THEN
+  IF len = 0 THEN
     RETURN String.Nil
   END; (* IF *)
   
@@ -157,7 +158,7 @@ BEGIN
       END; (* IF *)
       
       (* return backup name if no such file exists *)
-      IF NOT BasicFileSys.fileExist(target) THEN
+      IF NOT BasicFileSys.fileExists(target) THEN
         RETURN String.forArray(target)
       END; (* IF *)
       
@@ -200,6 +201,41 @@ END backupVersionLimit;
  * ************************************************************************ *)
 
 (* ---------------------------------------------------------------------------
+ * procedure FindFilename(path, len, found, fnPos)
+ * ---------------------------------------------------------------------------
+ * Searches path from right to left for any directory delimiter ('/', '\', ':'
+ * or ']') starting at position len-1. Aborts if len > HIGH(path) or zero and
+ * passes FALSE in found. Passes TRUE in found and the index of the delimiter
+ * in fnPos if a delimiter is found, else FALSE, leaving fnPos unmodified.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE FindFilename
+  ( VAR (* CONST *) path : ARRAY OF CHAR; len : CARDINAL;
+    VAR found : BOOLEAN; VAR fnPos : CARDINAL );
+
+VAR
+  ch : CHAR;
+  index : CARDINAL;
+  
+BEGIN
+  IF (len <= HIGH(path)) AND (len > 0) THEN
+    FOR index := len-1 TO 0 BY -1 DO
+      ch := path[index];
+      IF (ch = '/') OR (ch = BACKSLASH) OR (ch = ':') OR (ch = ']') THEN
+        (* directory delimiter found *)
+        fnPos := index + 1;
+        found := TRUE;
+        RETURN
+      END (* IF *)
+    END (* FOR *)
+  END; (* IF *)
+  
+  (* no directory delimiter found *)
+  found := FALSE
+END FindFilename;
+
+
+(* ---------------------------------------------------------------------------
  * procedure FindExtension(target, genFound, genPos, extFound, extPos)
  * ---------------------------------------------------------------------------
  * Searches from right to left for an extension in array before any directory
@@ -215,17 +251,18 @@ END backupVersionLimit;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE FindExtension
-  ( VAR (* CONST *) target : ARRAY OF CHAR; 
+  ( VAR (* CONST *) path : ARRAY OF CHAR; 
     VAR genFound : BOOLEAN; VAR genPos : CARDINAL;
     VAR extFound : BOOLEAN; VAR extPos : CARDINAL );
 
 VAR
+  found : BOOLEAN;
   len, index : CARDINAL;
   
 BEGIN
   genFound := FALSE;
   extFound := FALSE;
-  len := CharArray.length(target);
+  len := CharArray.length(path);
   
   (* bail out if array is empty *)
   IF len = 0 THEN
@@ -233,13 +270,13 @@ BEGIN
   END; (* IF *)
   
   (* look for rightmost period *)
-  FindPeriodR2L(array, found, index);
+  FindPeriodR2L(path, found, index);
   
   IF (NOT found) OR (index + 1 >= len) THEN
     RETURN
   END; (* IF *)
   
-  IF (index + 4 = len) AND matchesGenAtIndex(array, index) THEN
+  IF (index + 4 = len) AND matchesGenAtIndex(path, index) THEN
     genFound := TRUE; genPos := index;
     extFound := FALSE;
     RETURN
@@ -247,7 +284,7 @@ BEGIN
   
   extFound := TRUE; extPos := index;
   
-  IF (index > 4) AND matchesGenAtIndex(array, index-4) THEN
+  IF (index > 4) AND matchesGenAtIndex(path, index-4) THEN
     genFound := TRUE; genPos := index - 4
   END (* IF *)
 END FindExtension;
@@ -329,10 +366,10 @@ PROCEDURE matchesGenAtIndex
 
 BEGIN
   RETURN
-    (target + 4 <= HIGH(array)) AND
-    (target[index] = '.') AND (target[index+1] = 'g') AND
-    (target[index+2] = 'e') AND(target[index+3] = 'n') AND
-    ((target[index+4] = '.') OR (target[index+4] = NUL))
+    (index + 4 <= HIGH(array)) AND
+    (array[index] = '.') AND (array[index+1] = 'g') AND
+    (array[index+2] = 'e') AND(array[index+3] = 'n') AND
+    ((array[index+4] = '.') OR (array[index+4] = NUL))
 END matchesGenAtIndex;
 
 
@@ -408,7 +445,7 @@ VAR
   len, index : CARDINAL;
   
 BEGIN
-  len := CharArray.length(array);
+  len := CharArray.length(path);
   
   (* bail out if array is empty *)
   IF len = 0 THEN
