@@ -42,19 +42,19 @@
   Hash.cardinal.def -- 32-bit hash function using CARDINAL type
   Hash.longint.def -- 31-bit hash function using LONGINT type
   ISO646.def -- ISO646 (aka ASCII) character code constant definitions
-  Infile.iso.def -- interface to source file reader for ISO Modula-2
-  Infile.pim.def -- interface to source file reader for PIM Modula-2
+  Infile.iso.def -- interface to source file reader (ISO version)
+  Infile.pim.def -- interface to source file reader (PIM version)
   Newline.def -- interface to newline mode management
   NumStr.def -- interface to numeric string conversions
-  Outfile.iso.def -- interface to target file writer for ISO Modula-2
-  Outile.pim.def -- interface to target file writer for PIM Modula-2
-  Proc.iso.def -- NIL procedure constant for ISO Modula-2
-  Proc.pim.def -- NIL procedure constant for PIM Modula-2
+  Outfile.iso.def -- interface to target file writer (ISO version)
+  Outile.pim.def -- interface to target file writer (PIM version)
+  Proc.iso.def -- NIL procedure constant (ISO version)
+  Proc.pim.def -- NIL procedure constant (PIM version)
   Preprocessor.def -- interface to preprocessor
   Settings.def -- interface to program settings management
   StrBlank.def -- type definitions for module String
-  String.iso.def -- interface to interned strings library for ISO Modula-2
-  String.pim.def -- interface to interned strings library for PIM Modula-2
+  String.iso.def -- interface to interned strings library (ISO version)
+  String.pim.def -- interface to interned strings library (PIM version)
   Tabulator.def -- interface to tabulator management
   Terminal.nonpim.def -- interface of PIM's Terminal module for ISO/POSIX
   Terminal.pim.txt -- user info on PIM library's Terminal module
@@ -101,8 +101,8 @@
   Preprocessor.mod -- preprocessor
   Settings.mod -- program settings management
   StrBlank.mod -- allocation size function for module String
-  String.iso.mod -- interned strings library for ISO Modula-2
-  String.pim.def -- interned strings library for PIM Modula-2
+  String.iso.mod -- interned strings library (ISO version)
+  String.pim.def -- interned strings library (PIM version)
   Tabulator.mod -- tabulator management
   Terminal.iso.mod -- ISO implementation of PIM's Terminal module
   Terminal.pim.txt -- user info on PIM library's Terminal module
