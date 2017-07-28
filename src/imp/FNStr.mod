@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE FNStr;
 
 (* Filename string operations *)
 
-IMPORT CharArray, BasicFileSys;
+IMPORT BuildParams, CharArray, BasicFileSys;
 
 FROM ISO646 IMPORT NUL, BACKSLASH;
 FROM CardMath IMPORT pow10, log10;
@@ -45,7 +45,7 @@ PROCEDURE targetName ( sourceName : StringT ) : StringT;
 VAR
   found, genFound, extFound : BOOLEAN;
   fnPos, genPos, extPos, srcIndex, tgtIndex, len, count : CARDINAL;
-  target : ARRAY [0..MaxPathLen] OF CHAR;
+  target : ARRAY [0..BuildParams.MaxPathLen] OF CHAR;
 
 BEGIN
   (* bail out if source is NIL *)
@@ -116,7 +116,7 @@ PROCEDURE backupName ( origName : StringT ) : StringT;
 
 VAR
   len, index : CARDINAL;
-  target : ARRAY [0..MaxPathLen] OF CHAR;
+  target : ARRAY [0..BuildParams.MaxPathLen] OF CHAR;
   
 BEGIN
   (* bail out if original is NIL *)
@@ -292,13 +292,13 @@ BEGIN
   len := CharArray.length(array);
   
   (* bail out if array is empty *)
-  IF len := 0 THEN
+  IF len = 0 THEN
     found := FALSE;
     RETURN
   END; (* IF *)
   
   FOR index := len-1 TO 0 BY -1 DO
-    ch = array[index];
+    ch := array[index];
     
     (* dirpath delimiter reached *)
     IF (ch = '/') OR (ch = BACKSLASH) OR (ch = ':') OR (ch = ']') THEN
@@ -411,14 +411,14 @@ BEGIN
   len := CharArray.length(array);
   
   (* bail out if array is empty *)
-  IF len := 0 THEN
+  IF len = 0 THEN
     RETURN
   END; (* IF *)
   
   FOR index := len - 1 TO 0 BY -1 DO
     ch := path[index];
     IF ch = ';' THEN
-      path[index] := NUL
+      path[index] := NUL;
       RETURN
     ELSIF (ch = '/') OR (ch = BACKSLASH) OR (ch = ':') OR (ch = ']') THEN
       RETURN     
