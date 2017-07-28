@@ -388,6 +388,7 @@ function copyFiles {
     "${srcpath}imp/BasicFileIO.mod"
   
   # module BasicFileSys
+  copy "${srcpath}BasicFileSys.${mmID}.def" "${srcpath}BasicFileSys.def"
   if [ "$iolibID" = "pim" ] || [ "$iolibID" = "posix" ]; then
     copy \
       "${srcpath}imp/BasicFileSys/BasicFileSys.${iolibID}.mod" \
@@ -482,6 +483,7 @@ function cleanFiles {
   remove "${srcpath}imp/BasicFileIO.mod"
   
   # module BasicFileSys
+  remove "${srcpath}BasicFileSys.def"
   remove "${srcpath}imp/BasicFileSys.mod"
   
   # posix interfaces and shim libraries
