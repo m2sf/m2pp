@@ -74,7 +74,7 @@ BEGIN
   END; (* IF *)
   
   IF reqBitsFS(fileSize) > CardBitwidth THEN
-    (* fileSize exceeds type FileSize *)
+    (* fileSize overflows type FileSize *)
     status := SizeOverflow;
     RETURN
   END; (* IF *)
