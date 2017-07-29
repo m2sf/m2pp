@@ -1,0 +1,5 @@
+(*!m2pim*) DEFINITION MODULE Proc; (* PIM version *)
+
+CONST Nil = NIL;
+
+END Proc.
