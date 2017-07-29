@@ -24,7 +24,7 @@ PROCEDURE GetFileSize
   ( path : ARRAY OF CHAR; VAR size : FileSize; VAR status : Status );
 (* Obtains the size of the file at path. On success, the size is passed back
    in size and Success is passed back in status. On failure, size remains
-   unmodified and the FileNotFound or Failure is passed back in status. *)
+   unmodified, FileNotFound, SizeOverflow or Failure is passed in status. *)
 
 
 PROCEDURE CreateFile ( path : ARRAY OF CHAR; VAR status : Status );
