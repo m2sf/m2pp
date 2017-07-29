@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE BasicFileSys; (* p1 version *)
 
 (* Clean file system interface to the junk that comes with ISO *)
 
-IMPORT ChanConsts, RndFile; (* ISO libraries *)
+IMPORT ChanConsts, IOResult, RawIO, RndFile; (* ISO libraries *)
 
 FROM stdio IMPORT INT, rename, remove;
 
@@ -58,9 +58,20 @@ PROCEDURE GetFileSize
    unmodified and FileNotFound or Failure is passed back in status. *)
 
 VAR
+  ch : CHAR;
   found : BOOLEAN;
   f : RndFile.ChanId;
+  counter : FileSize;
   res : RndFile.OpenResults;
+
+  (* The p1 compiler does not permit any arithmetic on values of type FilePos
+     nor does it permit conversion to another type. As ridiculous as this may
+     seem, it does not violate the ISO standard which defines type FilePos as
+     an array and does not require it to support arithmetic nor conversion.
+     We therefore have no choice but to open the file, read it byte by byte
+     to the end while incrementing a counter to obtain the filesize as a
+     value of a useful type. This is terribly inefficiant, especially on
+     larger files. The penalty for using such a badly designed standard. *)
 
 BEGIN
   RndFile.OpenOld(f, path, RndFile.read+RndFile.old, res);
@@ -80,13 +91,22 @@ BEGIN
     RETURN
   END; (* IF *)
   
-  (* this doesn't work ...
-  size := RndFile.EndPos(f);
-  ... and how could it work anyway, FilePos is an array. WTF ?! *)
-  RndFile.Close(f);
+  counter := 0;
+  WHILE IOResult.ReadResult(f) # IOResult.endOfInput DO
+    RawIO.Read(f, ch);
+    
+    IF counter = MAX(FileSize) THEN
+      status := SizeOverflow;
+      RndFile.Close(f);
+      RETURN
+    END; (* IF *)
+    
+    counter := counter + 1      
+  END; (* WHILE *)
   
-  (* for now, people who use the ISO library will not get any size *)
-  status := Failure
+  RndFile.Close(f);
+  status := Success;
+  size := counter
 END GetFileSize;
 
 
