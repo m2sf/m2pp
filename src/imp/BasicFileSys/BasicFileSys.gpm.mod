@@ -72,7 +72,7 @@ BEGIN
       size := VAL(FileSize, fileSize);
       status := Success
     ELSE (* file size exceeds type FileSize *)
-      status := Failure
+      status := SizeOverflow
     END (* IF *)
     
   ELSE (* subsystem returned failure *)
