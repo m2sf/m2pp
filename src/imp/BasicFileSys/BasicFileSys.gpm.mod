@@ -67,17 +67,20 @@ BEGIN
   
   UxFiles.FileSize(path, fileSize, done);
   
-  IF done THEN
-    IF reqBitsFS(fileSize) <= CardBitwidth THEN
-      size := VAL(FileSize, fileSize);
-      status := Success
-    ELSE (* file size exceeds type FileSize *)
-      status := SizeOverflow
-    END (* IF *)
-    
-  ELSE (* subsystem returned failure *)
-    status := Failure
-  END (* IF *)
+  IF NOT done THEN
+    (* subsystem returned failure *)
+    status := Failure;
+    RETURN
+  END; (* IF *)
+  
+  IF reqBitsFS(fileSize) > CardBitwidth THEN
+    (* fileSize exceeds type FileSize *)
+    status := SizeOverflow;
+    RETURN
+  END; (* IF *)
+  
+  size := VAL(FileSize, fileSize);
+  status := Success
 END GetFileSize;
 
 
