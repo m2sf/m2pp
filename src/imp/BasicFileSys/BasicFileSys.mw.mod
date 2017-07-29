@@ -208,12 +208,12 @@ BEGIN
   maxWeight := size DIV 2 + 1;
   
   (* calculate required bits *)
-  WHILE (weight < maxWeight) DO
+  WHILE weight < maxWeight DO
     bits := bits + 1;
     weight := weight * 2
   END; (* WHILE *)
   
-  RETURN (bits + 1) > FileSizeAvailableBits
+  RETURN ((bits + 1) > FileSizeAvailableBits)
 END wouldOverflowFileSize;
 
   
