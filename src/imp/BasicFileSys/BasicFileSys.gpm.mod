@@ -28,10 +28,26 @@ PROCEDURE GetFileSize
   ( path : ARRAY OF CHAR; VAR size : FileSize; VAR status : Status );
 (* Obtains the size of the file at path. On success, the size is passed back
    in size and Success is passed back in status. On failure, size remains
-   unmodified and the FileNotFound or Failure is passed back in status. *)
+   unmodified and FileNotFound or Failure is passed back in status. *)
 
+VAR
+  done : BOOLEAN;
+  fileSize : CARDINAL;
+  
 BEGIN
-  (* TO DO *)
+  IF NOT fileExists(path) THEN
+    status := FileNotFound;
+    RETURN
+  END; (* IF *)
+  
+  UxFiles.FileSize(path, fileSize, done);
+  
+  IF done THEN
+    size := fileSize;
+    status := Success
+  ELSE
+    status := Failure
+  END (* IF *)
 END GetFileSize;
 
 
