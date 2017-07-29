@@ -173,7 +173,7 @@ VAR
 BEGIN
   bits := 7;
   weight := 128;
-  maxWeight := i DIV 2 + 1;
+  maxWeight := size DIV 2 + 1;
   
   WHILE (weight < maxWeight) DO
     bits := bits + 8;
