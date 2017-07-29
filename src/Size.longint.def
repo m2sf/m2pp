@@ -1,0 +1,59 @@
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE Size; (* LONGINT version *)
+
+(* Type with largest positive value *)
+
+
+TYPE Size = LONGINT [0..MAX(LONGINT)];
+
+TYPE SizeT = Size; (* alias for unqualified use *)
+
+
+(* ---------------------------------------------------------------------------
+ * compile time calculation of the bit width of type Size
+ * ------------------------------------------------------------------------ *)
+
+  MaxSizeDivPow2Of8   = MAX(Size) DIV 256;
+  MaxSizeDivPow2Of16  = MaxSizeDivPow2Of8 DIV 256;
+  MaxSizeDivPow2Of24  = MaxSizeDivPow2Of16 DIV 256;
+  MaxSizeDivPow2Of32  = MaxSizeDivPow2Of24 DIV 256;
+  MaxSizeDivPow2Of40  = MaxSizeDivPow2Of32 DIV 256;
+  MaxSizeDivPow2Of48  = MaxSizeDivPow2Of40 DIV 256;
+  MaxSizeDivPow2Of56  = MaxSizeDivPow2Of48 DIV 256;
+  MaxSizeDivPow2Of64  = MaxSizeDivPow2Of56 DIV 256;
+  MaxSizeDivPow2Of72  = MaxSizeDivPow2Of64 DIV 256;
+  MaxSizeDivPow2Of80  = MaxSizeDivPow2Of72 DIV 256;
+  MaxSizeDivPow2Of88  = MaxSizeDivPow2Of80 DIV 256;
+  MaxSizeDivPow2Of96  = MaxSizeDivPow2Of88 DIV 256;
+  MaxSizeDivPow2Of104 = MaxSizeDivPow2Of96 DIV 256;
+  MaxSizeDivPow2Of112 = MaxSizeDivPow2Of104 DIV 256;
+  MaxSizeDivPow2Of120 = MaxSizeDivPow2Of112 DIV 256;
+  
+  BW8   = (MAX(Size) <= 127);
+  BW16  = (MaxSizeDivPow2Of8 > 0) AND (MaxSizeDivPow2Of8 <= 127);
+  BW24  = (MaxSizeDivPow2Of16 > 0) AND (MaxSizeDivPow2Of16 <= 127);
+  BW32  = (MaxSizeDivPow2Of24 > 0) AND (MaxSizeDivPow2Of24 <= 127);
+  BW40  = (MaxSizeDivPow2Of32 > 0) AND (MaxSizeDivPow2Of32 <= 127);
+  BW48  = (MaxSizeDivPow2Of40 > 0) AND (MaxSizeDivPow2Of40 <= 127);
+  BW56  = (MaxSizeDivPow2Of48 > 0) AND (MaxSizeDivPow2Of48 <= 127);
+  BW64  = (MaxSizeDivPow2Of56 > 0) AND (MaxSizeDivPow2Of56 <= 127);
+  BW72  = (MaxSizeDivPow2Of64 > 0) AND (MaxSizeDivPow2Of64 <= 127);
+  BW80  = (MaxSizeDivPow2Of72 > 0) AND (MaxSizeDivPow2Of72 <= 127);
+  BW88  = (MaxSizeDivPow2Of80 > 0) AND (MaxSizeDivPow2Of80 <= 127);
+  BW96  = (MaxSizeDivPow2Of88 > 0) AND (MaxSizeDivPow2Of88 <= 127);
+  BW104 = (MaxSizeDivPow2Of96 > 0) AND (MaxSizeDivPow2Of96 <= 127);
+  BW112 = (MaxSizeDivPow2Of104 > 0) AND (MaxSizeDivPow2Of104 <= 127);
+  BW120 = (MaxSizeDivPow2Of112 > 0) AND (MaxSizeDivPow2Of112 <= 127);
+  BW128 = (MaxSizeDivPow2Of120 > 0) AND (MaxSizeDivPow2Of120 <= 127);
+  
+  Bitwidth =
+    8*ORD(BW8) + 16*ORD(BW16) + 24*ORD(BW24) + 32*ORD(BW32) +
+    40*ORD(BW40) + 48*ORD(BW48) + 56*ORD(BW56) + 64*ORD(BW64) +
+    72*ORD(BW72) + 80*ORD(BW80) + 88*ORD(BW88) + 96*ORD(BW96) +
+    104*ORD(BW104) + 112*ORD(BW112) + 120*ORD(BW120) + 128*ORD(BW128);
+  
+  BitsInUse = Bitwidth - 1;
+  
+
+END Size.
