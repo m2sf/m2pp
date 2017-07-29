@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE BasicFileSys; (* ModulaWare version *)
 
 (* Clean file system interface to the junk that comes with ISO *)
 
-IMPORT ChanConsts, RndFile; (* ISO's junk libraries *)
+IMPORT ChanConsts, RndFile; (* ISO libraries *)
 
 IMPORT FileSystem; (* ModulaWare specific library *)
 
@@ -14,6 +14,35 @@ CONST
   NotFound = ChanConsts.noSuchFile;
   ExistsAlready = ChanConsts.fileExists;
   OpenAlready = ChanConsts.alreadyOpen;
+
+
+(* Number of bits in use by type FileSize *)
+
+CONST  
+  MaxFileSizeDivPow2Of8   = MAX(FileSize) DIV 256;
+  MaxFileSizeDivPow2Of16  = MaxFileSizeDivPow2Of8 DIV 256;
+  MaxFileSizeDivPow2Of24  = MaxFileSizeDivPow2Of16 DIV 256;
+  MaxFileSizeDivPow2Of32  = MaxFileSizeDivPow2Of24 DIV 256;
+  MaxFileSizeDivPow2Of40  = MaxFileSizeDivPow2Of32 DIV 256;
+  MaxFileSizeDivPow2Of48  = MaxFileSizeDivPow2Of40 DIV 256;
+  MaxFileSizeDivPow2Of56  = MaxFileSizeDivPow2Of48 DIV 256;
+  
+  (* for unsigned types K=255; for signed types K=127 *)
+  K = 256 DIV (ORD(FileSizeUsesMSB)+1) - 1;
+  
+  BW8   = (MAX(FileSize) <= K);
+  BW16  = (MaxFileSizeDivPow2Of8 > 0) AND (MaxFileSizeDivPow2Of8 <= K);
+  BW24  = (MaxFileSizeDivPow2Of16 > 0) AND (MaxFileSizeDivPow2Of16 <= K);
+  BW32  = (MaxFileSizeDivPow2Of24 > 0) AND (MaxFileSizeDivPow2Of24 <= K);
+  BW40  = (MaxFileSizeDivPow2Of32 > 0) AND (MaxFileSizeDivPow2Of32 <= K);
+  BW48  = (MaxFileSizeDivPow2Of40 > 0) AND (MaxFileSizeDivPow2Of40 <= K);
+  BW56  = (MaxFileSizeDivPow2Of48 > 0) AND (MaxFileSizeDivPow2Of48 <= K);
+  BW64  = (MaxFileSizeDivPow2Of56 > 0) AND (MaxFileSizeDivPow2Of56 <= K);
+  
+  FileSizeAvailableBits =
+    8*ORD(BW8) + 16*ORD(BW16) + 24*ORD(BW24) + 32*ORD(BW32) +
+    40*ORD(BW40) + 48*ORD(BW48) + 56*ORD(BW56) + 64*ORD(BW64) -
+    ORD(FileSizeUsesMSB);
 
 
 PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
@@ -57,9 +86,38 @@ PROCEDURE GetFileSize
    in size and Success is passed back in status. On failure, size remains
    unmodified and the FileNotFound or Failure is passed back in status. *)
 
+(* This procedure requires FilePos arithmetic and conversion which is not
+   supported by all ISO Modula-2 compilers. For a truly portable but very
+   inefficient implementation of GetFileSize, see BasicFileSys.p1.mod. *)
+
 BEGIN
-  (* TO DO *)
-  status := Failure
+  RndFile.OpenOld(f, path, RndFile.read+RndFile.old, res);
+  
+  found :=
+    (res = Opened) OR
+    (res = ExistsAlready) OR
+    (res = OpenAlready);
+  
+  IF NOT found THEN
+    status := FileNotFound;
+    RETURN
+  END; (* IF *)
+  
+  IF res # Opened THEN
+    status := Failure;
+    RETURN
+  END; (* IF *)
+  
+  fileSize := RndFile.EndPos(f);
+  RndFile.Close(f);
+  
+  IF reqBitsFilePos(fileSize) > FileSizeAvailableBits THEN
+    status := SizeOverflow;
+    RETURN
+  END; (* IF *)
+  
+  size := VAL(FileSize, fileSize);
+  status := Success
 END GetFileSize;
 
 
@@ -128,4 +186,34 @@ BEGIN
 END DeleteFile;
 
 
+(* ************************************************************************ *
+ * Private Operations                                                       *
+ * ************************************************************************ *)
+
+(* --------------------------------------------------------------------------
+ * function reqBitsFilePos(size)
+ * --------------------------------------------------------------------------
+ * Returns the minimum number of bits required to represent size.
+ * ----------------------------------------------------------------------- *)
+
+PROCEDURE reqBitsFilePos ( size : RndFile.FilePos ) : CARDINAL;
+
+VAR
+  bits : CARDINAL;
+  weight, maxWeight : RndFile.FilePos;
+
+BEGIN
+  bits := 7;
+  weight := 128;
+  maxWeight := size DIV 2 + 1;
+  
+  WHILE (weight < maxWeight) DO
+    bits := bits + 8;
+    weight := weight * 256
+  END; (* WHILE *)
+  
+  RETURN bits + 1
+END reqBitsFilePos;
+
+  
 END BasicFileSys.
