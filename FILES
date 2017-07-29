@@ -31,8 +31,7 @@
   ArgParser.def -- interface for command line argument parser
   Args.def -- interface to command line argument handling
   BasicFileIO.def -- File I/O interface
-  BasicFileSys.cardinal.def -- file system interface using CARDINAL file size
-  BasicFileSys.longint.def -- file system interface using LONGINT file size
+  BasicFileSys.def -- file system interface
   BuildParams.def -- Build parameter definitions
   CardMath.def -- interface to cardinal math functions
   CharArray -- interface to character array operations
@@ -52,6 +51,8 @@
   Proc.pim.def -- NIL procedure constant (PIM version)
   Preprocessor.def -- interface to preprocessor
   Settings.def -- interface to program settings management
+  Size.cardinal.def -- definition of type Size using CARDINAL
+  Size.longint.def -- definition of type Size using LONGINT
   StrBlank.def -- type definitions for module String
   String.iso.def -- interface to interned strings library (ISO version)
   String.pim.def -- interface to interned strings library (PIM version)
