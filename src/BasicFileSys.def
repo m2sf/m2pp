@@ -1,13 +1,13 @@
 (*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
 
-DEFINITION MODULE BasicFileSys; (* CARDINAL version *)
+DEFINITION MODULE BasicFileSys;
 
 (* Basic Filesystem Interface for M2PP and M2BSK *)
 
+FROM Size IMPORT SizeT;
 
-TYPE FileSize = CARDINAL;
 
-CONST FileSizeUsesMSB = TRUE; (* most significant bit is used *)
+TYPE FileSize = SizeT;
 
 
 TYPE Status = (
