@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE BasicFileSys; (* ModulaWare version *)
 
 (* Clean file system interface to the junk that comes with ISO *)
 
-IMPORT ChanConsts, StreamFile; (* ISO's junk libraries *)
+IMPORT ChanConsts, RndFile; (* ISO's junk libraries *)
 
 IMPORT FileSystem; (* ModulaWare specific library *)
 
@@ -21,8 +21,8 @@ PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
 
 VAR
   found : BOOLEAN;
-  f : StreamFile.ChanId;
-  res : StreamFile.OpenResults;
+  f : RndFile.ChanId;
+  res : RndFile.OpenResults;
 
   (* The ISO library doesn't provide any file lookup function. So we have
      no choice but to open a file just to see if it exists, and if it does
@@ -32,7 +32,7 @@ BEGIN
   (* Why do we need to decide between sequential, stream and random access
      when all we want is check if a file exists? Incredibly bad design. *)
      
-  StreamFile.OpenRead(f, path, StreamFile.read+StreamFile.old, res);
+  RndFile.OpenOld(f, path, RndFile.read+RndFile.old, res);
   
   (* There are plenty of failure result codes that do not actually tell us
      whether or not the file exists. We have no choice but to deem that it
@@ -44,9 +44,9 @@ BEGIN
     (res = OpenAlready);
     
   IF res = Opened THEN
-    StreamFile.Close(f)
+    RndFile.Close(f)
   END; (* IF *)
-  
+    
   RETURN found
 END fileExists;
 
@@ -59,6 +59,7 @@ PROCEDURE GetFileSize
 
 BEGIN
   (* TO DO *)
+  status := Failure
 END GetFileSize;
 
 
