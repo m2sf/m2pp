@@ -55,7 +55,7 @@ PROCEDURE GetFileSize
   ( path : ARRAY OF CHAR; VAR size : FileSize; VAR status : Status );
 (* Obtains the size of the file at path. On success, the size is passed back
    in size and Success is passed back in status. On failure, size remains
-   unmodified and the FileNotFound or Failure is passed back in status. *)
+   unmodified, FileNotFound, SizeOverflow or Failure is passed in status. *)
 
 (* This procedure requires FilePos arithmetic and conversion which is not
    supported by all ISO Modula-2 compilers. For a truly portable but very
