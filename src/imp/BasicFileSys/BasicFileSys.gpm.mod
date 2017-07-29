@@ -5,31 +5,6 @@ IMPLEMENTATION MODULE BasicFileSys; (* GPM version *)
 IMPORT FLength, UxFiles; (* GPM specific libraries *)
 
 
-(* Cardinal bitwidth calculation for up to 64 bits *)
-
-CONST
-  MaxCardDivPow2Of8   = MAX(CARDINAL) DIV 256;
-  MaxCardDivPow2Of16  = MaxCardDivPow2Of8 DIV 256;
-  MaxCardDivPow2Of24  = MaxCardDivPow2Of16 DIV 256;
-  MaxCardDivPow2Of32  = MaxCardDivPow2Of24 DIV 256;
-  MaxCardDivPow2Of40  = MaxCardDivPow2Of32 DIV 256;
-  MaxCardDivPow2Of48  = MaxCardDivPow2Of40 DIV 256;
-  MaxCardDivPow2Of56  = MaxCardDivPow2Of48 DIV 256;
-  
-  BW8   = (MAX(CARDINAL) <= 255);
-  BW16  = (MaxCardDivPow2Of8 > 0) AND (MaxCardDivPow2Of8 <= 255);
-  BW24  = (MaxCardDivPow2Of16 > 0) AND (MaxCardDivPow2Of16 <= 255);
-  BW32  = (MaxCardDivPow2Of24 > 0) AND (MaxCardDivPow2Of24 <= 255);
-  BW40  = (MaxCardDivPow2Of32 > 0) AND (MaxCardDivPow2Of32 <= 255);
-  BW48  = (MaxCardDivPow2Of40 > 0) AND (MaxCardDivPow2Of40 <= 255);
-  BW56  = (MaxCardDivPow2Of48 > 0) AND (MaxCardDivPow2Of48 <= 255);
-  BW64  = (MaxCardDivPow2Of56 > 0) AND (MaxCardDivPow2Of56 <= 255);
-  
-  CardBitwidth =
-    8*ORD(BW8) + 16*ORD(BW16) + 24*ORD(BW24) + 32*ORD(BW32) +
-    40*ORD(BW40) + 48*ORD(BW48) + 56*ORD(BW56) + 64*ORD(BW64);
-
-
 PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if the file at the given path exists, else FALSE. *)
 
@@ -53,7 +28,7 @@ PROCEDURE GetFileSize
   ( path : ARRAY OF CHAR; VAR size : FileSize; VAR status : Status );
 (* Obtains the size of the file at path. On success, the size is passed back
    in size and Success is passed back in status. On failure, size remains
-   unmodified and FileNotFound or Failure is passed back in status. *)
+   unmodified, FileNotFound, SizeOverflow or Failure is passed in status. *)
 
 VAR
   done : BOOLEAN;
@@ -73,8 +48,7 @@ BEGIN
     RETURN
   END; (* IF *)
   
-  IF reqBitsFS(fileSize) > CardBitwidth THEN
-    (* fileSize overflows type FileSize *)
+  IF wouldOverflowFileSize(fileSize) THEN
     status := SizeOverflow;
     RETURN
   END; (* IF *)
@@ -161,17 +135,41 @@ END DeleteFile;
  * Private Operations                                                       *
  * ************************************************************************ *)
 
+(* Cardinal bitwidth calculation for up to 64 bits *)
+
+CONST
+  MaxCardDivPow2Of8   = MAX(CARDINAL) DIV 256;
+  MaxCardDivPow2Of16  = MaxCardDivPow2Of8 DIV 256;
+  MaxCardDivPow2Of24  = MaxCardDivPow2Of16 DIV 256;
+  MaxCardDivPow2Of32  = MaxCardDivPow2Of24 DIV 256;
+  MaxCardDivPow2Of40  = MaxCardDivPow2Of32 DIV 256;
+  MaxCardDivPow2Of48  = MaxCardDivPow2Of40 DIV 256;
+  MaxCardDivPow2Of56  = MaxCardDivPow2Of48 DIV 256;
+  
+  BW8   = (MAX(CARDINAL) <= 255);
+  BW16  = (MaxCardDivPow2Of8 > 0) AND (MaxCardDivPow2Of8 <= 255);
+  BW24  = (MaxCardDivPow2Of16 > 0) AND (MaxCardDivPow2Of16 <= 255);
+  BW32  = (MaxCardDivPow2Of24 > 0) AND (MaxCardDivPow2Of24 <= 255);
+  BW40  = (MaxCardDivPow2Of32 > 0) AND (MaxCardDivPow2Of32 <= 255);
+  BW48  = (MaxCardDivPow2Of40 > 0) AND (MaxCardDivPow2Of40 <= 255);
+  BW56  = (MaxCardDivPow2Of48 > 0) AND (MaxCardDivPow2Of48 <= 255);
+  BW64  = (MaxCardDivPow2Of56 > 0) AND (MaxCardDivPow2Of56 <= 255);
+  
+  CardBitwidth =
+    8*ORD(BW8) + 16*ORD(BW16) + 24*ORD(BW24) + 32*ORD(BW32) +
+    40*ORD(BW40) + 48*ORD(BW48) + 56*ORD(BW56) + 64*ORD(BW64);
+
+
 (* --------------------------------------------------------------------------
- * function reqBitsFS(size)
+ * function wouldOverflowFileSize(size)
  * --------------------------------------------------------------------------
- * Returns the minimum number of bits required to represent size.
+ * Returns TRUE if size > MAX(CARDINAL), else FALSE.
  * ----------------------------------------------------------------------- *)
 
-PROCEDURE reqBitsFS ( size : FileSize ) : CARDINAL;
+PROCEDURE wouldOverflowFileSize ( size : CARDINAL ) : BOOLEAN;
 
 VAR
-  bits : CARDINAL;
-  weight, maxWeight : FileSize;
+  bits, weight, maxWeight : CARDINAL;
 
 BEGIN
   bits := 7;
@@ -183,8 +181,8 @@ BEGIN
     weight := weight * 256
   END; (* WHILE *)
   
-  RETURN bits + 1
-END reqBitsFS;
+  RETURN ((bits + 1) > CardBitwidth)
+END wouldOverflowFileSize;
 
-  
+
 END BasicFileSys.
