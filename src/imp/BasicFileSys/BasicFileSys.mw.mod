@@ -8,6 +8,8 @@ IMPORT ChanConsts, RndFile; (* ISO libraries *)
 
 IMPORT FileSystem; (* ModulaWare specific library *)
 
+IMPORT Size;
+
 
 CONST
   Opened = ChanConsts.opened;
@@ -161,35 +163,6 @@ END DeleteFile;
  * Private Operations                                                       *
  * ************************************************************************ *)
 
-(* Number of bits in use by type FileSize *)
-
-CONST  
-  MaxFileSizeDivPow2Of8   = MAX(FileSize) DIV 256;
-  MaxFileSizeDivPow2Of16  = MaxFileSizeDivPow2Of8 DIV 256;
-  MaxFileSizeDivPow2Of24  = MaxFileSizeDivPow2Of16 DIV 256;
-  MaxFileSizeDivPow2Of32  = MaxFileSizeDivPow2Of24 DIV 256;
-  MaxFileSizeDivPow2Of40  = MaxFileSizeDivPow2Of32 DIV 256;
-  MaxFileSizeDivPow2Of48  = MaxFileSizeDivPow2Of40 DIV 256;
-  MaxFileSizeDivPow2Of56  = MaxFileSizeDivPow2Of48 DIV 256;
-  
-  (* for unsigned types K=255; for signed types K=127 *)
-  K = 256 DIV (ORD(FileSizeUsesMSB)+1) - 1;
-  
-  BW8   = (MAX(FileSize) <= K);
-  BW16  = (MaxFileSizeDivPow2Of8 > 0) AND (MaxFileSizeDivPow2Of8 <= K);
-  BW24  = (MaxFileSizeDivPow2Of16 > 0) AND (MaxFileSizeDivPow2Of16 <= K);
-  BW32  = (MaxFileSizeDivPow2Of24 > 0) AND (MaxFileSizeDivPow2Of24 <= K);
-  BW40  = (MaxFileSizeDivPow2Of32 > 0) AND (MaxFileSizeDivPow2Of32 <= K);
-  BW48  = (MaxFileSizeDivPow2Of40 > 0) AND (MaxFileSizeDivPow2Of40 <= K);
-  BW56  = (MaxFileSizeDivPow2Of48 > 0) AND (MaxFileSizeDivPow2Of48 <= K);
-  BW64  = (MaxFileSizeDivPow2Of56 > 0) AND (MaxFileSizeDivPow2Of56 <= K);
-  
-  FileSizeAvailableBits =
-    8*ORD(BW8) + 16*ORD(BW16) + 24*ORD(BW24) + 32*ORD(BW32) +
-    40*ORD(BW40) + 48*ORD(BW48) + 56*ORD(BW56) + 64*ORD(BW64) -
-    ORD(FileSizeUsesMSB);
-
-
 (* --------------------------------------------------------------------------
  * function wouldOverflowFileSize(size)
  * --------------------------------------------------------------------------
@@ -213,7 +186,7 @@ BEGIN
     weight := weight * 2
   END; (* WHILE *)
   
-  RETURN ((bits + 1) > FileSizeAvailableBits)
+  RETURN ((bits + 1) > Size.BitsInUse)
 END wouldOverflowFileSize;
 
   
