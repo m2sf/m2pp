@@ -7,6 +7,8 @@ DEFINITION MODULE BasicFileSys; (* CARDINAL version *)
 
 TYPE FileSize = CARDINAL;
 
+CONST FileSizeUsesMSB = TRUE; (* most significant bit is used *)
+
 
 TYPE Status = (
   Success,           (* successful completion *)

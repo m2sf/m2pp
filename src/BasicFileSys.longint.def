@@ -7,6 +7,8 @@ DEFINITION MODULE BasicFileSys; (* LONGINT version *)
 
 TYPE FileSize = LONGINT [0..MAX(LONGINT)];
 
+CONST FileSizeUsesMSB = FALSE; (* most significant bit is unused *)
+
 
 TYPE Status = (
   Success,           (* successful completion *)
