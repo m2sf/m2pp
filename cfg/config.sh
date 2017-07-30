@@ -370,6 +370,9 @@ function copyFiles {
   # module Proc
   copy "${srcpath}Proc.${dialectID}.def" "${srcpath}Proc.def"
   
+  # module Size
+  copy "${srcpath}Size.${mmID}.def" "${srcpath}Size.def"
+  
   # module String
   copy "${srcpath}String.${dialectID}.def" "${srcpath}String.def"
   copy "${srcpath}imp/String.${dialectID}.mod" "${srcpath}imp/String.mod"
@@ -388,7 +391,6 @@ function copyFiles {
     "${srcpath}imp/BasicFileIO.mod"
   
   # module BasicFileSys
-  copy "${srcpath}BasicFileSys.${mmID}.def" "${srcpath}BasicFileSys.def"
   if [ "$iolibID" = "pim" ] || [ "$iolibID" = "posix" ]; then
     copy \
       "${srcpath}imp/BasicFileSys/BasicFileSys.${iolibID}.mod" \
@@ -471,6 +473,9 @@ function cleanFiles {
   # module Proc
   remove "${srcpath}Proc.def"
   
+  # module Size
+  remove "${srcpath}Size.def"
+  
   # module String
   remove "${srcpath}String.def"
   remove "${srcpath}imp/String.mod"
@@ -483,7 +488,6 @@ function cleanFiles {
   remove "${srcpath}imp/BasicFileIO.mod"
   
   # module BasicFileSys
-  remove "${srcpath}BasicFileSys.def"
   remove "${srcpath}imp/BasicFileSys.mod"
   
   # posix interfaces and shim libraries
