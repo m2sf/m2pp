@@ -4,7 +4,9 @@ IMPLEMENTATION MODULE BasicFileSys; (* Ulm version *)
 
 (* Basic Filesystem interface for M2PP and M2BSK *)
 
-IMPORT SysAccess, Files; (* Ulm specific libraries *)
+IMPORT SystemTypes, SysAccess, SysStat, Files; (* Ulm specific libraries *)
+
+IMPORT Size;
 
 FROM stdio IMPORT INT, rename, remove;
 FROM unistd IMPORT FileOK, CreateOnly, access, unlink;
@@ -24,8 +26,30 @@ PROCEDURE GetFileSize
    in size and Success is passed back in status. On failure, size remains
    unmodified, FileNotFound, SizeOverflow or Failure is passed in status. *)
 
+VAR
+  done : BOOLEAN;
+  stat : SysStat.StatBuf;
+  
 BEGIN
-  (* TO DO *)
+  IF NOT fileExists(path) THEN
+    status := FileNotFound;
+    RETURN
+  END; (* IF *)
+  
+  done := SysStat.Stat(path, stat);
+  
+  IF NOT done THEN
+    status := Failure;
+    RETURN
+  END; (* IF *)
+  
+  IF wouldOverflowFileSize(stat.size) THEN
+    status := SizeOverflow;
+    RETURN
+  END; (* IF *)
+  
+  size := VAL(FileSize, stat.size);
+  status := Success
 END GetFileSize;
 
 
@@ -104,6 +128,37 @@ BEGIN
     status := Success
   END (* IF *)
 END DeleteFile;
+
+
+(* ************************************************************************ *
+ * Private Operations                                                       *
+ * ************************************************************************ *)
+
+(* --------------------------------------------------------------------------
+ * function wouldOverflowFileSize(size)
+ * --------------------------------------------------------------------------
+ * Returns TRUE if size > MAX(FileSize), else FALSE.
+ * ----------------------------------------------------------------------- *)
+
+PROCEDURE wouldOverflowFileSize ( size : SystemTypes.OFF ) : BOOLEAN;
+
+VAR
+  bits : CARDINAL;
+  weight, maxWeight : RndFile.FilePos;
+
+BEGIN
+  bits := 0;
+  weight := 1;
+  maxWeight := size DIV 2 + 1;
+  
+  (* calculate required bits *)
+  WHILE weight < maxWeight DO
+    bits := bits + 1;
+    weight := weight * 2
+  END; (* WHILE *)
+  
+  RETURN ((bits + 1) > Size.BitsInUse)
+END wouldOverflowFileSize;
 
 
 END BasicFileSys.
