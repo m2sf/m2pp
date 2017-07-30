@@ -63,7 +63,7 @@ BEGIN
   END (* IF *)
   
   IF high = 0 THEN
-    IF valueWouldOverflowFS(low) THEN
+    IF wouldOverflowFileSize(low) THEN
       status := SizeOverflow;
       RETURN
     ELSE
@@ -187,7 +187,7 @@ END DeleteFile;
  * Private Operations                                                       *
  * ************************************************************************ *)
 
-PROCEDURE valueWouldOverflowFS ( n : CARDINAL ) : BOOLEAN;
+PROCEDURE wouldOverflowFileSize ( n : CARDINAL ) : BOOLEAN;
 
 BEGIN
   IF MAX(FileSize) > MAX(CARDINAL) THEN
@@ -195,7 +195,7 @@ BEGIN
   ELSE
     RETURN n > MAX(FileSize)
   END (* IF *)
-END valueWouldOverflowFS;
+END wouldOverflowFileSize;
 
 
 PROCEDURE addWouldOverflowFS ( n, m : CARDINAL ) : BOOLEAN;
