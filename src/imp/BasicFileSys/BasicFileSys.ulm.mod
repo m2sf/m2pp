@@ -144,7 +144,7 @@ PROCEDURE wouldOverflowFileSize ( size : SystemTypes.OFF ) : BOOLEAN;
 
 VAR
   bits : CARDINAL;
-  weight, maxWeight : RndFile.FilePos;
+  weight, maxWeight : SystemTypes.OFF;
 
 BEGIN
   bits := 0;
