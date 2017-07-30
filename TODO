@@ -14,6 +14,6 @@ Adaptation Libraries
 Missing Functionality
 * implement --show-settings output
 * implement concat() and comparison() in module String
-* implement GetFileSize() in PIM, POSIX & Ulm versions of module BasicFileSys
+* implement GetFileSize() in POSIX and Ulm versions of module BasicFileSys
 
 [END OF FILE]
