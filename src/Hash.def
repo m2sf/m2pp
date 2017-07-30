@@ -1,12 +1,14 @@
 (*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation. *)
 
-DEFINITION MODULE Hash; (* CARDINAL version *)
+DEFINITION MODULE Hash;
 
-(* General Purpose 32-bit Hash Function *)
+(* General Purpose Hash Function *)
 
-TYPE Key = CARDINAL; (* must be at least 32 bits wide *)
 
-(* Library will abort the client program if CARDINAL is less than 32-bit. *)
+TYPE Key; (* OPAQUE *)
+
+
+CONST MaxBits = 32; (* upper limit for hash values *)
 
 
 (* ---------------------------------------------------------------------------
@@ -15,13 +17,13 @@ TYPE Key = CARDINAL; (* must be at least 32 bits wide *)
  * Returns the initial hash value for incremental hash calculation.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE initialValue ( ) : Key;
+PROCEDURE initialValue () : Key;
 
 
 (* ---------------------------------------------------------------------------
  * function Hash.valueForNextChar(hash, ch)
  * ---------------------------------------------------------------------------
- * Returns the next incremental hash value for incremental hash calculation.
+ * Returns the next incremental value for incremental hash calculation.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE valueForNextChar ( hash : Key; ch : CHAR ) : Key;
@@ -39,20 +41,20 @@ PROCEDURE finalValue ( hash : Key ) : Key;
 (* ---------------------------------------------------------------------------
  * function Hash.valueForArray( array )
  * ---------------------------------------------------------------------------
- * Returns the final hash value for the given character array.
+ * Returns the hash value for the given character array.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE valueForArray ( VAR (* CONST *) array : ARRAY OF CHAR ) : Key;
+PROCEDURE valueForArray ( VAR (*CONST*) array : ARRAY OF CHAR ) : Key;
 
 
 (* ---------------------------------------------------------------------------
  * function Hash.valueForArraySlice( array, start, end )
  * ---------------------------------------------------------------------------
- * Returns the final hash value for the given character array slice.
+ * Returns the hash value for the given character array slice.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE valueForArraySlice
-  ( VAR (* CONST *) array : ARRAY OF CHAR; start, end : CARDINAL ) : Key;
+  ( VAR (*CONST*) array : ARRAY OF CHAR; start, end : CARDINAL ) : Key;
 
 
 END Hash.
