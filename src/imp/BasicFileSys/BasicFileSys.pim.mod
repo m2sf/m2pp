@@ -6,6 +6,8 @@ IMPLEMENTATION MODULE BasicFileSys; (* PIM version *)
 
 IMPORT FileSystem; (* PIM's junk library *)
 
+IMPORT Size;
+
 
 PROCEDURE fileExists ( path : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if the file at the given path exists, else FALSE. *)
@@ -35,10 +37,64 @@ PROCEDURE GetFileSize
   ( path : ARRAY OF CHAR; VAR size : FileSize; VAR status : Status );
 (* Obtains the size of the file at path. On success, the size is passed back
    in size and Success is passed back in status. On failure, size remains
-   unmodified and the FileNotFound or Failure is passed back in status. *)
+   unmodified, FileNotFound, SizeOverflow or Failure is passed in status. *)
+
+VAR
+  found : BOOLEAN;
+  f : FileSystem.File;
+  high, low : CARDINAL;
+  highFactor, highWeight : FileSize;
 
 BEGIN
-  (* TO DO *)
+  FileSystem.Lookup(f, path, false);
+  found := (f.res = FileSystem.done);
+  
+  IF NOT found THEN
+    status := FileNotFound;
+    RETURN
+  END; (* IF *)
+  
+  IF FileSystem.opened IN f.flags THEN
+    FileSystem.Length(f, high, low);
+    FileSystem.Close(f)
+  ELSE
+    status := Failure;
+    RETURN
+  END (* IF *)
+  
+  IF high = 0 THEN
+    IF valueWouldOverflowFS(low) THEN
+      status := SizeOverflow;
+      RETURN
+    ELSE
+      size := VAL(FileSize, low)
+    END (* IF *)
+    
+  ELSE (* high > 0 *)
+    IF MAX(FileSize) <= MAX(CARDINAL) THEN
+      status := SizeOverflow;
+      RETURN
+    END; (* IF *)
+    
+    (* highFactor := 2^(bitwidth of CARDINAL) *)
+    highFactor := VAL(FileSize, MAX(CARDINAL)) + 1;
+    IF mulWouldOverflowFS(high, highFactor) THEN
+      status := SizeOverflow;
+      RETURN
+    END; (* IF *)
+    
+    (* highWeight := high * 2^(bitwidth of CARDINAL)  *)
+    highWeight := VAL(FileSize, high) * highFactor;
+    IF addWouldOverflowFS(highWeight, low) THEN
+      status := SizeOverflow;
+      RETURN
+    END; (* IF *)
+    
+    (* size := high * 2^(bitwidth of CARDINAL) + low *)
+    size := highWeight + VAL(FileSize, low)
+  END; (* IF *)
+  
+  status := Success
 END GetFileSize;
 
 
@@ -125,6 +181,45 @@ BEGIN
     status := Failure
   END (* IF *)
 END DeleteFile;
+
+
+(* ************************************************************************ *
+ * Private Operations                                                       *
+ * ************************************************************************ *)
+
+PROCEDURE valueWouldOverflowFS ( n : CARDINAL ) : BOOLEAN;
+
+BEGIN
+  IF MAX(FileSize) > MAX(CARDINAL) THEN
+    RETURN FALSE
+  ELSE
+    RETURN n > MAX(FileSize)
+  END (* IF *)
+END valueWouldOverflowFS;
+
+
+PROCEDURE addWouldOverflowFS ( n, m : CARDINAL ) : BOOLEAN;
+
+BEGIN
+  IF valueWouldOverflowFS(n) THEN
+    RETURN TRUE
+  ELSIF valueWouldOverflowFS(m) THEN
+    RETURN TRUE
+  ELSE
+    RETURN (MAX(FileSize) - m) < n
+  END (* IF *)
+END addWouldOverflowFS;
+
+
+PROCEDURE mulWouldOverflowFS ( n, m : CARDINAL ) : BOOLEAN;
+
+BEGIN
+  IF m > 0 THEN
+    RETURN ((MAX(FileSize) DIV m) < n)
+  ELSE
+    RETURN FALSE
+  END (* IF *)
+END mulWouldOverflowFS;
 
 
 END BasicFileSys.
