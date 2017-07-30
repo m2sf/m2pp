@@ -1,85 +1,341 @@
 (*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation. *)
 
-IMPLEMENTATION MODULE Hash; (* CARDINAL version *)
+IMPLEMENTATION MODULE Hash;
 
-(* General Purpose 32-bit Hash Function *)
+(* General Purpose Hash Function *)
 
-IMPORT Terminal; (* for abort message *)
+IMPORT Size; (* Base Type *)
 
-
-CONST
-  KeyBitwidth = 32; (* must not exceed bit width of type CARDINAL *)
+FROM Size IMPORT SizeT; (* alias for Size.Size *)
 
 
 (* ---------------------------------------------------------------------------
- * weight of MSB of type Hash.Key = pow2(KeyBitwidth-1)
+ * compile time assertion that MaxBits is in range [16..128]
  * ------------------------------------------------------------------------ *)
 
+CONST
+  MaxBitsValueTooSmall = 1/ORD(MaxBits<16); (* causes div by zero if < 16 *)
+  MaxBitsValueTooLarge = 1/ORD(MaxBits>128); (* causes div by zero if > 128 *)
+  
+
+(* ---------------------------------------------------------------------------
+ * number of bits available for use
+ * ------------------------------------------------------------------------ *)
+
+CONST
+  AddressableBits = Size.AddressableBits;
+  
+
+(* ---------------------------------------------------------------------------
+ * number of bits to be used by key type
+ * ------------------------------------------------------------------------ *)
+
+CONST
+  BitsInUse =
+    ORD(AddressableBits > MaxBits) * MaxBits +
+    ORD(AddressableBits <= MaxBits) * AddressableBits;
+  
+
+(* ---------------------------------------------------------------------------
+ * intermediary constants
+ * ------------------------------------------------------------------------ *)
+
+CONST
+  TTP16  = ORD(AddressableBits>16) * 65535 + 1;
+  TTP32  = ORD(AddressableBits>32) * TTP16 * TTP16;
+  TTP48  = ORD(AddressableBits>48) * TTP32 * TTP16;
+  TTP64  = ORD(AddressableBits>64) * TTP48 * TTP16;
+  TTP80  = ORD(AddressableBits>80) * TTP64 * TTP16;
+  TTP96  = ORD(AddressableBits>96) * TTP80 * TTP16;
+  TTP112 = ORD(AddressableBits>112) * TTP96 * TTP16;
+
+
+(* ---------------------------------------------------------------------------
+ * maximum value for key type
+ * ------------------------------------------------------------------------ *)
+  
+CONST
+  MaxKey =
+    VAL(SizeT,
+      ORD(BitsInUse>0) * 1 +
+      ORD(BitsInUse>1) * 2 +
+      ORD(BitsInUse>2) * 4 +
+      ORD(BitsInUse>3) * 8 +
+      ORD(BitsInUse>4) * 16 +
+      ORD(BitsInUse>5) * 32 +
+      ORD(BitsInUse>6) * 64 +
+      ORD(BitsInUse>7) * 128 +
+      ORD(BitsInUse>8) * 256 +
+      ORD(BitsInUse>9) * 512 +
+      ORD(BitsInUse>10) * 1024 +
+      ORD(BitsInUse>11) * 2048 +
+      ORD(BitsInUse>12) * 4096 +
+      ORD(BitsInUse>13) * 8192 +
+      ORD(BitsInUse>14) * 16384 +
+      ORD(BitsInUse>15) * 32768 +
+      ORD(BitsInUse>16) * TTP16 +
+      ORD(BitsInUse>17) * TTP16 * 2 +
+      ORD(BitsInUse>18) * TTP16 * 4 +
+      ORD(BitsInUse>19) * TTP16 * 8 +
+      ORD(BitsInUse>20) * TTP16 * 16 +
+      ORD(BitsInUse>21) * TTP16 * 32 +
+      ORD(BitsInUse>22) * TTP16 * 64 +
+      ORD(BitsInUse>23) * TTP16 * 128 +
+      ORD(BitsInUse>24) * TTP16 * 256 +
+      ORD(BitsInUse>25) * TTP16 * 512 +
+      ORD(BitsInUse>26) * TTP16 * 1024 +
+      ORD(BitsInUse>27) * TTP16 * 2048 +
+      ORD(BitsInUse>28) * TTP16 * 4096 +
+      ORD(BitsInUse>29) * TTP16 * 8192 +
+      ORD(BitsInUse>30) * TTP16 * 16384 +
+      ORD(BitsInUse>31) * TTP16 * 32768 +
+      ORD(BitsInUse>32) * TTP32 +
+      ORD(BitsInUse>33) * TTP32 * 2 +
+      ORD(BitsInUse>34) * TTP32 * 4 +
+      ORD(BitsInUse>35) * TTP32 * 8 +
+      ORD(BitsInUse>36) * TTP32 * 16 +
+      ORD(BitsInUse>37) * TTP32 * 32 +
+      ORD(BitsInUse>38) * TTP32 * 64 +
+      ORD(BitsInUse>39) * TTP32 * 128 +
+      ORD(BitsInUse>40) * TTP32 * 256 +
+      ORD(BitsInUse>41) * TTP32 * 512 +
+      ORD(BitsInUse>42) * TTP32 * 1024 +
+      ORD(BitsInUse>43) * TTP32 * 2048 +
+      ORD(BitsInUse>44) * TTP32 * 4096 +
+      ORD(BitsInUse>45) * TTP32 * 8192 +
+      ORD(BitsInUse>46) * TTP32 * 16384 +
+      ORD(BitsInUse>47) * TTP32 * 32768 +
+      ORD(BitsInUse>48) * TTP48 +
+      ORD(BitsInUse>49) * TTP48 * 2 +
+      ORD(BitsInUse>50) * TTP48 * 4 +
+      ORD(BitsInUse>51) * TTP48 * 8 +
+      ORD(BitsInUse>52) * TTP48 * 16 +
+      ORD(BitsInUse>53) * TTP48 * 32 +
+      ORD(BitsInUse>54) * TTP48 * 64 +
+      ORD(BitsInUse>55) * TTP48 * 128 +
+      ORD(BitsInUse>56) * TTP48 * 256 +
+      ORD(BitsInUse>57) * TTP48 * 512 +
+      ORD(BitsInUse>58) * TTP48 * 1024 +
+      ORD(BitsInUse>59) * TTP48 * 2048 +
+      ORD(BitsInUse>60) * TTP48 * 4096 +
+      ORD(BitsInUse>61) * TTP48 * 8192 +
+      ORD(BitsInUse>62) * TTP48 * 16384 +
+      ORD(BitsInUse>63) * TTP48 * 32768 +
+      ORD(BitsInUse>64) * TTP64 +
+      ORD(BitsInUse>65) * TTP64 * 2 +
+      ORD(BitsInUse>66) * TTP64 * 4 +
+      ORD(BitsInUse>67) * TTP64 * 8 +
+      ORD(BitsInUse>68) * TTP64 * 16 +
+      ORD(BitsInUse>69) * TTP64 * 32 +
+      ORD(BitsInUse>70) * TTP64 * 64 +
+      ORD(BitsInUse>71) * TTP64 * 128 +
+      ORD(BitsInUse>72) * TTP64 * 256 +
+      ORD(BitsInUse>73) * TTP64 * 512 +
+      ORD(BitsInUse>74) * TTP64 * 1024 +
+      ORD(BitsInUse>75) * TTP64 * 2048 +
+      ORD(BitsInUse>76) * TTP64 * 4096 +
+      ORD(BitsInUse>77) * TTP64 * 8192 +
+      ORD(BitsInUse>78) * TTP64 * 16384 +
+      ORD(BitsInUse>79) * TTP64 * 32768 +
+      ORD(BitsInUse>80) * TTP80 +
+      ORD(BitsInUse>81) * TTP80 * 2 +
+      ORD(BitsInUse>82) * TTP80 * 4 +
+      ORD(BitsInUse>83) * TTP80 * 8 +
+      ORD(BitsInUse>84) * TTP80 * 16 +
+      ORD(BitsInUse>85) * TTP80 * 32 +
+      ORD(BitsInUse>86) * TTP80 * 64 +
+      ORD(BitsInUse>87) * TTP80 * 128 +
+      ORD(BitsInUse>88) * TTP80 * 256 +
+      ORD(BitsInUse>89) * TTP80 * 512 +
+      ORD(BitsInUse>90) * TTP80 * 1024 +
+      ORD(BitsInUse>91) * TTP80 * 2048 +
+      ORD(BitsInUse>92) * TTP80 * 4096 +
+      ORD(BitsInUse>93) * TTP80 * 8192 +
+      ORD(BitsInUse>94) * TTP80 * 16384 +
+      ORD(BitsInUse>95) * TTP80 * 32768 +
+      ORD(BitsInUse>96) * TTP96 +
+      ORD(BitsInUse>97) * TTP96 * 2 +
+      ORD(BitsInUse>98) * TTP96 * 4 +
+      ORD(BitsInUse>99) * TTP96 * 8 +
+      ORD(BitsInUse>100) * TTP96 * 16 +
+      ORD(BitsInUse>101) * TTP96 * 32 +
+      ORD(BitsInUse>102) * TTP96 * 64 +
+      ORD(BitsInUse>103) * TTP96 * 128 +
+      ORD(BitsInUse>104) * TTP96 * 256 +
+      ORD(BitsInUse>105) * TTP96 * 512 +
+      ORD(BitsInUse>106) * TTP96 * 1024 +
+      ORD(BitsInUse>107) * TTP96 * 2048 +
+      ORD(BitsInUse>108) * TTP96 * 4096 +
+      ORD(BitsInUse>109) * TTP96 * 8192 +
+      ORD(BitsInUse>110) * TTP96 * 16384 +
+      ORD(BitsInUse>111) * TTP96 * 32768 +
+      ORD(BitsInUse>112) * TTP112 +
+      ORD(BitsInUse>113) * TTP112 * 2 +
+      ORD(BitsInUse>114) * TTP112 * 4 +
+      ORD(BitsInUse>115) * TTP112 * 8 +
+      ORD(BitsInUse>116) * TTP112 * 16 +
+      ORD(BitsInUse>117) * TTP112 * 32 +
+      ORD(BitsInUse>118) * TTP112 * 64 +
+      ORD(BitsInUse>119) * TTP112 * 128 +
+      ORD(BitsInUse>120) * TTP112 * 256 +
+      ORD(BitsInUse>121) * TTP112 * 512 +
+      ORD(BitsInUse>122) * TTP112 * 1024 +
+      ORD(BitsInUse>123) * TTP112 * 2048 +
+      ORD(BitsInUse>124) * TTP112 * 4096 +
+      ORD(BitsInUse>125) * TTP112 * 8192 +
+      ORD(BitsInUse>126) * TTP112 * 16384 +
+      ORD(BitsInUse>127) * TTP112 * 32768);
+
+
+(* ---------------------------------------------------------------------------
+ * key type
+ * ------------------------------------------------------------------------ *)
+
+TYPE Key = SizeT [0..MaxKey];
+
+
+(* ---------------------------------------------------------------------------
+ * index type for bit addressing
+ * ------------------------------------------------------------------------ *)
+
+TYPE BitIndex = SizeT [0..AddressableBits-1];
+
+
+(* ---------------------------------------------------------------------------
+ * weight of MSB of key type = pow2(BitsInUse-1)
+ * ------------------------------------------------------------------------ *)
+
+CONST
   KeyMSBWeight =
-    ORD(KeyBitwidth=1) * 1 +
-    ORD(KeyBitwidth=2) * 2 +
-    ORD(KeyBitwidth=3) * 4 +
-    ORD(KeyBitwidth=4) * 8 +
-    ORD(KeyBitwidth=5) * 16 +
-    ORD(KeyBitwidth=6) * 32 +
-    ORD(KeyBitwidth=7) * 64 +
-    ORD(KeyBitwidth=8) * 128 +
-    ORD(KeyBitwidth=9) * 256 +
-    ORD(KeyBitwidth=10) * 256 * 2 +
-    ORD(KeyBitwidth=11) * 256 * 4 +
-    ORD(KeyBitwidth=12) * 256 * 8 +
-    ORD(KeyBitwidth=13) * 256 * 16 +
-    ORD(KeyBitwidth=14) * 256 * 32 +
-    ORD(KeyBitwidth=15) * 256 * 64 +
-    ORD(KeyBitwidth=16) * 256 * 128 +
-    ORD(KeyBitwidth=17) * 256 * 256 +
-    ORD(KeyBitwidth=18) * 256 * 256 * 2 +
-    ORD(KeyBitwidth=19) * 256 * 256 * 4 +
-    ORD(KeyBitwidth=20) * 256 * 256 * 8 +
-    ORD(KeyBitwidth=21) * 256 * 256 * 16 +
-    ORD(KeyBitwidth=22) * 256 * 256 * 32 +
-    ORD(KeyBitwidth=23) * 256 * 256 * 64 +
-    ORD(KeyBitwidth=24) * 256 * 256 * 128 +
-    ORD(KeyBitwidth=25) * 256 * 256 * 256 +
-    ORD(KeyBitwidth=26) * 256 * 256 * 256 * 2 +
-    ORD(KeyBitwidth=27) * 256 * 256 * 256 * 4 +
-    ORD(KeyBitwidth=28) * 256 * 256 * 256 * 8 +
-    ORD(KeyBitwidth=29) * 256 * 256 * 256 * 16 +
-    ORD(KeyBitwidth=30) * 256 * 256 * 256 * 32 +
-    ORD(KeyBitwidth=31) * 256 * 256 * 256 * 64 +
-    ORD(KeyBitwidth=32) * 256 * 256 * 256 * 128 +
-    ORD(KeyBitwidth=33) * 256 * 256 * 256 * 256 +
-    ORD(KeyBitwidth=34) * 256 * 256 * 256 * 256 * 2 +
-    ORD(KeyBitwidth=35) * 256 * 256 * 256 * 256 * 4 +
-    ORD(KeyBitwidth=36) * 256 * 256 * 256 * 256 * 8 +
-    ORD(KeyBitwidth=37) * 256 * 256 * 256 * 256 * 16 +
-    ORD(KeyBitwidth=38) * 256 * 256 * 256 * 256 * 32 +
-    ORD(KeyBitwidth=39) * 256 * 256 * 256 * 256 * 64 +
-    ORD(KeyBitwidth=40) * 256 * 256 * 256 * 256 * 128 +
-    ORD(KeyBitwidth=41) * 256 * 256 * 256 * 256 * 256 +
-    ORD(KeyBitwidth=42) * 256 * 256 * 256 * 256 * 256 * 2 +
-    ORD(KeyBitwidth=43) * 256 * 256 * 256 * 256 * 256 * 4 +
-    ORD(KeyBitwidth=44) * 256 * 256 * 256 * 256 * 256 * 8 +
-    ORD(KeyBitwidth=45) * 256 * 256 * 256 * 256 * 256 * 16 +
-    ORD(KeyBitwidth=46) * 256 * 256 * 256 * 256 * 256 * 32 +
-    ORD(KeyBitwidth=47) * 256 * 256 * 256 * 256 * 256 * 64 +
-    ORD(KeyBitwidth=48) * 256 * 256 * 256 * 256 * 256 * 128 +
-    ORD(KeyBitwidth=49) * 256 * 256 * 256 * 256 * 256 * 256 +
-    ORD(KeyBitwidth=50) * 256 * 256 * 256 * 256 * 256 * 256 * 2 +
-    ORD(KeyBitwidth=51) * 256 * 256 * 256 * 256 * 256 * 256 * 4 +
-    ORD(KeyBitwidth=52) * 256 * 256 * 256 * 256 * 256 * 256 * 8 +
-    ORD(KeyBitwidth=53) * 256 * 256 * 256 * 256 * 256 * 256 * 16 +
-    ORD(KeyBitwidth=54) * 256 * 256 * 256 * 256 * 256 * 256 * 32 +
-    ORD(KeyBitwidth=55) * 256 * 256 * 256 * 256 * 256 * 256 * 64 +
-    ORD(KeyBitwidth=56) * 256 * 256 * 256 * 256 * 256 * 256 * 128 +
-    ORD(KeyBitwidth=57) * 256 * 256 * 256 * 256 * 256 * 256 * 256 +
-    ORD(KeyBitwidth=58) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 2 +
-    ORD(KeyBitwidth=59) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 4 +
-    ORD(KeyBitwidth=60) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 8 +
-    ORD(KeyBitwidth=61) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 16 +
-    ORD(KeyBitwidth=62) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 32 +
-    ORD(KeyBitwidth=63) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 64 +
-    ORD(KeyBitwidth=64) * 256 * 256 * 256 * 256 * 256 * 256 * 256 * 128;
+    VAL(Key,
+      ORD(BitsInUse=1) * 1 +
+      ORD(BitsInUse=2) * 2 +
+      ORD(BitsInUse=3) * 4 +
+      ORD(BitsInUse=4) * 8 +
+      ORD(BitsInUse=5) * 16 +
+      ORD(BitsInUse=6) * 32 +
+      ORD(BitsInUse=7) * 64 +
+      ORD(BitsInUse=8) * 128 +
+      ORD(BitsInUse=9) * 256 +
+      ORD(BitsInUse=10) * 512 +
+      ORD(BitsInUse=11) * 1024 +
+      ORD(BitsInUse=12) * 2048 +
+      ORD(BitsInUse=13) * 4096 +
+      ORD(BitsInUse=14) * 8192 +
+      ORD(BitsInUse=15) * 16384 +
+      ORD(BitsInUse=16) * 32768 +
+      ORD(BitsInUse=17) * TTP16 +
+      ORD(BitsInUse=18) * TTP16 * 2 +
+      ORD(BitsInUse=19) * TTP16 * 4 +
+      ORD(BitsInUse=20) * TTP16 * 8 +
+      ORD(BitsInUse=21) * TTP16 * 16 +
+      ORD(BitsInUse=22) * TTP16 * 32 +
+      ORD(BitsInUse=23) * TTP16 * 64 +
+      ORD(BitsInUse=24) * TTP16 * 128 +
+      ORD(BitsInUse=25) * TTP16 * 256 +
+      ORD(BitsInUse=26) * TTP16 * 512 +
+      ORD(BitsInUse=27) * TTP16 * 1024 +
+      ORD(BitsInUse=28) * TTP16 * 2048 +
+      ORD(BitsInUse=29) * TTP16 * 4096 +
+      ORD(BitsInUse=30) * TTP16 * 8192 +
+      ORD(BitsInUse=31) * TTP16 * 16384 +
+      ORD(BitsInUse=32) * TTP16 * 32768 +
+      ORD(BitsInUse=33) * TTP32 +
+      ORD(BitsInUse=34) * TTP32 * 2 +
+      ORD(BitsInUse=35) * TTP32 * 4 +
+      ORD(BitsInUse=36) * TTP32 * 8 +
+      ORD(BitsInUse=37) * TTP32 * 16 +
+      ORD(BitsInUse=38) * TTP32 * 32 +
+      ORD(BitsInUse=39) * TTP32 * 64 +
+      ORD(BitsInUse=40) * TTP32 * 128 +
+      ORD(BitsInUse=41) * TTP32 * 256 +
+      ORD(BitsInUse=42) * TTP32 * 512 +
+      ORD(BitsInUse=43) * TTP32 * 1024 +
+      ORD(BitsInUse=44) * TTP32 * 2048 +
+      ORD(BitsInUse=45) * TTP32 * 4096 +
+      ORD(BitsInUse=46) * TTP32 * 8192 +
+      ORD(BitsInUse=47) * TTP32 * 16384 +
+      ORD(BitsInUse=48) * TTP32 * 32768 +
+      ORD(BitsInUse=49) * TTP48 +
+      ORD(BitsInUse=50) * TTP48 * 2 +
+      ORD(BitsInUse=51) * TTP48 * 4 +
+      ORD(BitsInUse=52) * TTP48 * 8 +
+      ORD(BitsInUse=53) * TTP48 * 16 +
+      ORD(BitsInUse=54) * TTP48 * 32 +
+      ORD(BitsInUse=55) * TTP48 * 64 +
+      ORD(BitsInUse=56) * TTP48 * 128 +
+      ORD(BitsInUse=57) * TTP48 * 256 +
+      ORD(BitsInUse=58) * TTP48 * 512 +
+      ORD(BitsInUse=59) * TTP48 * 1024 +
+      ORD(BitsInUse=60) * TTP48 * 2048 +
+      ORD(BitsInUse=61) * TTP48 * 4096 +
+      ORD(BitsInUse=62) * TTP48 * 8192 +
+      ORD(BitsInUse=63) * TTP48 * 16384 +
+      ORD(BitsInUse=64) * TTP48 * 32768 +
+      ORD(BitsInUse=65) * TTP64 +
+      ORD(BitsInUse=66) * TTP64 * 2 +
+      ORD(BitsInUse=67) * TTP64 * 4 +
+      ORD(BitsInUse=68) * TTP64 * 8 +
+      ORD(BitsInUse=69) * TTP64 * 16 +
+      ORD(BitsInUse=70) * TTP64 * 32 +
+      ORD(BitsInUse=71) * TTP64 * 64 +
+      ORD(BitsInUse=72) * TTP64 * 128 +
+      ORD(BitsInUse=73) * TTP64 * 256 +
+      ORD(BitsInUse=74) * TTP64 * 512 +
+      ORD(BitsInUse=75) * TTP64 * 1024 +
+      ORD(BitsInUse=76) * TTP64 * 2048 +
+      ORD(BitsInUse=77) * TTP64 * 4096 +
+      ORD(BitsInUse=78) * TTP64 * 8192 +
+      ORD(BitsInUse=79) * TTP64 * 16384 +
+      ORD(BitsInUse=80) * TTP64 * 32768 +
+      ORD(BitsInUse=81) * TTP80 +
+      ORD(BitsInUse=82) * TTP80 * 2 +
+      ORD(BitsInUse=83) * TTP80 * 4 +
+      ORD(BitsInUse=84) * TTP80 * 8 +
+      ORD(BitsInUse=85) * TTP80 * 16 +
+      ORD(BitsInUse=86) * TTP80 * 32 +
+      ORD(BitsInUse=87) * TTP80 * 64 +
+      ORD(BitsInUse=88) * TTP80 * 128 +
+      ORD(BitsInUse=89) * TTP80 * 256 +
+      ORD(BitsInUse=90) * TTP80 * 512 +
+      ORD(BitsInUse=91) * TTP80 * 1024 +
+      ORD(BitsInUse=92) * TTP80 * 2048 +
+      ORD(BitsInUse=93) * TTP80 * 4096 +
+      ORD(BitsInUse=94) * TTP80 * 8192 +
+      ORD(BitsInUse=95) * TTP80 * 16384 +
+      ORD(BitsInUse=96) * TTP80 * 32768 +
+      ORD(BitsInUse=97) * TTP96 +
+      ORD(BitsInUse=98) * TTP96 * 2 +
+      ORD(BitsInUse=99) * TTP96 * 4 +
+      ORD(BitsInUse=100) * TTP96 * 8 +
+      ORD(BitsInUse=101) * TTP96 * 16 +
+      ORD(BitsInUse=102) * TTP96 * 32 +
+      ORD(BitsInUse=103) * TTP96 * 64 +
+      ORD(BitsInUse=104) * TTP96 * 128 +
+      ORD(BitsInUse=105) * TTP96 * 256 +
+      ORD(BitsInUse=106) * TTP96 * 512 +
+      ORD(BitsInUse=107) * TTP96 * 1024 +
+      ORD(BitsInUse=108) * TTP96 * 2048 +
+      ORD(BitsInUse=109) * TTP96 * 4096 +
+      ORD(BitsInUse=110) * TTP96 * 8192 +
+      ORD(BitsInUse=111) * TTP96 * 16384 +
+      ORD(BitsInUse=112) * TTP96 * 32768 +
+      ORD(BitsInUse=113) * TTP112 +
+      ORD(BitsInUse=114) * TTP112 * 2 +
+      ORD(BitsInUse=115) * TTP112 * 4 +
+      ORD(BitsInUse=116) * TTP112 * 8 +
+      ORD(BitsInUse=117) * TTP112 * 16 +
+      ORD(BitsInUse=118) * TTP112 * 32 +
+      ORD(BitsInUse=119) * TTP112 * 64 +
+      ORD(BitsInUse=120) * TTP112 * 128 +
+      ORD(BitsInUse=121) * TTP112 * 256 +
+      ORD(BitsInUse=122) * TTP112 * 512 +
+      ORD(BitsInUse=123) * TTP112 * 1024 +
+      ORD(BitsInUse=124) * TTP112 * 2048 +
+      ORD(BitsInUse=125) * TTP112 * 4096 +
+      ORD(BitsInUse=126) * TTP112 * 8192 +
+      ORD(BitsInUse=127) * TTP112 * 16384 +
+      ORD(BitsInUse=128) * TTP112 * 32768);
 
 
 (* ---------------------------------------------------------------------------
@@ -89,66 +345,15 @@ CONST
  * For Keys <= 16 bits, use A = 3 and B = 8. (experimental)
  * ------------------------------------------------------------------------ *)
 
-  A = ORD(KeyBitwidth<=16) * 3 + ORD(KeyBitwidth>16) * 8;
-  B = ORD(KeyBitwidth<=16) * 6 + ORD(KeyBitwidth>16) * 16;
-  
-
-(* ---------------------------------------------------------------------------
- * compile time calculation of the bit width of type CARDINAL
- * ------------------------------------------------------------------------ *)
-
-  MaxCardDivPow2Of8   = MAX(CARDINAL) DIV 256;
-  MaxCardDivPow2Of16  = MaxCardDivPow2Of8 DIV 256;
-  MaxCardDivPow2Of24  = MaxCardDivPow2Of16 DIV 256;
-  MaxCardDivPow2Of32  = MaxCardDivPow2Of24 DIV 256;
-  MaxCardDivPow2Of40  = MaxCardDivPow2Of32 DIV 256;
-  MaxCardDivPow2Of48  = MaxCardDivPow2Of40 DIV 256;
-  MaxCardDivPow2Of56  = MaxCardDivPow2Of48 DIV 256;
-  MaxCardDivPow2Of64  = MaxCardDivPow2Of56 DIV 256;
-  MaxCardDivPow2Of72  = MaxCardDivPow2Of64 DIV 256;
-  MaxCardDivPow2Of80  = MaxCardDivPow2Of72 DIV 256;
-  MaxCardDivPow2Of88  = MaxCardDivPow2Of80 DIV 256;
-  MaxCardDivPow2Of96  = MaxCardDivPow2Of88 DIV 256;
-  MaxCardDivPow2Of104 = MaxCardDivPow2Of96 DIV 256;
-  MaxCardDivPow2Of112 = MaxCardDivPow2Of104 DIV 256;
-  MaxCardDivPow2Of120 = MaxCardDivPow2Of112 DIV 256;
-  
-  BW8   = (MAX(CARDINAL) <= 255);
-  BW16  = (MaxCardDivPow2Of8 > 0) AND (MaxCardDivPow2Of8 <= 255);
-  BW24  = (MaxCardDivPow2Of16 > 0) AND (MaxCardDivPow2Of16 <= 255);
-  BW32  = (MaxCardDivPow2Of24 > 0) AND (MaxCardDivPow2Of24 <= 255);
-  BW40  = (MaxCardDivPow2Of32 > 0) AND (MaxCardDivPow2Of32 <= 255);
-  BW48  = (MaxCardDivPow2Of40 > 0) AND (MaxCardDivPow2Of40 <= 255);
-  BW56  = (MaxCardDivPow2Of48 > 0) AND (MaxCardDivPow2Of48 <= 255);
-  BW64  = (MaxCardDivPow2Of56 > 0) AND (MaxCardDivPow2Of56 <= 255);
-  BW72  = (MaxCardDivPow2Of64 > 0) AND (MaxCardDivPow2Of64 <= 255);
-  BW80  = (MaxCardDivPow2Of72 > 0) AND (MaxCardDivPow2Of72 <= 255);
-  BW88  = (MaxCardDivPow2Of80 > 0) AND (MaxCardDivPow2Of80 <= 255);
-  BW96  = (MaxCardDivPow2Of88 > 0) AND (MaxCardDivPow2Of88 <= 255);
-  BW104 = (MaxCardDivPow2Of96 > 0) AND (MaxCardDivPow2Of96 <= 255);
-  BW112 = (MaxCardDivPow2Of104 > 0) AND (MaxCardDivPow2Of104 <= 255);
-  BW120 = (MaxCardDivPow2Of112 > 0) AND (MaxCardDivPow2Of112 <= 255);
-  BW128 = (MaxCardDivPow2Of120 > 0) AND (MaxCardDivPow2Of120 <= 255);
-  
-  CardBitwidth =
-    8*ORD(BW8) + 16*ORD(BW16) + 24*ORD(BW24) + 32*ORD(BW32) +
-    40*ORD(BW40) + 48*ORD(BW48) + 56*ORD(BW56) + 64*ORD(BW64) +
-    72*ORD(BW72) + 80*ORD(BW80) + 88*ORD(BW88) + 96*ORD(BW96) +
-    104*ORD(BW104) + 112*ORD(BW112) + 120*ORD(BW120) + 128*ORD(BW128);
-
-
-(* ---------------------------------------------------------------------------
- * index type for bit addressing
- * ------------------------------------------------------------------------ *)
-
-TYPE BitIndex = CARDINAL [0..CardBitwidth-1];
+  A = ORD(BitsInUse<=16) * 3 + ORD(BitsInUse>16) * 6;
+  B = ORD(BitsInUse<=16) * 8 + ORD(BitsInUse>16) * 16;
 
 
 (* ---------------------------------------------------------------------------
  * function Hash.initialValue()
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE initialValue ( ) : Key;
+PROCEDURE initialValue () : Key;
 
 BEGIN
   RETURN 0
@@ -162,7 +367,7 @@ END initialValue;
 PROCEDURE valueForNextChar ( hash : Key; ch : CHAR ) : Key;
 
 BEGIN
-  RETURN ORD(ch) + SHL(hash, A) + SHL(hash, B) - hash
+  RETURN VAL(Key, ch) + SHL(hash, A) + SHL(hash, B) - hash
 END valueForNextChar;
 
 
@@ -173,13 +378,9 @@ END valueForNextChar;
 PROCEDURE finalValue ( hash : Key ) : Key;
 
 BEGIN
-  (* Clear bits [MSB..KeyBitwidth-1] in hash value *)
+  (* Clear MSB of hash value *)
   IF hash >= KeyMSBWeight THEN
-    IF CardBitwidth > KeyBitwidth THEN
-      ClearBitsInclAndAbove(hash, KeyBitwidth-1)
-    ELSE
-      hash := hash - KeyMSBWeight
-    END (* IF *)
+    hash := hash - KeyMSBWeight
   END; (* IF *)
   
   RETURN hash
@@ -192,7 +393,7 @@ END finalValue;
 
 CONST NUL = CHR(0);
 
-PROCEDURE valueForArray ( VAR (* CONST *) array : ARRAY OF CHAR ) : Key;
+PROCEDURE valueForArray ( VAR (*CONST*) array : ARRAY OF CHAR ) : Key;
   
 VAR
   ch : CHAR;
@@ -205,18 +406,14 @@ BEGIN
   
   ch := array[index];
   WHILE (ch # NUL) AND (index < HIGH(array)) DO
-    hash := ORD(ch) + SHL(hash, A) + SHL(hash, B) - hash;
+    hash := VAL(Key, ch) + SHL(hash, A) + SHL(hash, B) - hash;
     index := index + 1;
     ch := array[index]
   END; (* WHILE *)
   
-  (* Clear bits [MSB..KeyBitwidth-1] in hash value *)
+  (* Clear MSB of hash value *)
   IF hash >= KeyMSBWeight THEN
-    IF CardBitwidth > KeyBitwidth THEN
-      ClearBitsInclAndAbove(hash, KeyBitwidth-1)
-    ELSE
-      hash := hash - KeyMSBWeight
-    END (* IF *)
+    hash := hash - KeyMSBWeight
   END; (* IF *)
   
   RETURN hash
@@ -230,7 +427,7 @@ END valueForArray;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE valueForArraySlice
-  ( VAR (* CONST *) array : ARRAY OF CHAR; start, end : CARDINAL ) : Key;
+  ( VAR (*CONST*) array : ARRAY OF CHAR; start, end : CARDINAL ) : Key;
 
 VAR
   ch : CHAR;
@@ -252,13 +449,9 @@ BEGIN
     ch := array[index]
   END; (* WHILE *)
   
-  (* Clear bits [MSB..KeyBitwidth-1] in hash value *)
+  (* Clear MSB of hash value *)
   IF hash >= KeyMSBWeight THEN
-    IF CardBitwidth > KeyBitwidth THEN
-      ClearBitsInclAndAbove(hash, KeyBitwidth-1)
-    ELSE
-      hash := hash - KeyMSBWeight
-    END (* IF *)
+    hash := hash - KeyMSBWeight
   END; (* IF *)
   
   RETURN hash
@@ -281,13 +474,13 @@ VAR
   pivotalBit : BitIndex;
   
 BEGIN
-  (* shifting by KeyBitwidth and more produces all zeroes *)
-  IF shiftFactor > KeyBitwidth-1 THEN
+  (* shifting by BitsInUse and more produces all zeroes *)
+  IF shiftFactor > BitsInUse-1 THEN
     RETURN 0
   END; (* IF *)
   
-  (* bit at position CardBitwidth-shiftFactor is pivotal *)
-  pivotalBit := CardBitwidth - shiftFactor;
+  (* bit at position AddressableBits-shiftFactor is pivotal *)
+  pivotalBit := AddressableBits - shiftFactor;
   
   (* clear bits including and above pivotal bit to avoid overflow *)
   IF hash >= pow2[pivotalBit] THEN
@@ -309,12 +502,12 @@ PROCEDURE ClearBitsInclAndAbove
   ( VAR hash : Key; lowestBitToClear : BitIndex );
 
 VAR
-  mask : Key;
+  mask : SizeT;
   bitToClear : BitIndex;
   
 BEGIN
   (* shift lower bits out to the right *)
-  mask := hash DIV lowestBitToClear+1;
+  mask := hash DIV VAL(SizeT, lowestBitToClear+1);
   
   (* shift them back, thereby clearing the low bits *)
   mask := mask * pow2[lowestBitToClear+1];
@@ -327,11 +520,11 @@ END ClearBitsInclAndAbove;
 (* ---------------------------------------------------------------------------
  * array pow2[]
  * ---------------------------------------------------------------------------
- * Pre-calculated powers of 2 for n in [0..CardBitwidth-1]
+ * Pre-calculated powers of 2 for n in [0..AddressableBits-1]
  * ------------------------------------------------------------------------ *)
 
 VAR
-  pow2 : ARRAY [0..MAX(BitIndex)] OF CARDINAL;
+  pow2 : ARRAY [0..MAX(BitIndex)] OF SizeT;
 
 
 PROCEDURE InitPow2Table;
@@ -348,16 +541,5 @@ END InitPow2Table;
 
 
 BEGIN (* Hash *)
-  (* abort if KeyBitwidth width exceeds bit width of type CARDINAL *)
-  IF KeyBitwidth > CardBitwidth THEN
-    Terminal.WriteString
-      ("Hash.mod: KeyBitwidth exceeds bit width of type CARDINAL.");
-    Terminal.WriteLn;
-    Terminal.WriteString("program aborted.");
-    Terminal.WriteLn;
-    HALT
-  END; (* IF *)
-  
-  (* initialise pow2 table *)
   InitPow2Table
 END Hash.
