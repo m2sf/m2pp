@@ -38,8 +38,7 @@
   Console.def -- interface to console I/O
   Dicitionary.def -- interface to global key/value dictionary
   FNStr.def -- interface to filename string operations
-  Hash.cardinal.def -- 32-bit hash function using CARDINAL type
-  Hash.longint.def -- 31-bit hash function using LONGINT type
+  Hash.def -- interface to general purpose hash function
   ISO646.def -- ISO646 (aka ASCII) character code constant definitions
   Infile.iso.def -- interface to source file reader (ISO version)
   Infile.pim.def -- interface to source file reader (PIM version)
@@ -94,8 +93,7 @@
   Console.mod -- console I/O library
   Dicitionary.mod -- global key/value dictionary
   FNStr.mod -- filename string operations
-  Hash.cardinal.mod -- CARDINAL based implementation of hash function
-  Hash.longint.mod -- LONGINT based implementation of hash function
+  Hash.mod -- implementation of general purpose hash function
   Infile.mod -- source file reader
   Newline.mod -- newline mode management
   NumStr.mod -- numeric string conversions
@@ -104,7 +102,7 @@
   Settings.mod -- program settings management
   StrBlank.mod -- allocation size function for module String
   String.iso.mod -- interned strings library (ISO version)
-  String.pim.def -- interned strings library (PIM version)
+  String.pim.mod -- interned strings library (PIM version)
   Tabulator.mod -- tabulator management
   Terminal.iso.mod -- ISO implementation of PIM's Terminal module
   Terminal.pim.txt -- user info on PIM library's Terminal module
@@ -154,7 +152,6 @@
 
 /src/templates
   BuildInfo.gen.def -- template to generate build info constants
-  Hash.gen.def -- template for Hash.def
   Infile.gen.def -- template for Infile.def
   Outfile.gen.def -- template for Outfile.def
 
