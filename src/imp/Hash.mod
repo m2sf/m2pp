@@ -14,8 +14,8 @@ FROM Size IMPORT SizeT; (* alias for Size.Size *)
  * ------------------------------------------------------------------------ *)
 
 CONST (* causes compile time error if assert condition is not met *)
-  MaxBitsValueTooSmall = 1 DIV ORD(MaxBits>=16);
-  MaxBitsValueTooLarge = 1 DIV ORD(MaxBits<=128);
+  MaxBitsValueLowerBoundAssert = 1 DIV ORD(MaxBits>=16);
+  MaxBitsValueUpperBoundAssert = 1 DIV ORD(MaxBits<=128);
   
 
 (* ---------------------------------------------------------------------------
