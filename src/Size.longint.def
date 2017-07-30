@@ -2,8 +2,11 @@
 
 DEFINITION MODULE Size; (* LONGINT version *)
 
-(* Type with largest positive value *)
+(* Whole number type with largest positive value *)
 
+
+(* Identifiers provided for client use:
+     Size, SizeT, Bitwidth, BitsInUse, AddressableBits. *)
 
 TYPE Size = LONGINT [0..MAX(LONGINT)];
 
@@ -47,13 +50,15 @@ TYPE SizeT = Size; (* alias for unqualified use *)
   BW120 = (MaxSizeDivPow2Of112 > 0) AND (MaxSizeDivPow2Of112 <= 127);
   BW128 = (MaxSizeDivPow2Of120 > 0) AND (MaxSizeDivPow2Of120 <= 127);
   
-  Bitwidth =
+  Bitwidth = (* storage size *)
     8*ORD(BW8) + 16*ORD(BW16) + 24*ORD(BW24) + 32*ORD(BW32) +
     40*ORD(BW40) + 48*ORD(BW48) + 56*ORD(BW56) + 64*ORD(BW64) +
     72*ORD(BW72) + 80*ORD(BW80) + 88*ORD(BW88) + 96*ORD(BW96) +
     104*ORD(BW104) + 112*ORD(BW112) + 120*ORD(BW120) + 128*ORD(BW128);
   
-  BitsInUse = Bitwidth - 1;
+  BitsInUse = Bitwidth - 1; (* apparent size *)
   
-
+  AddressableBits = Bitwidth - 1; (* addressable size *)
+  
+  
 END Size.
