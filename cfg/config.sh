@@ -357,10 +357,6 @@ function copyFiles {
   echo Copying source files corresponding to selected build configuration ...
   echo ""
   
-  # module Hash
-  copy "${srcpath}Hash.${mmID}.def" "${srcpath}Hash.def"
-  copy "${srcpath}imp/Hash.${mmID}.mod" "${srcpath}imp/Hash.mod"
-  
   # module Infile
   copy "${srcpath}Infile.${dialectID}.def" "${srcpath}Infile.def"
   
@@ -459,11 +455,7 @@ function copy {
 #
 function cleanFiles {
   echo ""
-  
-  # module Hash
-  remove "${srcpath}Hash.def"
-  remove "${srcpath}imp/Hash.mod"
-  
+    
   # module Infile
   remove "${srcpath}Infile.def"
   
