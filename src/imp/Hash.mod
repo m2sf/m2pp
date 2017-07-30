@@ -13,9 +13,9 @@ FROM Size IMPORT SizeT; (* alias for Size.Size *)
  * compile time assertion that MaxBits is in range [16..128]
  * ------------------------------------------------------------------------ *)
 
-CONST
-  MaxBitsValueTooSmall = 1/ORD(MaxBits<16); (* causes div by zero if < 16 *)
-  MaxBitsValueTooLarge = 1/ORD(MaxBits>128); (* causes div by zero if > 128 *)
+CONST (* causes compile time error if assert condition not met *)
+  MaxBitsValueTooSmall = 1 DIV ORD(MaxBits<16);
+  MaxBitsValueTooLarge = 1 DIV ORD(MaxBits>128);
   
 
 (* ---------------------------------------------------------------------------
