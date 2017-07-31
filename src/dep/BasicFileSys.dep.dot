@@ -1,0 +1,12 @@
+digraph BasicFileSysDep {
+  node [fontname=helvetica];
+    
+  BasicFileSys -> {
+    Size IOSubsystem
+  };
+  
+  Size; /* no dependencies */
+  
+  IOSubsystem [label="I/O Subsystem";shape=box];
+  
+} /* BasicFileSysDep */
