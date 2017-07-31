@@ -6,9 +6,17 @@ digraph InfileDep {
   };
   
   BasicFileIO -> {
-    ISO646 Storage
+    BasicFileSys IOSubsystem ISO646 Storage
   };
-    
+  
+  BasicFileSys -> {
+    Size IOSubsystem
+  };
+  
+  Size; /* no dependencies */
+  
+  IOSubsystem [label="I/O Subsystem";shape=box];
+  
   ISO646; /* no dependencies */
   
   Storage [shape=box]; /* stdlib */
@@ -22,9 +30,7 @@ digraph InfileDep {
   Hash -> {
     Size
   };
-  
-  Size; /* no dependencies */
-  
+    
   StrBlank; /* no dependencies */
   
 } /* InfileDep */

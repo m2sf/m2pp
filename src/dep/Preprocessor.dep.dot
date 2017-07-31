@@ -32,9 +32,15 @@ digraph PreprocessorDep {
   };
   
   BasicFileIO -> {
-    ISO646 Storage
+    BasicFileSys IOSubsystem ISO646 Storage
+  };
+  
+  BasicFileSys -> {
+    Size IOSubsystem
   };
     
+  IOSubsystem [label="I/O Subsystem";shape=box];
+      
   BuildParams; /* no dependencies */
   
   Outfile -> {

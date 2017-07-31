@@ -33,15 +33,23 @@ digraph ArgsImports {
   
   StrBlank; /* no dependencies */  
   
-  BasicFileSys [shape=box];
+  Terminal [shape=box]; /* stdlib */
+  
+  BasicFileSys -> {
+    Size IOSubsystem
+  };
+    
+  IOSubsystem [label="I/O Subsystem";shape=box];
   
   Infile -> {
     BasicFileIO BuildParams ISO646 Storage String
   };
   
   BasicFileIO -> {
-    ISO646 Storage
+    BasicFileSys IOSubsystem ISO646 Storage
   };
+    
+  Storage [shape=box]; /* stdlib */
   
   Outfile -> {
     BasicFileIO ISO646 Newline String Tabulator

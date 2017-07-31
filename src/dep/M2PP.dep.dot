@@ -37,14 +37,18 @@ digraph M2PPDep {
   
   StrBlank; /* no dependencies */  
   
-  BasicFileSys [shape=box];
+  BasicFileSys -> {
+    Size IOSubsystem
+  };
+    
+  IOSubsystem [label="I/O Subsystem";shape=box];
   
   Infile -> {
     BasicFileIO BuildParams ISO646 Storage String
   };
   
   BasicFileIO -> {
-    BasicFileSys ISO646 Storage
+    BasicFileSys IOSubsystem ISO646 Storage
   };
   
   Outfile -> {

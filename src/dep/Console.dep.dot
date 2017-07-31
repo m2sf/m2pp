@@ -21,6 +21,8 @@ digraph ConsoleDep {
   
   Storage [shape=box]; /* stdlib */
   
-  StrBlank; /* no dependencies */  
+  StrBlank; /* no dependencies */
+  
+  Terminal [shape=box]; /* stdlib */
     
 } /* ConsoleDep */
