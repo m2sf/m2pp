@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE BasicFileIO; (* ISO version *)
 
 (* Basic File IO library for M2PP and M2BSK *)
 
-IMPORT SYSTEM, SeqFile, RawIO, IOResult;
+IMPORT SYSTEM, SeqFile, RawIO, RndFile, IOResult;
 IMPORT BasicFileSys;
 
 FROM ISO646 IMPORT NUL, EOT;
@@ -30,7 +30,12 @@ TYPE InsertQueue = RECORD
 END; (* InsertBuffer *)
 
 
-TYPE IOUnit = SYSTEM.LOC;
+(* Status *)
+
+(* Due to the staggering incompetence of ISO WG13, the ISO I/O library does
+   not report status for write operations. It is thus impossible to tell
+   whether an I/O error occurred during a write operation. We therefore had
+   no choice but to set the status to Unknown after every write operation. *)
 
 
 (* Operations *)
@@ -217,9 +222,9 @@ BEGIN
   IF (file = NIL) OR (file^.mode # Read)THEN
     RETURN FALSE
   END; (* IF *)
-    
+  
   IF (* queue empty *) file^.queue.count = 0 THEN
-    RETURN (* How does one query EOF in ISO M2? *) 
+    RETURN (RndFile.CurrentPos(file^.cid) = RndFile.EndPos(file^.cid))
   ELSE (* queue not empty *)
     RETURN FALSE
   END (* IF *)
@@ -257,12 +262,15 @@ BEGIN
     IF res = IOResult.allRight THEN
       ch := readCh;
       file^.status := Success
+      
     ELSIF res = IOResult.endOfInput THEN
       file^.status := ReadBeyondEOF;
       ch := EOT
+      
     ELSE
       file^.status := IOError
     END (* IF *)
+    
   ELSE (* queue not empty *)
     RemoveChar(ch)
   END (* IF *)
@@ -340,6 +348,7 @@ BEGIN
     IF res = IOResult.allRight THEN
       buffer[index] := ch;
       index := index + 1
+      
     ELSE
       noError := FALSE
     END (* IF *)
@@ -389,12 +398,15 @@ BEGIN
     IF res = IOResult.allRight THEN
       octet := ORD(ch);
       file^.status := Success
+      
     ELSIF res = IOResult.endOfInput THEN
       file^.status := ReadBeyondEOF;
       ch := EOT
+      
     ELSE
       file^.status := IOError
     END (* IF *)
+    
   ELSE (* queue not empty *)
     RemoveChar(ch);
     octet := ORD(ch)
@@ -473,6 +485,7 @@ BEGIN
     IF res = IOResult.allRight THEN
       buffer[index] := octet;
       index := index + 1
+      
     ELSE
       noError := FALSE
     END (* IF *)
@@ -500,9 +513,6 @@ END ReadOctets;
 
 PROCEDURE WriteChar ( file : File; ch : CHAR );
 
-VAR
-  res : (* Write Result Type ??? *);
-
 BEGIN
   IF file = NIL  THEN
     RETURN
@@ -513,12 +523,9 @@ BEGIN
   
   (* write ch to file *)
   RawIO.Write(file^.cid, ch);
-  res := (* how do we get the write result ??? *)
-  IF res = (* OK *) THEN
-    file^.status := Success
-  ELSE
-    file^.status := IOError
-  END (* IF *)
+  
+  (* ISO doesn't report status on write. Oh, the incompetence !!! *)
+  file^.status := Unknown
 END WriteChar;
 
 
@@ -535,8 +542,6 @@ PROCEDURE WriteChars
 
 VAR
   index : CARDINAL;
-  noError : BOOLEAN;
-  res : (* Write Result Type ??? *);
   
 BEGIN
   IF file = NIL  THEN
@@ -546,22 +551,12 @@ BEGIN
   END; (* IF *)
   
   index := 0;
-  noError := TRUE;
-  WHILE noError AND index <= HIGH(buffer) AND buffer[index] # NUL DO
-    RawIO.Write(file^.cid, buffer[index]);
-    res := (* how do we get the write result ??? *)
-    IF res = (* OK *) THEN
-      index := index + 1
-    ELSE (* error *)
-      noError := FALSE
-    END (* IF *)
+  WHILE index <= HIGH(buffer) AND buffer[index] # NUL DO
+    RawIO.Write(file^.cid, buffer[index])
   END; (* WHILE *)
   
-  IF noError THEN
-    file^.status := Success
-  ELSE
-    file^.status := IOError
-  END; (* IF *)
+  (* ISO doesn't report status on write. Oh, the incompetence !!! *)
+  file^.status := Unknown;
   
   charsWritten := index
 END WriteChars;
@@ -575,9 +570,6 @@ END WriteChars;
 
 PROCEDURE WriteOctet ( file : File; octet : Octet );
 
-VAR
-  res : (* Write Result Type ??? *);
-
 BEGIN
   IF file = NIL  THEN
     RETURN
@@ -588,12 +580,9 @@ BEGIN
   
   (* write octet to file *)
   RawIO.Write(file^.cid, octet);
-  res := (* how do we get the write result ??? *)
-  IF res = (* OK *) THEN
-    file^.status := Success
-  ELSE
-    file^.status := IOError
-  END (* IF *)
+  
+  (* ISO doesn't report status on write. Oh, the incompetence !!! *)
+  file^.status := Unknown
 END WriteOctet;
 
 
@@ -609,8 +598,6 @@ PROCEDURE WriteOctets
 
 VAR
   index : CARDINAL;
-  noError : BOOLEAN;
-  res : (* Write Result Type ??? *);
   
 BEGIN
   IF file = NIL  THEN
@@ -620,25 +607,15 @@ BEGIN
   END; (* IF *)
   
   index := 0;
-  noError := TRUE;
-  WHILE noError AND index <= HIGH(buffer) DO
-    RawIO.Write(file^.cid, buffer[index]);
-    res := (* how do we get the write result ??? *)
-    IF res = (* OK *) THEN
-      index := index + 1
-    ELSE (* error *)
-      noError := FALSE
-    END (* IF *)
+  WHILE index <= HIGH(buffer) DO
+    RawIO.Write(file^.cid, buffer[index])
   END; (* WHILE *)
   
-  IF noError THEN
-    file^.status := Success
-  ELSE
-    file^.status := IOError
-  END; (* IF *)
+  (* ISO doesn't report status on write. Oh, the incompetence !!! *)
+  file^.status := Unknown;
   
   octetsWritten := index
-END WriteChars;
+END WriteOctets;
 
 
 (* ************************************************************************ *
