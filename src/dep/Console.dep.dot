@@ -13,16 +13,14 @@ digraph ConsoleDep {
     Hash ISO646 Storage StrBlank
   };
   
-  edge [style=dotted];
   Hash -> {
-    Terminal
+    Size
   };
-  edge [style=none];
-    
+  
+  Size; /* no dependencies */
+  
   Storage [shape=box]; /* stdlib */
   
   StrBlank; /* no dependencies */  
-  
-  Terminal [shape=box]; /* stdlib */
-  
+    
 } /* ConsoleDep */

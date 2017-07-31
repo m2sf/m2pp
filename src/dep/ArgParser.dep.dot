@@ -29,13 +29,11 @@ digraph ArgParserImports {
     Hash ISO646 Storage StrBlank
   };
   
-  edge [style=dotted];
   Hash -> {
-    Terminal
+    Size
   };
-  edge [style=none];
   
-  Terminal [shape=box]; /* stdlib */
+  Size; /* no dependencies */
   
   StrBlank; /* no dependencies */  
   
