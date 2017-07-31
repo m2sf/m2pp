@@ -17,6 +17,7 @@ TYPE SizeT = Size; (* alias for unqualified use *)
  * compile time calculation of the bit width of type Size
  * ------------------------------------------------------------------------ *)
 
+CONST
   MaxSizeDivPow2Of8   = MAX(Size) DIV 256;
   MaxSizeDivPow2Of16  = MaxSizeDivPow2Of8 DIV 256;
   MaxSizeDivPow2Of24  = MaxSizeDivPow2Of16 DIV 256;
