@@ -64,6 +64,7 @@
   ArgParser.dep.dot -- dependency graph for module ArgParser
   Args.dep.dot -- dependency graph for module Args
   BasicFileIO.dep.dot -- dependency graph for module BasicFileIO
+  BasicFileSys.dep.dot -- dependency graph for module BasicFileSys
   BuildParams.dep.dot -- dependency graph for module BuildParams
   CardMath.dep.dot -- dependency graph for module CardMath
   CharArray.dep.dot -- dependeny graph for module CharArray
