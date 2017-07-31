@@ -13,6 +13,7 @@ TYPE Mode = ( Read, Write, Append );
 
 TYPE Status =
   ( Success,          (* operation completed successfully *)
+    Unknown,          (* subsystem does not support status *)
     FileNotFound,     (* requested file not found at path *)
     AccessDenied,     (* access to requested file denied *)
     InsertBufferFull, (* file's insert buffer is full *)
