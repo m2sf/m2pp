@@ -9,6 +9,8 @@ IMPORT Infile, Outfile, Dictionary, String;
 FROM ISO646 IMPORT
   NUL, TAB, LF, CR, SPACE, DEL, SINGLEQUOTE, DOUBLEQUOTE;
 FROM String IMPORT StringT; (* alias for String.String *)
+FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
+FROM Outfile IMPORT OutfileT; (* alias for Outfile.Outfile *)
 
 
 (* ---------------------------------------------------------------------------
@@ -26,19 +28,19 @@ BEGIN
   (* read chars from infile until EOF *)
   WHILE NOT Infile.eof(infile) DO
     (* all decisions based on lookahead *)
-    next := Infile.lookahead(infile);
+    next := Infile.lookaheadChar(infile);
     
     CASE next OF
     (* tabulator *)
       TAB :
         (* consume and write *)
-        Infile.ReadChar(infile, next);
+        next := Infile.consumeChar(infile);
         Outfile.WriteTab(outfile)
       
     (* newline *)
     | LF :        
         (* consume and write *)
-        Infile.ReadChar(infile, next);
+        next := Infile.consumeChar(infile);
         Outfile.WriteLn(outfile)
         
     (* quoted literal *)
@@ -53,22 +55,20 @@ BEGIN
         ExpandPlaceholder(infile, outfile)
         
       ELSE (* not a placeholder *)
-        (* consume and write *)
-        Infile.ReadChar(infile, next);
-        Outfile.WriteChar(outfile, next)
+        (* write and consume *)
+        Outfile.WriteChar(outfile, next);
+        next := Infile.consumeChar(infile)
       END (* IF *)
     
     (* m2pp directive *)
     | '(' :
       (* consume *)
-      Infile.ReadFile(infile, next);
-      next := Infile.lookahead(infile, next);
+      next := Infile.consumeChar(infile);
       
       IF next = '*' THEN
       (* consume *)
-        Infile.ReadFile(infile, next);
-        next := Infile.lookahead(infile, next);
-    
+        next := Infile.consumeChar(infile);
+        
         IF next = '?' THEN (* m2pp directive *)
           Directive(infile, outfile)
           
@@ -84,19 +84,19 @@ BEGIN
     | '/' :
       IF Infile.la2Char(infile) = '*' THEN (* m2pp comment *)
         (* consume *)
-        SkipComment(infile)
+        SkipComment(infile, outfile)
       
       ELSE (* sole slash *)
-        (* consume and write *)
-        Infile.ReadChar(infile, next);
-        Outfile.WriteChar(outfile, '/')
+        (* write and consume *)
+        Outfile.WriteChar(outfile, '/');
+        next := Infile.consumeChar(infile)
       END (* IF *)
       
     (* any other chars *)
     ELSE
-      (* consume and write *)
-      Infile.ReadChar(infile, next);
-      Outfile.WriteChar(outfile, next)
+      (* write and consume *)
+      Outfile.WriteChar(outfile, next);
+      next := Infile.consumeChar(infile)
     END (* CASE *)
   END (* WHILE *)  
 END Expand;
@@ -111,18 +111,23 @@ END Expand;
 PROCEDURE CopyQuotedLiteral ( infile : InfileT; outfile : OutfileT );
   
 VAR
+  done : BOOLEAN;
   next, delimiter : CHAR;
 
 BEGIN
-  (* consume and write delimiter *)
-  Infile.ReadChar(infile, delimiter);
-  WriteChar(outfile, delimiter);
+  (* write delimiter *)
+  delimiter := Infile.lookaheadChar(infile);
+  Outfile.WriteChar(outfile, delimiter);
   
-  REPEAT
-    (* consume and write *)
-    Infile.ReadChar(infile, next);
-    Outfile.WriteChar(outfile, next)
-  UNTIL (next = delimiter) OR (next = LF) OR (Infile.eof(infile))
+  done := FALSE;
+  next := Infile.consumeChar(infile);
+  WHILE NOT done AND NOT (Infile.eof(infile)) AND (next # LF) DO
+    (* write *)
+    Outfile.WriteChar(outfile, next);
+    done := (next = delimiter);
+    (* consume *)
+    next := Infile.consumeChar(infile)
+  END (* WHILE *)
 END CopyQuotedLiteral;
 
 
@@ -135,13 +140,13 @@ END CopyQuotedLiteral;
 PROCEDURE ExpandPlaceholder ( infile : InfileT; outfile : OutfileT );
 
 VAR
+  next : CHAR;
   ident, replacement : StringT;
   
 BEGIN
   (* consume opening delimiter *)
-  Infile.ReadChar(infile, next);
-  Infile.ReadChar(infile, next);
-  next := Infile.lookahead(infile);
+  next := Infile.consumeChar(infile);
+  next := Infile.consumeChar(infile);
   
   (* bail out if following char is not letter *)
   IF NOT (((next >= 'a') AND (next <= 'z')) OR
@@ -154,16 +159,16 @@ BEGIN
   ident := stdIdent(infile);
       
   (* lookup replacement string *)
-  replacement := Dictionary.stringForKey(ident);
-  IF replacement # NIL THEN
+  replacement := Dictionary.valueForKey(ident);
+  IF replacement # String.Nil THEN
     (* write replacement string *)
     Outfile.WriteString(outfile, replacement);
     
     (* consume closing delimiter *)
-    next := Infile.lookahead(infile);
+    next := Infile.lookaheadChar(infile);
     IF (next = '#') AND (Infile.la2Char(infile) = '#') THEN
-      Infile.ReadChar(infile, next);
-      Infile.ReadChar(infile, next);
+      next := Infile.consumeChar(infile);
+      next := Infile.consumeChar(infile)
     END (* IF *)
     
   ELSE (* no entry found *)
@@ -175,28 +180,28 @@ END ExpandPlaceholder;
 
 
 (* ---------------------------------------------------------------------------
- * procedure Directive(infile)
+ * procedure Directive(infile, outfile)
  * ---------------------------------------------------------------------------
  * Reads an M2PP preprocessor directive from infile and processes it
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE Directive ( infile : InfileT );
+PROCEDURE Directive ( infile : InfileT; outfile : OutfileT );
 
 VAR
-  ident, version : StringT;
+  next : CHAR;
+  ident, typeIdent, value, key, version : StringT;
   
 BEGIN
-  (* '(*' has already been consumed *)
+  (* opening comment delimiter has already been consumed *)
   
   (* '?' *)
-  Infile.ReadChar(infile, next);
-  next := Infile.lookahead(infile);
+  next := Infile.consumeChar(infile);
   
   (* IMPCAST | TCAST *)
   (* bail out if following char is not letter *)
   IF NOT (((next >= 'a') AND (next <= 'z')) OR
     ((next >= 'A') AND (next <= 'Z'))) THEN
-    Outfile.WriteChars(outfile, "##");
+    Outfile.WriteChars(outfile, "(*?");
     RETURN
   END; (* IF *)
   
@@ -205,17 +210,18 @@ BEGIN
   
   (* IMPCAST *)
   IF String.matchesArray(ident, "IMPCAST") THEN
-    next := Infile.lookahead(infile);
+    next := Infile.lookaheadChar(infile);
     
     (* '*' *)
     IF next = '*' THEN
       (* consume *)
-      Infile.ReadChar(infile, next);
-      next := Infile.lookahead(infile);
+      next := Infile.consumeChar(infile);
       
       (* ')' *)
       IF next = ')' THEN (* well formed *)
-        version := Dictionary.stringForKey("ver");
+        next := Infile.consumeChar(infile);
+        key := String.forArray("ver");
+        version := Dictionary.valueForKey(key);
         IF String.matchesArray(version, "iso") THEN
           Outfile.WriteChars(outfile, "FROM SYSTEM IMPORT CAST;")
         END (* IF *)
@@ -224,6 +230,7 @@ BEGIN
         Outfile.WriteChars(outfile, "(*?");
         Outfile.WriteString(outfile, ident);
         Outfile.WriteChar(outfile, '*')
+      END (* IF *)
         
     ELSE (* malformed directive *)
       Outfile.WriteChars(outfile, "(*?");
@@ -232,13 +239,12 @@ BEGIN
   
   (* TCAST *)
   ELSIF String.matchesArray(ident, "TCAST") THEN
-    next := Infile.lookahead(infile);
+    next := Infile.lookaheadChar(infile);
     
     (* '(' *)
     IF next = '(' THEN
       (* consume *)
-      Infile.ReadChar(infile, next);
-      next := Infile.lookahead(infile);
+      next := Infile.consumeChar(infile);
       
       (* typeIdent *)
       IF ((next >= 'a') AND (next <= 'z')) OR
@@ -246,20 +252,18 @@ BEGIN
         
         (* read identifier *)
         typeIdent := stdIdent(infile);
-        next := Infile.lookahead(infile);
+        next := Infile.lookaheadChar(infile);
         
         (* ',' *)
         IF next = ',' THEN
           (* consume *)
-          Infile.ReadChar(infile, next);
-          next := Infile.lookahead(infile);
+          next := Infile.consumeChar(infile);
           
           (* ' '? *)
           IF next = SPACE THEN
             (* consume *)
-            Infile.ReadChar(infile, next);
-            next := Infile.lookahead(infile);
-          END (* IF *)
+            next := Infile.consumeChar(infile);
+          END; (* IF *)
           
           (* value *)
           IF ((next >= 'a') AND (next <= 'z')) OR
@@ -267,25 +271,22 @@ BEGIN
             
             (* read identifier *)
             value := stdIdent(infile);
-            next := Infile.lookahead(infile);
+            next := Infile.lookaheadChar(infile);
             
             (* ')' *)
             IF next = ')' THEN
               (* consume *)
-              Infile.ReadChar(infile, next);
-              next := Infile.lookahead(infile);
+              next := Infile.consumeChar(infile);
               
               (* '*' *)
               IF next = '*' THEN
                 (* consume *)
-                Infile.ReadChar(infile, next);
-                next := Infile.lookahead(infile);
+                next := Infile.consumeChar(infile);
                 
                 (* ')' *)
                 IF next = '*' THEN
                   (* consume *)
-                  Infile.ReadChar(infile, next);
-                  next := Infile.lookahead(infile);
+                  next := Infile.consumeChar(infile);
                   
                   (* write dialect specific cast *)
                   WriteCast(outfile, typeIdent, value)
@@ -364,11 +365,10 @@ VAR
 
 BEGIN
   (* mark identifier *)
-  Infile.MarkChar(infile);
+  Infile.MarkLexeme(infile);
   
   REPEAT
-    Infile.ReadChar(infile, next);
-    next := Infile.lookahead(infile)
+    next := Infile.consumeChar(infile)
   UNTIL (next < 'A') OR (next > 'Z'); 
     
   (* return identifier *)
@@ -389,16 +389,15 @@ VAR
 
 BEGIN
   (* mark identifier *)
-  Infile.MarkChar(infile);
+  Infile.MarkLexeme(infile);
   
   REPEAT
-    Infile.ReadChar(infile, next);
-    next := Infile.lookahead(infile)
+    next := Infile.consumeChar(infile)
   UNTIL (* not alpha-numeric *)
     (next < '0') OR
     ((next > '9') AND (next < 'A')) OR
     ((next > 'Z') AND (next < 'a')) OR
-    ((next > 'z');
+    ((next > 'z'));
     
   (* return identifier *)
   RETURN Infile.lexeme(infile)
@@ -414,16 +413,17 @@ END stdIdent;
 PROCEDURE WriteCast ( outfile : OutfileT; type, value : StringT );
 
 VAR
-  version : StringT;
+  key, version : StringT;
   
 BEGIN
-  version := Dictionary.stringForKey("ver");
+  key := String.forArray("ver");
+  version := Dictionary.valueForKey(key);
   
   (* PIM specific cast *)
   IF String.matchesArray(version, "pim") THEN
     Outfile.WriteString(outfile, type);
     Outfile.WriteChar(outfile, '(');
-    Outfile.WriteString(value);
+    Outfile.WriteString(outfile, value);
     Outfile.WriteChar(outfile, ')')
     
   (* ISO specific cast *)
@@ -431,7 +431,7 @@ BEGIN
     Outfile.WriteChars(outfile, "CAST(");
     Outfile.WriteString(outfile, type);
     Outfile.WriteChars(outfile, ", ");
-    Outfile.WriteString(value);
+    Outfile.WriteString(outfile, value);
     Outfile.WriteChar(outfile, ')')
   
   (* no version *)
@@ -439,7 +439,7 @@ BEGIN
     Outfile.WriteChars(outfile, "(*?TCAST(");
     Outfile.WriteString(outfile, type);
     Outfile.WriteChars(outfile, ", ");
-    Outfile.WriteString(value);
+    Outfile.WriteString(outfile, value);
     Outfile.WriteChars(outfile, ')*)')
   END (* IF *)
 END WriteCast;
@@ -453,7 +453,7 @@ END WriteCast;
  * follows the comment in infile, then the newline is also consumed.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE SkipComment( infile : InfileT; outfile : OutfileT );
+PROCEDURE SkipComment ( infile : InfileT; outfile : OutfileT );
 
 VAR
   next : CHAR;
@@ -463,27 +463,19 @@ BEGIN
   delimiterFound := FALSE;
   
   (* consume "/*" *)
-  Infile.ReadChar(infile, next);
-  Infile.ReadChar(infile, next);
+  next := Infile.consumeChar(infile);
+  next := Infile.consumeChar(infile);
   
   (* consume chars until closing delimiter *)
-  WHILE NOT delimiterFound DO
-    (* get next char *)
-    ReadChar(infile, next);
-    
-    (* check for closing delimiter *)
-    IF (next = '*') AND (Infile.la2Char(infile) = '/') THEN
-      delimiterFound := TRUE;
-      (* consume delimiter *)
-      ReadChar(infile, next);
-    END (* IF *)
-  END (* WHILE *)
+  WHILE NOT Infile.eof(infile) AND 
+    (next # '*') AND (Infile.la2Char(infile) # '/') DO
+    next := Infile.consumeChar(infile)
+  END; (* WHILE *)
   
   (* skip newline if this comment is the only content in this line *)
-  IF (Infile.lookahead(infile) = LF) AND (Outfile.column(outfile) = 1) THEN
-      (* consume newline *)
-      Infile.ReadChar(infile, next)
-    END (* IF *)
+  IF (next = LF) AND (Outfile.column(outfile) = 1) THEN
+    (* consume newline *)
+    next := Infile.consumeChar(infile)
   END (* IF *)
 END SkipComment;
 
