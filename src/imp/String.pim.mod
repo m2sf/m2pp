@@ -655,7 +655,7 @@ BEGIN
   
   (* calculate hash and bucket *)
   hash := Hash.valueForArraySlice(array, start, end);
-  bucketIndex := hash MOD BucketCount;
+  bucketIndex := Hash.mod(hash, BucketCount);
   
   (* check if bucket is empty *)
   IF bucket[bucketIndex] = NIL THEN
