@@ -12,7 +12,7 @@ CONST
   SOH = CHR(1);   (* 0u01 *)
   STX = CHR(2);   (* 0u02 *)
   ETX = CHR(3);   (* 0u03 *)
-  EOL = CHR(4);   (* 0u04 *)
+  EOT = CHR(4);   (* 0u04 *)
   ENQ = CHR(5);   (* 0u05 *)
   ACK = CHR(6);   (* 0u06 *)
   BEL = CHR(7);   (* 0u07 *)
