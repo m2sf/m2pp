@@ -17,7 +17,7 @@ VAR
   
 BEGIN
   len := 0;
-  WHILE len < HIGH(array) AND array[len] # NUL DO
+  WHILE (len < HIGH(array)) AND (array[len] # NUL) DO
     len := len + 1
   END; (* WHILE *)
   
@@ -112,6 +112,7 @@ BEGIN
   
   REPEAT
     (* find first non-space to the right *)
+    srcIndex := 0;
     WHILE (srcIndex <= HIGH(array)) AND (array[srcIndex] = SPACE) DO
       srcIndex := srcIndex + 1
     END; (* WHILE *)
@@ -122,10 +123,10 @@ BEGIN
     WHILE NOT found AND (ch # NUL) AND (srcIndex < HIGH(array)) DO
       array[tgtIndex] := ch;
       srcIndex := srcIndex + 1;
-      nextCh := array[srcIndex];
+      nextChar := array[srcIndex];
       found := ((ch = SPACE) AND (array[srcIndex] = SPACE));
       tgtIndex := tgtIndex + 1;
-      ch := nextCh
+      ch := nextChar
     END (* WHILE *)
   UNTIL NOT found;
   
@@ -226,7 +227,7 @@ END ToTitle;
 (* Copy Operations *)
 
 PROCEDURE canCopyArray
-  ( VAR (* CONST *) target, source : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (*CONST*) target : ARRAY OF CHAR; source : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if target can store the contents of source. *)
 
 BEGIN
@@ -235,7 +236,7 @@ END canCopyArray;
 
 
 PROCEDURE CopyArray
-  (  VAR target, (* CONST *) source : ARRAY OF CHAR );
+  ( VAR target : ARRAY OF CHAR; source : ARRAY OF CHAR );
 (* Copies source to target. *)
 
 VAR
@@ -260,16 +261,16 @@ END CopyArray;
 
 
 PROCEDURE canAppendArray
-  ( VAR (* CONST *) target, source : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (*CONST*) target : ARRAY OF CHAR; source : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if source can be appended to target. *)
 
 BEGIN
-  RETURN (HIGH(array) > length(source) + length(target))
+  RETURN (HIGH(target) > length(source) + length(target))
 END canAppendArray;
 
 
 PROCEDURE AppendArray
-  (  VAR target, (* CONST *) source : ARRAY OF CHAR );
+  ( VAR target : ARRAY OF CHAR; source : ARRAY OF CHAR );
 (* Appends source to target. *)
 
 VAR
@@ -282,7 +283,7 @@ BEGIN
   END; (* IF *)
   
   tgtLen := length(target);
-  IF HIGH(array) <= srcLen + tgtLen THEN
+  IF HIGH(target) <= srcLen + tgtLen THEN
     RETURN
   END; (* IF *)
   
@@ -299,7 +300,7 @@ END AppendArray;
 
 
 PROCEDURE canCopyQuotedArray
-  ( VAR (* CONST *) target, source : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (*CONST*) target : ARRAY OF CHAR; source : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if target can store the quoted contents of source. *)
 
 BEGIN
@@ -308,7 +309,7 @@ END canCopyQuotedArray;
 
 
 PROCEDURE CopyQuotedArray
-  (  VAR target, (* CONST *) source : ARRAY OF CHAR );
+  ( VAR target : ARRAY OF CHAR; source : ARRAY OF CHAR );
 (* Copies source to target, while enclosing contents in quotes. *)
 
 VAR
@@ -340,16 +341,16 @@ END CopyQuotedArray;
 (* Insert and Replace Operations *)
 
 PROCEDURE canInsertChars
-  ( VAR (* CONST *) target, source : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (*CONST*) target : ARRAY OF CHAR; source : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if source can be inserted into target. *)
 
 BEGIN
-  RETURN (HIGH(array) > length(source) + length(target))
+  RETURN (HIGH(target) > length(source) + length(target))
 END canInsertChars;
 
 
 PROCEDURE InsertCharsAtIndex
-  ( VAR target, (* CONST *) source : ARRAY OF CHAR; index : CARDINAL );
+  ( VAR target : ARRAY OF CHAR; source : ARRAY OF CHAR; index : CARDINAL );
 (* Inserts source into target starting at index. *)
 
 VAR
@@ -362,7 +363,7 @@ BEGIN
   END; (* IF *)
   
   tgtLen := length(target);
-  IF HIGH(array) <= srcLen + tgtLen THEN
+  IF HIGH(target) <= srcLen + tgtLen THEN
     RETURN
   END; (* IF *)
   
@@ -391,8 +392,8 @@ END InsertCharsAtIndex;
 
 
 PROCEDURE canReplaceCharsAtIndex
-  ( VAR (* CONST *) target, source : ARRAY OF CHAR;
-    index : CARDINAL ) : BOOLEAN;
+  ( VAR (*CONST*) target : ARRAY OF CHAR;
+    source : ARRAY OF CHAR; index : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if index+length(source) does not exceed length of target. *)
 
 BEGIN
@@ -401,11 +402,11 @@ END canReplaceCharsAtIndex;
 
 
 PROCEDURE ReplaceCharsAtIndex
-  ( VAR target, (* CONST *) source : ARRAY OF CHAR; index : CARDINAL );
+  ( VAR target : ARRAY OF CHAR; source : ARRAY OF CHAR; index : CARDINAL );
 (* Replaces slice target[index..index+length(source) with source. *)
 
 VAR
-  srcLen : CARDINAL;
+  srcLen, srcIndex, tgtIndex : CARDINAL;
   
 BEGIN
   srcLen := length(source);
@@ -432,7 +433,7 @@ END ReplaceCharsAtIndex;
 (* Slice Operations *)
 
 PROCEDURE canCopySlice
-  ( VAR (* CONST *) target : ARRAY OF CHAR; start, end : CARDINAL ) : BOOLEAN;
+  ( VAR (*CONST*) target : ARRAY OF CHAR; start, end : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if target can store (end-start+1) characters. *)
 
 BEGIN
@@ -441,7 +442,8 @@ END canCopySlice;
 
 
 PROCEDURE CopySlice
-  ( VAR target, (* CONST *) source : ARRAY OF CHAR; start, end : CARDINAL );
+  ( VAR target : ARRAY OF CHAR;
+    source : ARRAY OF CHAR; start, end : CARDINAL );
 (* Copies slice source[start..end] to target. *)
 
 VAR
@@ -456,7 +458,7 @@ BEGIN
   srcLen := length(source);
   
   (* bail out if start and end do not specify a valid slice in source *)
-  IF (srcLen = 0) OR (start > end) OR (end >= len) THEN
+  IF (srcLen = 0) OR (start > end) OR (end >= srcLen) THEN
     RETURN
   END; (* IF *)
   
@@ -471,7 +473,7 @@ END CopySlice;
 
 
 PROCEDURE canAppendSlice
-  ( VAR (* CONST *) target : ARRAY OF CHAR; start, end : CARDINAL ) : BOOLEAN;
+  ( VAR (*CONST*) target : ARRAY OF CHAR; start, end : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if target can store (end-start+1) additional characters. *)
 
 BEGIN
@@ -480,7 +482,8 @@ END canAppendSlice;
 
 
 PROCEDURE AppendSlice
-  ( VAR target, (* CONST *) source : ARRAY OF CHAR; start, end : CARDINAL );
+  ( VAR target : ARRAY OF CHAR;
+    source : ARRAY OF CHAR; start, end : CARDINAL );
 (* Appends slice source[start..end] to target. *)
 
 VAR
@@ -497,7 +500,7 @@ BEGIN
   srcLen := length(source);
   
   (* bail out if start and end do not specify a valid slice in source *)
-  IF (srcLen = 0) OR (start > end) OR (end >= len) THEN
+  IF (srcLen = 0) OR (start > end) OR (end >= srcLen) THEN
     RETURN
   END; (* IF *)
   
@@ -511,8 +514,7 @@ BEGIN
 END AppendSlice;
 
 
-PROCEDURE RemoveSlice
-  ( VAR (* CONST *) array : ARRAY OF CHAR; start, end : CARDINAL );
+PROCEDURE RemoveSlice ( VAR array : ARRAY OF CHAR; start, end : CARDINAL );
 (* Removes slice source[start..end] from array. *)
 
 VAR
@@ -544,7 +546,8 @@ END RemoveSlice;
 (* Word Operations *)
 
 PROCEDURE canCopyWordAtIndex
-  ( VAR (* CONST *) target, source : ARRAY OF CHAR; n : CARDINAL ) : BOOLEAN;
+  ( VAR (*CONST*) target : ARRAY OF CHAR;
+    source: ARRAY OF CHAR; n : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if target can store the n-th word of source. *)
 
 BEGIN
@@ -553,7 +556,7 @@ END canCopyWordAtIndex;
 
 
 PROCEDURE CopyWordAtIndex
-  ( VAR target, (* CONST *) source : ARRAY OF CHAR; n : CARDINAL );
+  ( VAR target : ARRAY OF CHAR; source : ARRAY OF CHAR; n : CARDINAL );
 (* Copies the n-th word in source array to target array. *)
 
 BEGIN
@@ -562,8 +565,9 @@ END CopyWordAtIndex;
 
 
 PROCEDURE canAppendWordAtIndex
-  ( VAR (* CONST *) target, source : ARRAY OF CHAR; n : CARDINAL ) : BOOLEAN;
-(* Returns TRUE if target can be appended the n-th word of source. *)
+  ( VAR (*CONST*) target : ARRAY OF CHAR;
+    source : ARRAY OF CHAR; n : CARDINAL ) : BOOLEAN;
+(* Returns TRUE if the n-th word of source can be appended to target. *)
 
 BEGIN
   (* TO DO *)
@@ -571,7 +575,7 @@ END canAppendWordAtIndex;
 
 
 PROCEDURE AppendWordAtIndex
-  ( VAR target, (* CONST *) source : ARRAY OF CHAR; n : CARDINAL );
+  ( VAR target : ARRAY OF CHAR; source : ARRAY OF CHAR; n : CARDINAL );
 (* Appends the n-th word in source array to target array. *)
 
 BEGIN
@@ -579,8 +583,7 @@ BEGIN
 END AppendWordAtIndex;
 
 
-PROCEDURE RemoveWordAtIndex
-  ( VAR (* CONST *) array : ARRAY OF CHAR; n : CARDINAL );
+PROCEDURE RemoveWordAtIndex ( VAR array : ARRAY OF CHAR; n : CARDINAL );
 (* Removes the n-th word in array from array. *)
 
 BEGIN
@@ -591,11 +594,11 @@ END RemoveWordAtIndex;
 (* Relational Operations *)
 
 PROCEDURE matches
-  ( VAR (* CONST *) array1, array2 : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (*CONST*) array1, array2 : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if the content of array1 matches that of array2. *)
 
 VAR
-  maxIndex : CARDINAL;
+  index, maxIndex : CARDINAL;
   
 BEGIN
   (* limit iteration to range of shorter array *)
@@ -628,12 +631,12 @@ END matches;
 
 
 PROCEDURE collatesBefore
-  ( VAR (* CONST *) array1, array2 : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (*CONST*) array1, array2 : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if array1 comes before array2 in ASCII collation order. *)
 
 VAR
   ch1, ch2 : CHAR;
-  maxIndex : CARDINAL;
+  index, maxIndex : CARDINAL;
   
 BEGIN
   (* limit iteration to range of shorter array *)
@@ -678,12 +681,12 @@ END collatesBefore;
 
 
 PROCEDURE collatesBeforeOrMatches
-  ( VAR (* CONST *) array1, array2 : ARRAY OF CHAR ) : BOOLEAN;
+  ( VAR (*CONST*) array1, array2 : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if array1 comes before array2 in ASCII collation order. *)
 
 VAR
   ch1, ch2 : CHAR;
-  maxIndex : CARDINAL;
+  index, maxIndex : CARDINAL;
   
 BEGIN
   (* limit iteration to range of shorter array *)
@@ -745,7 +748,7 @@ PROCEDURE FindFirstConsecutiveSpace
 
 VAR
   ch, nextChar : CHAR;
-  searchIndex : CARDINAL
+  searchIndex : CARDINAL;
 
 BEGIN
   (* bail out if index out of bounds *)
@@ -760,7 +763,7 @@ BEGIN
     searchIndex := searchIndex + 1;
     nextChar := array[searchIndex];
     found := ((ch = SPACE) AND (nextChar = SPACE))
-  UNTIL found OR (searchIndex > HIGH(array)) OR (ch = NUL));
+  UNTIL found OR (searchIndex > HIGH(array)) OR (ch = NUL);
   
   IF found THEN
     index := searchIndex
@@ -824,7 +827,7 @@ BEGIN
     thisChar := array[index-1];
     index := index - 1
   END (* WHILE *)
-END FindCharL2R;
+END FindCharR2L;
 
 
 END CharArray.
