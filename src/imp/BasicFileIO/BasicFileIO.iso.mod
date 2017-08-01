@@ -12,6 +12,14 @@ FROM Storage IMPORT ALLOCATE, DEALLOCATE;
 FROM IOChan IMPORT ChanId, InvalidChan;
 
 
+CONST InsertQueueSize = 8;
+
+TYPE InsertQueue = RECORD
+  count : CARDINAL [0..InsertQueueSize-1];
+  char  : ARRAY [0..InsertQueueSize] OF CHAR
+END; (* InsertBuffer *)
+
+
 TYPE File = POINTER TO FileDescriptor;
 
 TYPE FileDescriptor = RECORD
@@ -20,14 +28,6 @@ TYPE FileDescriptor = RECORD
   queue  : InsertQueue;
   status : Status;
 END; (* FileDescriptor *)
-
-
-CONST InsertQueueSize = 8;
-
-TYPE InsertQueue = RECORD
-  count : CARDINAL [0..InsertQueueSize-1];
-  char  : ARRAY [0..InsertQueueSize] OF CHAR
-END; (* InsertBuffer *)
 
 
 (* Status *)
@@ -86,7 +86,7 @@ PROCEDURE Open
   ( VAR file : File; path : ARRAY OF CHAR; mode : Mode; VAR status : Status );
 
 VAR
-  cid : ChanID;
+  cid : ChanId;
   found : BOOLEAN;
   res : SeqFile.OpenResults;
   
@@ -114,7 +114,7 @@ BEGIN
     RETURN
   END; (* IF *)
   
-  ALLOCATE(file, TSIZE(FileDescriptor));
+  ALLOCATE(file, SYSTEM.TSIZE(FileDescriptor));
   
   IF file = NIL THEN
     status := AllocationFailed;
@@ -149,7 +149,7 @@ BEGIN
   SeqFile.Close(file^.cid);
   
   IF file^.cid = InvalidChan() THEN
-    DEALLOCATE(file, TSIZE(FileDescriptor));
+    DEALLOCATE(file, SYSTEM.TSIZE(FileDescriptor));
     status := Success
   ELSE
     status := IOError
@@ -272,7 +272,7 @@ BEGIN
     END (* IF *)
     
   ELSE (* queue not empty *)
-    RemoveChar(ch)
+    RemoveChar(file, ch)
   END (* IF *)
 END ReadChar;
 
@@ -294,7 +294,7 @@ BEGIN
   END; (* IF *)
   
   IF (* queue not full *) file^.queue.count < InsertQueueSize THEN
-    file^.queue.char[queue.count] := ch;
+    file^.queue.char[file^.queue.count] := ch;
     file^.queue.count := file^.queue.count + 1
     
   ELSE (* queue full *)
@@ -319,7 +319,6 @@ PROCEDURE ReadChars
   ( file : File; VAR buffer : ARRAY OF CHAR; VAR charsRead : CARDINAL );
 
 VAR
-  c : INT;
   ch : CHAR;
   index : CARDINAL;
   noError : BOOLEAN;
@@ -335,14 +334,15 @@ BEGIN
   (* read chars from insert buffer *)
   index := 0;
   WHILE (index <= HIGH(buffer)) AND (file^.queue.count > 0) DO
-    RemoveChar(ch);
+    RemoveChar(file, ch);
     buffer[index] := ch;
     index := index + 1
   END; (* WHILE *)
   
   (* read chars from file *)
   noError := TRUE;
-  WHILE noError AND (index < HIGH(buffer)) AND (* NOT EOF *) DO
+  WHILE noError AND (index < HIGH(buffer)) AND
+    (RndFile.CurrentPos(file^.cid) = RndFile.EndPos(file^.cid)) DO
     RawIO.Read(file^.cid, ch);
     res := IOResult.ReadResult(file^.cid);
     IF res = IOResult.allRight THEN
@@ -359,7 +359,7 @@ BEGIN
   
   IF noError THEN
     file^.status := Success
-  ELSIF (* again, need to query EOF here *) THEN
+  ELSIF (RndFile.CurrentPos(file^.cid) = RndFile.EndPos(file^.cid)) THEN
     file^.status := ReadBeyondEOF
   ELSE
     file^.status := IOError
@@ -408,7 +408,7 @@ BEGIN
     END (* IF *)
     
   ELSE (* queue not empty *)
-    RemoveChar(ch);
+    RemoveChar(file, ch);
     octet := ORD(ch)
   END (* IF *)
 END ReadOctet;
@@ -434,7 +434,7 @@ BEGIN
   END; (* IF *)
   
   IF (* queue not full *) file^.queue.count < InsertQueueSize THEN
-    file^.queue.char[queue.count] := CHR(octet);
+    file^.queue.char[file^.queue.count] := CHR(octet);
     file^.queue.count := file^.queue.count + 1
     
   ELSE (* queue full *)
@@ -458,9 +458,11 @@ PROCEDURE ReadOctets
   ( file : File; VAR buffer : ARRAY OF Octet; VAR octetsRead : CARDINAL );
 
 VAR
+  ch : CHAR;
   octet : Octet;
   index : CARDINAL;
   noError : BOOLEAN;
+  res : IOResult.ReadResults;
   
 BEGIN
   IF file = NIL  THEN
@@ -472,14 +474,15 @@ BEGIN
   (* read chars from insert buffer *)
   index := 0;
   WHILE (index <= HIGH(buffer)) AND (file^.queue.count > 0) DO
-    RemoveChar(ch);
+    RemoveChar(file, ch);
     buffer[index] := ORD(ch);
     index := index + 1
   END; (* WHILE *)
   
   (* read octets from file *)
   noError := TRUE;
-  WHILE noError AND (index < HIGH(buffer)) AND (* NOT EOF *) DO
+  WHILE noError AND (index < HIGH(buffer)) AND
+    (RndFile.CurrentPos(file^.cid) = RndFile.EndPos(file^.cid)) DO
     RawIO.Read(file^.cid, octet);
     res := IOResult.ReadResult(file^.cid);
     IF res = IOResult.allRight THEN
@@ -493,7 +496,7 @@ BEGIN
   
   IF noError THEN
     file^.status := Success
-  ELSIF (* again, need to query EOF here *) THEN
+  ELSIF (RndFile.CurrentPos(file^.cid) = RndFile.EndPos(file^.cid)) THEN
     file^.status := ReadBeyondEOF
   ELSE
     file^.status := IOError
@@ -551,7 +554,7 @@ BEGIN
   END; (* IF *)
   
   index := 0;
-  WHILE index <= HIGH(buffer) AND buffer[index] # NUL DO
+  WHILE (index <= HIGH(buffer)) AND (buffer[index] # NUL) DO
     RawIO.Write(file^.cid, buffer[index])
   END; (* WHILE *)
   
