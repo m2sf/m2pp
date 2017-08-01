@@ -57,4 +57,15 @@ PROCEDURE valueForArraySlice
   ( VAR (*CONST*) array : ARRAY OF CHAR; start, end : CARDINAL ) : Key;
 
 
+(* ---------------------------------------------------------------------------
+ * function Hash.mod( hash, n )
+ * ---------------------------------------------------------------------------
+ * Returns the CARDINAL value of hash MOD n for n IN [1..MAX(CARDINAL)].
+ * ------------------------------------------------------------------------ *)
+
+TYPE NatCard = CARDINAL [1..MAX(CARDINAL)];
+
+PROCEDURE mod ( hash : Key; n : NatCard ) : CARDINAL;
+
+
 END Hash.
