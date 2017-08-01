@@ -458,6 +458,19 @@ BEGIN
 END valueForArraySlice;
 
 
+(* ---------------------------------------------------------------------------
+ * function Hash.mod( hash, n )
+ * ---------------------------------------------------------------------------
+ * Returns the CARDINAL value of hash MOD n for n IN [1..MAX(CARDINAL)].
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE mod ( hash : Key; n : NatCard ) : CARDINAL;
+
+BEGIN
+  RETURN VAL(CARDINAL, VAL(SizeT, hash) MOD VAL(SizeT, n))
+END mod;
+
+
 (* ************************************************************************ *
  * Private Operations                                                       *
  * ************************************************************************ *)
