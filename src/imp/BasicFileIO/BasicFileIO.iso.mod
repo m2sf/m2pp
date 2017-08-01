@@ -224,6 +224,7 @@ BEGIN
   END; (* IF *)
   
   IF (* queue empty *) file^.queue.count = 0 THEN
+  (* this produces 'error: operation with incompatible type' with p1 : *)
     RETURN (RndFile.CurrentPos(file^.cid) = RndFile.EndPos(file^.cid))
   ELSE (* queue not empty *)
     RETURN FALSE
@@ -342,6 +343,7 @@ BEGIN
   (* read chars from file *)
   noError := TRUE;
   WHILE noError AND (index < HIGH(buffer)) AND
+    (* this produces 'error: operation with incompatible type' with p1 : *)
     (RndFile.CurrentPos(file^.cid) = RndFile.EndPos(file^.cid)) DO
     RawIO.Read(file^.cid, ch);
     res := IOResult.ReadResult(file^.cid);
@@ -359,6 +361,7 @@ BEGIN
   
   IF noError THEN
     file^.status := Success
+  (* this produces 'error: operation with incompatible type' with p1 : *)
   ELSIF (RndFile.CurrentPos(file^.cid) = RndFile.EndPos(file^.cid)) THEN
     file^.status := ReadBeyondEOF
   ELSE
@@ -482,6 +485,7 @@ BEGIN
   (* read octets from file *)
   noError := TRUE;
   WHILE noError AND (index < HIGH(buffer)) AND
+    (* this produces 'error: operation with incompatible type' with p1 : *)
     (RndFile.CurrentPos(file^.cid) = RndFile.EndPos(file^.cid)) DO
     RawIO.Read(file^.cid, octet);
     res := IOResult.ReadResult(file^.cid);
@@ -496,6 +500,7 @@ BEGIN
   
   IF noError THEN
     file^.status := Success
+  (* this produces 'error: operation with incompatible type' with p1 : *)
   ELSIF (RndFile.CurrentPos(file^.cid) = RndFile.EndPos(file^.cid)) THEN
     file^.status := ReadBeyondEOF
   ELSE
