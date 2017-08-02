@@ -209,7 +209,7 @@ BEGIN
   ident := upperIdent(infile);
   
   (* IMPCAST *)
-  IF String.matchesArray(ident, "IMPCAST") THEN
+  IF String.matchesConstArray(ident, "IMPCAST") THEN
     next := Infile.lookaheadChar(infile);
     
     (* '*' *)
@@ -220,9 +220,9 @@ BEGIN
       (* ')' *)
       IF next = ')' THEN (* well formed *)
         next := Infile.consumeChar(infile);
-        key := String.forArray("ver");
+        key := String.forConstArray("ver");
         version := Dictionary.valueForKey(key);
-        IF String.matchesArray(version, "iso") THEN
+        IF String.matchesConstArray(version, "iso") THEN
           Outfile.WriteChars(outfile, "FROM SYSTEM IMPORT CAST;")
         END (* IF *)
         
@@ -238,7 +238,7 @@ BEGIN
     END (* IF *)
   
   (* TCAST *)
-  ELSIF String.matchesArray(ident, "TCAST") THEN
+  ELSIF String.matchesConstArray(ident, "TCAST") THEN
     next := Infile.lookaheadChar(infile);
     
     (* '(' *)
@@ -416,18 +416,18 @@ VAR
   key, version : StringT;
   
 BEGIN
-  key := String.forArray("ver");
+  key := String.forConstArray("ver");
   version := Dictionary.valueForKey(key);
   
   (* PIM specific cast *)
-  IF String.matchesArray(version, "pim") THEN
+  IF String.matchesConstArray(version, "pim") THEN
     Outfile.WriteString(outfile, type);
     Outfile.WriteChar(outfile, '(');
     Outfile.WriteString(outfile, value);
     Outfile.WriteChar(outfile, ')')
     
   (* ISO specific cast *)
-  ELSIF String.matchesArray(version, "iso") THEN
+  ELSIF String.matchesConstArray(version, "iso") THEN
     Outfile.WriteChars(outfile, "CAST(");
     Outfile.WriteString(outfile, type);
     Outfile.WriteChars(outfile, ", ");
