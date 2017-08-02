@@ -22,16 +22,6 @@ TYPE StringDescriptor = RECORD
 END; (* StringDescriptor *)
 
 
-(* String Table *)
-
-CONST BucketCount = 1021; (* prime closest to 1K *)
-
-TYPE StringTable = RECORD
-  count  : CARDINAL; (* number of entries *)
-  bucket : ARRAY [0..BucketCount-1] OF TableEntry
-END; (* StringTable *)
-
-
 (* String Table Entry *)
 
 TYPE TableEntry = POINTER TO EntryDescriptor;
@@ -43,6 +33,16 @@ TYPE EntryDescriptor = RECORD
 END; (* EntryDescriptor *)
 
 
+(* String Table *)
+
+CONST BucketCount = 1021; (* prime closest to 1K *)
+
+TYPE StringTable = RECORD
+  count  : CARDINAL; (* number of entries *)
+  bucket : ARRAY [0..BucketCount-1] OF TableEntry
+END; (* StringTable *)
+
+
 (* Global String Table *)
 
 VAR
@@ -52,13 +52,27 @@ VAR
 (* Operations *)
 
 (* ---------------------------------------------------------------------------
+ * function String.forConstArray(array)
+ * ---------------------------------------------------------------------------
+ * Looks up the interned string for a character array constant and returns it.
+ * Creates and returns a new interned string if no matching entry is found.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE forConstArray ( array : ARRAY OF CHAR ) : StringT;
+
+BEGIN
+  RETURN lookupOrInsert(array, 0, HIGH(array))
+END forConstArray;
+
+
+(* ---------------------------------------------------------------------------
  * function forArray(array)
  * ---------------------------------------------------------------------------
  * Looks up the interned string for the given character array and returns it.
  * Creates and returns a new interned string if no matching entry is found.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE forArray ( VAR array : ARRAY OF CHAR) : String;
+PROCEDURE forArray ( VAR array : ARRAY OF CHAR ) : String;
 
 BEGIN
   RETURN lookupOrInsert(array, 0, HIGH(array))
@@ -74,7 +88,7 @@ END forArray;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE forArraySlice
-  ( VAR array : ARRAY OF CHAR; start, end : CARDINAL) : String;
+  ( VAR array : ARRAY OF CHAR; start, end : CARDINAL ) : String;
 
 BEGIN
   RETURN lookupOrInsert(array, start, end)
@@ -282,14 +296,29 @@ END AppendSliceToArray;
 
 
 (* ---------------------------------------------------------------------------
+ * function String.matchesArray(string, array)
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if the given string matches the given array constant. Returns
+ * FALSE if string is NIL or if string does not match the array.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE matchesConstArray
+  ( string : StringT; array : ARRAY OF CHAR ) : BOOLEAN;
+
+BEGIN
+  RETURN matchesArray(string, array)
+END matchesConstArray;
+
+
+(* ---------------------------------------------------------------------------
  * function matchesArray(string, array)
  * ---------------------------------------------------------------------------
- * Returns TRUE if the given string matches the given array. Returns FALSE
- * if string is NIL or if string does not match the array.
+ * Returns TRUE if the given string matches the given array variable. Returns
+ * FALSE if string is NIL or if string does not match the array.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE matchesArray
-  ( string : String; VAR (* CONST *) array : ARRAY OF CHAR ) : BOOLEAN;
+  ( string : String; VAR (*CONST*) array : ARRAY OF CHAR ) : BOOLEAN;
 
 VAR
   index : CARDINAL;
@@ -328,7 +357,7 @@ END matchesArray;
 
 PROCEDURE matchesArraySlice
   ( string : String;
-    VAR (* CONST *) array : ARRAY OF CHAR;
+    VAR (*CONST*) array : ARRAY OF CHAR;
     start, end : CARDINAL ) : BOOLEAN;
 
 VAR
