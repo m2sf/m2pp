@@ -7,10 +7,11 @@ IMPORT Infile, String;
 FROM ISO646 IMPORT
   NUL, TAB, NEWLINE, SPACE, SINGLEQUOTE, DOUBLEQUOTE, BACKSLASH;
 FROM String IMPORT StringT; (* alias for String.String *)
+FROM Infile IMPORT InfileT; (* alias for Infile.Infile *)
 
 
 VAR
-  args : Infile;
+  args : InfileT;
   lexeme : StringT;
   
 
@@ -25,7 +26,7 @@ PROCEDURE nextToken () : Token;
 VAR
   next : CHAR;
   token : Token;
-  pathExpected : BOOLEAN;
+  pathExpected, valueExpected : BOOLEAN;
   
 BEGIN
   pathExpected := TRUE;
@@ -43,7 +44,7 @@ BEGIN
   (* check for end-of-file *)
   IF Infile.eof(args) THEN
     token := EndOfInput;
-    lexeme := NIL
+    lexeme := String.Nil
     
   ELSE
     CASE next OF
@@ -85,7 +86,7 @@ BEGIN
     | '=' :
         next := Infile.consumeChar(args);
         token := Equals;
-        lexeme := NIL
+        lexeme := String.Nil
     
     (* identifier or path *)
     | 'A' .. 'Z',
@@ -96,14 +97,14 @@ BEGIN
           GetIdent(next, token, lexeme)
         END (* IF *)
     
-    ELSIF pathExpected THEN
-      GetPath(next, token, lexeme)
-      
-    ELSE (* invalid input *)
-      GetInvalidInput(next, token, lexeme)
-      
+    ELSE
+      IF pathExpected THEN
+        GetPath(next, token, lexeme)
+      ELSE (* invalid input *)
+        GetInvalidInput(next, token, lexeme)
+      END (* IF *)
     END (* CASE *)
-  END (* IF *)
+  END; (* IF *)
   
   RETURN token
 END nextToken;
@@ -159,7 +160,7 @@ END isExpansionOption;
 PROCEDURE isParameter ( token : Token ) : BOOLEAN;
 
 BEGIN
-  RETURN (token >= FileOrPath) AND (token <= CRLF)
+  RETURN (token >= FileOrPath) AND (token <= Number)
 END isParameter;
 
 
@@ -240,12 +241,12 @@ BEGIN
   | 6 :
       CASE String.charAtIndex(lexeme, 2) OF
         'd' :
-          IF String.matchesArray(lexeme, "--dict") THEN
+          IF String.matchesConstArray(lexeme, "--dict") THEN
             RETURN Dict
           END (* IF *)
       
       | 'h' :
-          IF String.matchesArray(lexeme, "--help") THEN
+          IF String.matchesConstArray(lexeme, "--help") THEN
             RETURN Help
           END (* IF *)
       END (* CASE *)
@@ -253,43 +254,43 @@ BEGIN
   | 9 :
       CASE String.charAtIndex(lexeme, 5) OF
         'e' :
-          IF String.matchesArray(lexeme, "--license") THEN
+          IF String.matchesConstArray(lexeme, "--license") THEN
             RETURN License
           END (* IF *)
           
       | 'l' :
-          IF String.matchesArray(lexeme, "--newline") THEN
+          IF String.matchesConstArray(lexeme, "--newline") THEN
             RETURN Newline
           END (* IF *)
           
       | 'f' :
-          IF String.matchesArray(lexeme, "--outfile") THEN
+          IF String.matchesConstArray(lexeme, "--outfile") THEN
             RETURN Outfile
           END (* IF *)
           
       | 'b' :
-          IF String.matchesArray(lexeme, "--verbose") THEN
+          IF String.matchesConstArray(lexeme, "--verbose") THEN
             RETURN Verbose
           END (* IF *)
           
       | 's' :
-          IF String.matchesArray(lexeme, "--version") THEN
+          IF String.matchesConstArray(lexeme, "--version") THEN
             RETURN Version
           END (* IF *)
       END (* CASE *)
   
   | 10 :
-      IF String.matchesArray(lexeme, "--tabwidth") THEN
+      IF String.matchesConstArray(lexeme, "--tabwidth") THEN
         RETURN TabWidth
       END (* IF *)
       
   | 12 :
-      IF String.matchesArray(lexeme, "--build-info") THEN
+      IF String.matchesConstArray(lexeme, "--build-info") THEN
         RETURN BuildInfo
       END (* IF *)
       
   | 15 :
-      IF String.matchesArray(lexeme, "--show-settings") THEN
+      IF String.matchesConstArray(lexeme, "--show-settings") THEN
         RETURN ShowSettings
       END (* IF *)
   END; (* CASE *)
@@ -478,5 +479,5 @@ END GetNumber;
 
 BEGIN
   (* set args to already opened file *)
-  lexeme := NIL
+  lexeme := String.Nil
 END ArgLexer.
