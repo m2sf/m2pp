@@ -5,6 +5,7 @@ DEFINITION MODULE String; (* ISO version *)
 (* Interned Strings *)
 
 IMPORT StrBlank;
+
 FROM SYSTEM IMPORT CAST;
 
 
@@ -43,13 +44,23 @@ TYPE CharProc = PROCEDURE ( CHAR );
 (* Operations *)
 
 (* ---------------------------------------------------------------------------
- * function String.forArray(array)
+ * function String.forConstArray(array)
  * ---------------------------------------------------------------------------
- * Looks up the interned string for the given character array and returns it.
+ * Looks up the interned string for a character array constant and returns it.
  * Creates and returns a new interned string if no matching entry is found.
  * ------------------------------------------------------------------------ *)
 
-PROCEDURE forArray ( VAR (* CONST *) array : ARRAY OF CHAR) : StringT;
+PROCEDURE forConstArray ( array : ARRAY OF CHAR) : StringT;
+
+
+(* ---------------------------------------------------------------------------
+ * function String.forArray(array)
+ * ---------------------------------------------------------------------------
+ * Looks up the interned string for a character array variable and returns it.
+ * Creates and returns a new interned string if no matching entry is found.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE forArray ( VAR (*CONST*) array : ARRAY OF CHAR) : StringT;
 
 
 (* ---------------------------------------------------------------------------
@@ -61,7 +72,7 @@ PROCEDURE forArray ( VAR (* CONST *) array : ARRAY OF CHAR) : StringT;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE forArraySlice
-  ( VAR (* CONST *) array : ARRAY OF CHAR; start, end : CARDINAL) : StringT;
+  ( VAR (*CONST*) array : ARRAY OF CHAR; start, end : CARDINAL) : StringT;
 
 
 (* ---------------------------------------------------------------------------
@@ -152,12 +163,23 @@ PROCEDURE AppendSliceToArray
 (* ---------------------------------------------------------------------------
  * function String.matchesArray(string, array)
  * ---------------------------------------------------------------------------
- * Returns TRUE if the given string matches the given array. Returns FALSE
- * if string is NIL or if string does not match the array.
+ * Returns TRUE if the given string matches the given array constant. Returns
+ * FALSE if string is NIL or if string does not match the array.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE matchesConstArray
+  ( string : StringT; array : ARRAY OF CHAR ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function String.matchesArray(string, array)
+ * ---------------------------------------------------------------------------
+ * Returns TRUE if the given string matches the given array variable. Returns
+ * FALSE if string is NIL or if string does not match the array.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE matchesArray
-  ( string : StringT; VAR (* CONST *) array : ARRAY OF CHAR ) : BOOLEAN;
+  ( string : StringT; VAR (*CONST*) array : ARRAY OF CHAR ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
@@ -170,7 +192,7 @@ PROCEDURE matchesArray
 
 PROCEDURE matchesArraySlice
   ( string : StringT;
-    VAR (* CONST *) array : ARRAY OF CHAR;
+    VAR (*CONST*) array : ARRAY OF CHAR;
     start, end : CARDINAL ) : BOOLEAN;
 
 
