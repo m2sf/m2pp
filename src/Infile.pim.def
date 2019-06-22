@@ -55,7 +55,7 @@ PROCEDURE Close ( VAR infile : Infile );
 
 
 (* ---------------------------------------------------------------------------
- * procedure consumeChar(infile)
+ * function consumeChar(infile)
  * ---------------------------------------------------------------------------
  * Consumes the current lookahead character in infile. Returns the resulting
  * new lookahead character without consuming it.
@@ -65,7 +65,7 @@ PROCEDURE consumeChar ( infile : Infile ) : CHAR;
 
 
 (* ---------------------------------------------------------------------------
- * procedure lookaheadChar(infile)
+ * function lookaheadChar(infile)
  * ---------------------------------------------------------------------------
  * Returns the current lookahead char in infile without consuming any char.
  * ------------------------------------------------------------------------ *)
@@ -74,7 +74,7 @@ PROCEDURE lookaheadChar ( infile : Infile ) : CHAR;
 
 
 (* ---------------------------------------------------------------------------
- * procedure la2Char(infile)
+ * function la2Char(infile)
  * ---------------------------------------------------------------------------
  * Returns the 2nd lookahead char in infile without consuming any character.
  * ------------------------------------------------------------------------ *)
@@ -101,7 +101,7 @@ PROCEDURE eof( infile : Infile ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
- * procedure line(infile)
+ * function line(infile)
  * ---------------------------------------------------------------------------
  * Returns the line number of the current reading position of infile.
  * ------------------------------------------------------------------------ *)
@@ -110,7 +110,7 @@ PROCEDURE line ( infile : Infile ) : CARDINAL;
 
 
 (* ---------------------------------------------------------------------------
- * procedure column(infile)
+ * function column(infile)
  * ---------------------------------------------------------------------------
  * Returns the column number of the current reading position of infile.
  * ------------------------------------------------------------------------ *)
@@ -128,7 +128,7 @@ PROCEDURE MarkLexeme( infile : Infile );
 
 
 (* ---------------------------------------------------------------------------
- * procedure lexeme(infile ch)
+ * function lexeme(infile ch)
  * ---------------------------------------------------------------------------
  * Returns the current lexeme.  Returns NIL if no lexeme has been marked, or
  * if no characters have been consumed since MarkLexeme() has been called.
