@@ -43,7 +43,7 @@ END; (* InfileDescriptor *)
  * procedure Open(infile, path, status )
  * ---------------------------------------------------------------------------
  * Opens the file at path and passes a newly allocated and initialised infile
- * object back in out-parameter infile. Passes NilInfile on failure.
+ * object back in out-parameter infile. Passes Infile.Nil on failure.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE Open
@@ -75,7 +75,7 @@ END Open;
 (* ---------------------------------------------------------------------------
  * procedure Close(infile)
  * ---------------------------------------------------------------------------
- * Closes the file associated with infile and passes NilInfile in infile.
+ * Closes the file associated with infile and passes Infile.Nil in infile.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE Close ( VAR infile : Infile );
@@ -97,7 +97,7 @@ END Close;
 
 
 (* ---------------------------------------------------------------------------
- * procedure consumeChar(infile)
+ * function consumeChar(infile)
  * ---------------------------------------------------------------------------
  * Consumes the current lookahead character in infile. Returns the resulting
  * new lookahead character without consuming it.
@@ -148,7 +148,7 @@ END consumeChar;
 
 
 (* ---------------------------------------------------------------------------
- * procedure lookaheadChar(infile)
+ * function lookaheadChar(infile)
  * ---------------------------------------------------------------------------
  * Returns the current lookahead char in infile without consuming any char.
  * ------------------------------------------------------------------------ *)
@@ -172,7 +172,7 @@ END lookaheadChar;
 
 
 (* ---------------------------------------------------------------------------
- * procedure la2Char(infile)
+ * function la2Char(infile)
  * ---------------------------------------------------------------------------
  * Returns the 2nd lookahead char in infile without consuming any character.
  * ------------------------------------------------------------------------ *)
@@ -233,7 +233,7 @@ END eof;
 
 
 (* ---------------------------------------------------------------------------
- * procedure line(infile)
+ * function line(infile)
  * ---------------------------------------------------------------------------
  * Returns the line number of the current reading position of infile.
  * ------------------------------------------------------------------------ *)
@@ -246,7 +246,7 @@ END line;
 
 
 (* ---------------------------------------------------------------------------
- * procedure column(infile)
+ * function column(infile)
  * ---------------------------------------------------------------------------
  * Returns the column number of the current reading position of infile.
  * ------------------------------------------------------------------------ *)
@@ -272,7 +272,7 @@ END MarkLexeme;
 
 
 (* ---------------------------------------------------------------------------
- * procedure lexeme(infile ch)
+ * function lexeme(infile ch)
  * ---------------------------------------------------------------------------
  * Returns the current lexeme.  Returns NIL if no lexeme has been marked, or
  * if no characters have been consumed since MarkLexeme() has been called.
@@ -325,7 +325,7 @@ END AppendChar;
 
 
 (* ---------------------------------------------------------------------------
- * private procedure stringForLexeme(lexbuf)
+ * private function stringForLexeme(lexbuf)
  * ---------------------------------------------------------------------------
  * Returns interned string for contents of lexeme buffer, or NIL if empty.
  * ------------------------------------------------------------------------ *)
