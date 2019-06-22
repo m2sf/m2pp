@@ -36,7 +36,7 @@ CONST Nil = Infile(NIL); (* PIM specific *)
  * procedure Open(infile, path, status )
  * ---------------------------------------------------------------------------
  * Opens the file at path and passes a newly allocated and initialised infile
- * object back in out-parameter infile. Passes NilInfile on failure.
+ * object back in out-parameter infile. Passes Infile.Nil on failure.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE Open
@@ -48,7 +48,7 @@ PROCEDURE Open
 (* ---------------------------------------------------------------------------
  * procedure Close(infile)
  * ---------------------------------------------------------------------------
- * Closes the file associated with infile and passes NilInfile in infile.
+ * Closes the file associated with infile and passes Infile.Nil in infile.
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE Close ( VAR infile : Infile );
