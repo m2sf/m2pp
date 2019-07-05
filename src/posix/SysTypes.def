@@ -1,0 +1,87 @@
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE SysTypes;
+
+(* Modula-2 definition for POSIX sys/types *)
+
+
+(* type int *)
+
+TYPE INT = INTEGER;
+
+(* type uint *)
+
+TYPE UINT = CARDINAL;
+
+
+(* type size_t *)
+
+TYPE SizeT = CARDINAL;
+
+
+(* type ssize_t *)
+
+TYPE SSizeT = INTEGER;
+
+
+(* type pid_t *)
+
+TYPE PidT = INTEGER;
+
+
+(* type dev_t *)
+
+TYPE DevT = CARDINAL;
+
+
+(* type ino_t *)
+
+TYPE InoT = CARDINAL;
+
+
+(* type mode_t *)
+
+TYPE ModeT = INTEGER;
+
+
+(* type nlink_t *)
+
+TYPE NLinkT = INTEGER;
+
+
+(* type id_t *)
+
+TYPE IdT = INTEGER;
+
+
+(* type uid_t *)
+
+TYPE UidT = IdT;
+
+
+(* type gid_t *)
+
+TYPE GidT = IdT;
+
+
+(* type off_t *)
+
+TYPE OffT = INTEGER;
+
+
+(* type time_t *)
+
+TYPE TimeT = INTEGER;
+
+
+(* type blksize_t *)
+
+TYPE BlkSizeT = INTEGER;
+
+
+(* type blkcnt_t *)
+
+TYPE BlkCntT = INTEGER;
+
+
+END SysTypes.
