@@ -1,0 +1,61 @@
+(*!m2pim*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+DEFINITION MODULE stat;
+
+(* User-level Modula-2 shim library to call POSIX stat *)
+  
+IMPORT stat0; (* foreign interface *)
+IMPORT SysTypes; (* POSIX sys/types *)
+
+
+(* type int *)
+
+TYPE INT = SysTypes.INT;
+
+
+(* type mode_t *)
+
+TYPE ModeT = SysTypes.ModeT;
+
+
+(* struct stat *)
+
+TYPE Stat = stat0.Stat;
+
+
+(* file mode flags *)
+
+CONST
+  FileExists      = 0;   (* 0b0'0000'0000 *)
+  OwnerReadable   = 1;   (* 0b0'0000'0001 *)
+  OwnerWritable   = 2,   (* 0b0'0000'0010 *)
+  OwnerExecutable = 4;   (* 0b0'0000'0100 *)
+  GroupReadable   = 8;   (* 0b0'0000'1000 *)
+  GroupWritable   = 16,  (* 0b0'0001'0000 *)
+  GroupExecutable = 32;  (* 0b0'0010'0000 *)
+  WorldReadable   = 64;  (* 0b0'0100'0000 *)
+  WorldWritable   = 128, (* 0b0'1000'0000 *)
+  WorldExecutable = 256; (* 0b1'0000'0000 *)
+
+
+(* chmod() *)
+
+PROCEDURE chmod ( path : ARRAY OF CHAR; mode : ModeT ) : INT;
+
+
+(* mkdir() *)
+
+PROCEDURE mkdir ( path : ARRAY OF CHAR; mode : ModeT ) : INT;
+
+
+(* stat() *)
+
+PROCEDURE stat ( path : ARRAY OF CHAR; VAR st : Stat ) : INT;
+
+
+(* umask() *)
+
+PROCEDURE umask ( mode : ModeT ) : INT;
+
+
+END stat.

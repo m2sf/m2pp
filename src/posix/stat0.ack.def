@@ -1,0 +1,62 @@
+(*!m2pim+ack*) (* Copyright (c) 2017 Modula-2 Software Foundation *)
+
+(*$Foreign language module *)
+
+DEFINITION MODULE stat0; (* ACK version *)
+
+(* Low-level Modula-2 interface to POSIX stat *)
+  
+
+IMPORT SysTypes; (* POSIX sys/types *)
+
+FROM SYSTEM IMPORT ADDRESS (* void* *);
+
+
+(* type int *)
+
+TYPE INT = SysTypes.INT;
+
+
+(* type mode_t *)
+
+TYPE ModeT = SysTypes.ModeT;
+
+
+(* struct stat *)
+
+TYPE Stat = RECORD
+  dev   : SysTypes.DevT;
+  ino   : SysTypes.InoT;
+  mode  : SysTypes.ModeT;
+  nlink : SysTypes.NLinkT;
+  uid,
+  gid   : SysTypes.IdT;
+  rdev  : SysTypes.DevT;
+  size  : SysTypes.OffT;
+  atime,
+  mtime,
+  ctime : SysTypes.TimeT
+END; (* Stat *)
+
+
+(* foreign declaration for int chmod(const char*, mode_t) *)
+
+PROCEDURE chmod ( path : ADDRESS; mode : ModeT ) : INT;
+
+
+(* foreign declaration for int mkdir(const char*, mode_t) *)
+
+PROCEDURE mkdir ( path : ADDRESS; mode : ModeT ) : INT;
+
+
+(* foreign declaration for int stat(const char*, struct stat* ) *)
+
+PROCEDURE stat ( path : ADDRESS; st : ADDRESS ) : INT;
+
+
+(* foreign declaration for int umask(mode_t) *)
+
+PROCEDURE umask ( mode : ModeT ) : INT;
+
+
+END stat0.
