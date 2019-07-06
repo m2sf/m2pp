@@ -3,11 +3,10 @@ TO DOs
 Scripts
 * launch script for AmigaOS
 * build configuration script for AmigaOS
-* build configuration script for Windows
 * build configuration script for OpenVMS
+* complete build configuration script for Windows
 
 Adaptation Libraries
-* implement ISO version of module BasicFileIO
 * implement module BasicFileSys for Aglet Modula-2
 * implement module BasicFileSys for Clarion Modula-2
 
