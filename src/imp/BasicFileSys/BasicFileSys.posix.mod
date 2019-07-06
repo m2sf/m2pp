@@ -5,6 +5,7 @@ IMPLEMENTATION MODULE BasicFileSys; (* POSIX version *)
 (* Clean file system interface based on POSIX,
    not using any of the junk that comes with PIM and ISO *)
 
+FROM stat IMPORT Stat, stat;
 FROM stdio IMPORT INT, rename, remove;
 FROM unistd IMPORT FileOK, CreateOnly, access, unlink;
 
@@ -23,8 +24,24 @@ PROCEDURE GetFileSize
    in size and Success is passed back in status. On failure, size remains
    unmodified, FileNotFound, SizeOverflow or Failure is passed in status. *)
 
+VAR
+  res : INT;
+  st : Stat;
+
 BEGIN
-  (* TO DO *)
+  IF access(path, FileOK) # 0 THEN
+    status := FileNotFound;
+    RETURN
+  END; (* IF *)
+  
+  res := stat(path, st);
+  
+  IF res # -1 THEN
+    size := st.size;
+    status := Success
+  ELSE
+    status := Failure
+  END (* IF *)
 END GetFileSize;
 
 
@@ -57,7 +74,7 @@ VAR
   res : INT;
   
 BEGIN
-  IF access(path) # 0 THEN
+  IF access(path, FileOK) # 0 THEN
     status := FileNotFound;
     RETURN
   END; (* IF *)
@@ -79,7 +96,7 @@ VAR
   res : INT;
 
 BEGIN
-  IF access(path) # 0 THEN
+  IF access(path, FileOK) # 0 THEN
     status := FileNotFound;
     RETURN
   END; (* IF *)
