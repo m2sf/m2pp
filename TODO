@@ -1,9 +1,9 @@
 TO DOs
 
 Scripts
-* launch script for AmigaOS
-* build configuration script for AmigaOS
-* build configuration script for OpenVMS
+* write launch script for AmigaOS
+* write build configuration script for AmigaOS
+* write build configuration script for OpenVMS
 * complete build configuration script for Windows
 
 Adaptation Libraries
