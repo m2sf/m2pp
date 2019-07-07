@@ -1,7 +1,5 @@
 # m2pp
 
-[![Join the chat at https://gitter.im/modula-2/Lobby](https://badges.gitter.im/modula-2/Lobby.svg)](https://gitter.im/modula-2/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 Modula-2 Preprocessor
 
 M2PP is a simple preprocessor for the Modula-2 language.
