@@ -82,7 +82,7 @@ EXIT /B 0
 :dialectMenu
 echo.
 echo Dialect Section
-set /p dialect=1) ISO Modula-2	 2) PIM Modula-2	3) Quit Modula-2 dialect:  
+set /p dialect=1) ISO Modula-2	2) PIM Modula-2	3) GPM Modula-2	4) Quit Modula-2 dialect:  
 
 if %dialect% == 1 (
 	set dialectID=iso
@@ -91,13 +91,18 @@ if %dialect% == 1 (
 	if %dialect% == 2 (
 		set dialectID=pim
 	) else (
-	
+
 		if %dialect% == 3 (
-			EXIT 0
+			set dialectID=gpm
 		) else (
+	
+			if %dialect% == 4 (
+				EXIT 0
+			) else (
 		
-			echo Invalid input.
-			call :dialectMenu
+				echo Invalid input.
+				call :dialectMenu
+			)
 		)
 	)
 )
@@ -122,10 +127,15 @@ if %dialectID% == iso (
 	if %dialectID% == pim (
 		call :pimCompilerMenu
 	) else (
+
+		if %dialectID% == gpm (
+			call :gpmCompilerMenu
+		) else (
 	
-		echo.
-		echo internal error: invalid dialectID
-		EXIT 1
+			echo.
+			echo internal error: invalid dialectID
+			EXIT 1
+		)
 	)
 )
 EXIT /B 0
@@ -138,16 +148,12 @@ EXIT /B 0
 
 :isoCompilerMenu
 set needsPosixShim=false
-set iso[1]=gm2
-set iso[2]=gpm
-set iso[3]=p1
-set iso[4]=xds
+set iso[1]=adw
+set iso[2]=xds
 
-echo 1) GNU Modula-2
-echo 2) GPM Modula-2
-echo 3) p1 Modula-2
-echo 4) XDS Modula-2
-echo 5) Quit
+echo 1) ADW Modula-2
+echo 2) XDS Modula-2
+echo 3) Quit
 
 set /p compiler=Select Compiler: 
 
@@ -156,11 +162,11 @@ if "%compiler%"=="" (
 	call :isoCompilerMenu
 )
 
-if %compiler% LEQ 4  (
+if %compiler% LEQ 2  (
 call set compilerID=%%iso[%compiler%]%%
 ) else (
 
-	if %compiler% == 5 (
+	if %compiler% == 3 (
 		EXIT 0
 		) else (
 		
@@ -179,18 +185,12 @@ EXIT /B 0
 
 :pimCompilerMenu
 set needsPosixShim=false
-set pim[1]=ack
-set pim[2]=gm2
-set pim[3]=mocka
-set pim[4]=ulm
-set pim[5]=pim
+set pim[1]=fst
+set pim[2]=logitech
 
-echo 1) ACK Modula-2
-echo 2) GNU Modula-2
-echo 3) MOCKA Modula-2
-echo 4) Ulm's Modula-2
-echo 5) Generic Pim Compiler
-echo 6) Quit
+echo 1) FST Modula-2
+echo 2) Logitech Modula-2
+echo 3) Quit
 
 set /p compiler=Select Compiler:
 
@@ -199,16 +199,51 @@ if "%compiler%"=="" (
 	call :pimCompilerMenu
 )
 
-if %compiler% LEQ 5  (
+if %compiler% LEQ 2  (
 call set compilerID=%%pim[%compiler%]%%
 ) else (
 
-	if %compiler% == 6 (
+	if %compiler% == 3 (
 		EXIT 0
 		) else (
 		
 			echo Invalid input.
 			call :pimCompilerMenu
+		)
+	)
+)
+EXIT /B 0
+
+:: ---------------------------------------------------------------------------
+:: GPM compiler selection
+:: ---------------------------------------------------------------------------
+:: sets global variables compiler, compilerID and needsPosixShim
+:: ---------------------------------------------------------------------------
+
+:gpmCompilerMenu
+set needsPosixShim=false
+set pim[1]=gpm
+
+echo 1) GPM Modula-2
+echo 2) Quit
+
+set /p compiler=Select Compiler:
+
+if "%compiler%"=="" (
+	echo Invalid Input.
+	call :gpmCompilerMenu
+)
+
+if %compiler% LEQ 1  (
+call set compilerID=%%gpm[%compiler%]%%
+) else (
+
+	if %compiler% == 2 (
+		EXIT 0
+		) else (
+		
+			echo Invalid input.
+			call :gpmCompilerMenu
 		)
 	)
 )
@@ -231,6 +266,10 @@ if %dialectID%==iso (
 	if %dialectID%==pim ( 
 		call :pimIolibMenu 
 	) else (
+
+		if %dialectID%==gpm ( 
+			call :gpmIolibMenu 
+		) else (
 	
 		echo.
 		echo internal error: invalid dialectID
@@ -246,12 +285,6 @@ EXIT /B 0
 :isoIolibMenu
 
 setlocal enabledelayedexpansion
-if !compilerID! == gpm (
-	set iolib=vendor library
-	set iolibID=gpm
-	echo $iolib
-	goto :end
-) 
 
 echo 1) POSIX I/O library
 echo 2) ISO I/O library
@@ -285,19 +318,10 @@ EXIT /B 0
 :pimIolibMenu
 setlocal enabledelayedexpansion
 set "isPosix="
-if "!compilerID!" == "ack" ( set isPosix=true )
-if "!compilerID!" == "mocka" ( set isPosix=true )
 
 if defined isPosix (
 	set iolib=POSIX I/O library
 	set iolibID=posix
-	echo $iolib
-	goto :end
-) 
-
-if !compilerID! == ulm (
-	set iolib=vendor library
-	set iolibID=ulm
 	echo $iolib
 	goto :end
 ) 
@@ -323,6 +347,22 @@ if NOT "!iolib!" LEQ "3" (
 	echo Invalid Input.
 	call :pimIolibMenu
 )
+:end
+EXIT /B 0
+
+:: ---------------------------------------------------------------------------
+:: GPM compiler I/O library selection
+:: ---------------------------------------------------------------------------
+:: sets global variables iolib and iolibID
+:: ---------------------------------------------------------------------------
+:gpmIolibMenu
+setlocal enabledelayedexpansion
+set "isPosix="
+
+set iolib=vendor library
+set iolibID=gpm
+echo $iolib
+
 :end
 EXIT /B 0
 
