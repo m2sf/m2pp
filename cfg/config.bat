@@ -36,19 +36,20 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 
 :checkArgs
-if %1 == "clean" (
+if "%1" == "clean" (
 	set clean=true
 	
-	if %2 == -t set or_2 = T
-	if %2 == --test set or_2 = T
+	if "%2" == -t set or_2 = T
+	if "%2" == --test set or_2 = T
 	
 	if "%or_2%" == T (
 		set test=true
 	) else (
 		set test=false
+	)
 ) else (	
-	if %1 == -t set or_1 = T
-	if %1 == --test set or_1 = T
+	if "%1" == -t set or_1 = T
+	if "%1" == --test set or_1 = T
 	
 	if "%or_1%" == T (
 		set clean=false
@@ -59,8 +60,9 @@ if %1 == "clean" (
 			echo unknown argument $~2 ignored.
 		) 
 	) else (
-	set clean=false
-	set test=false
+		set clean=false
+		set test=false
+	)
 )		
 
 if %test% == true (
