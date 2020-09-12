@@ -84,7 +84,12 @@ EXIT /B 0
 :dialectMenu
 echo.
 echo Dialect Section
-set /p dialect=1) ISO Modula-2	2) PIM Modula-2	3) GPM Modula-2	4) Quit Modula-2 dialect:  
+
+echo 1) ISO Modula-2
+echo 2) PIM Modula-2
+echo 3) GPM Modula-2
+echo 4) Quit Modula-2 dialect:  
+set /p dialect=
 
 if %dialect% == 1 (
 	set dialectID=iso
