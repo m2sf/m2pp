@@ -722,16 +722,18 @@ EXIT /B 0
 :: expands template BuildInfo.gen.def with build configuration parameters
 :: ---------------------------------------------------------------------------
 :genBuildInfo
-:: TODO Convert to DOS format.  Lack of sed on DOS is a point of special concern
-::local osname="$(uname -rs)"
-::  local hardware="$(uname -m)"
-::  local platform="${osname} (${hardware})"
-::  local sub1="s|##platform##|\"${platform}\"|;"
-::  local sub2="s|##dialect##|\"${dialect}\"|;"
-::  local sub3="s|##compiler##|\"${compiler}\"|;"
-::  local sub4="s|##iolib##|\"${iolib}\"|;"
-::  local sub5="s|##mm##|\"${mm}\"|;"
-::  sed -e "${sub1}${sub2}${sub3}${sub4}${sub5}" "${srcpath}templates/BuildInfo.gen.def" > "${srcpath}BuildInfo.def"
+:: TODO No sed on DOS/Windows.  Generate entire file?  Include JREPL.bat?  Powershell or Sed for Windows as a dependency?
+SETLOCAL
+set osname=%OS%
+set hardware=%Processor_Architecture%
+set platform="%osname% (%hardware%)"
+set sub1="s|##platform##|\"%platform%\"|;"
+set sub2="s|##dialect##|\"%dialect%\"|;"
+set sub3="s|##compiler##|\"%compiler%\"|;"
+set sub4="s|##iolib##|\"%iolib%\"|;"
+set sub5="s|##mm##|\"%mm%\"|;"
+::  sed -e "%sub1%%sub2%%sub3%%sub4%%sub5%" "%srcpath%templates/BuildInfo.gen.def" > "%srcpath%BuildInfo.def"
+ENDLOCAL
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
