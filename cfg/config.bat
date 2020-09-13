@@ -1,6 +1,5 @@
 @echo off
 
-::!/bin/bash
 :: config.bat * Copyright (c) 2017 Modula-2 Software Foundation
 :: usage:
 :: config [clean] [--test | -t]
@@ -422,7 +421,6 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 :: sets global variable srcpath
 :: ---------------------------------------------------------------------------
-:: TODO confirm intended meaning?
 
 :querySourcePath
 echo.
@@ -494,6 +492,74 @@ EXIT /B 0
 echo.
 echo Copying source files corresponding to selected build configuration ...
 echo.
+:: TODO convert to proper DOS format, interfacing with the copyfile/remove routines below
+:: module Infile
+::  copyfile "%srcpath%Infile.%dialectID%.def" "%srcpath%Infile.def"
+  
+:: module Outfile
+::  copyfile "%srcpath%Outfile.%dialectID%.def" "%srcpath%Outfile.def"
+  
+:: module Proc
+::  copyfile "%srcpath%Proc.%dialectID%.def" "%srcpath%Proc.def"
+  
+:: module Size
+::  copyfile "%srcpath%Size.%mmID%.def" "%srcpath%Size.def"
+  
+:: module String
+::  copyfile "%srcpath%String.%dialectID%.def" "%srcpath%String.def"
+::  copyfile "%srcpath%imp\String.%dialectID%.mod" "%srcpath%imp\String.mod"
+  
+:: module Terminal
+::  if [ "$iolibID" = "iso" ] || [ "$iolibID" = "posix" ]; then
+::    copyfile "%srcpath%Terminal.nonpim.def" "%srcpath%Terminal.def"
+::    copyfile "%srcpath%imp\Terminal.%iolibID%.mod" "%srcpath%imp\Terminal.mod"
+::  else
+::    remove "%srcpath%Terminal.def"
+::    remove "%srcpath%imp\Terminal.mod"
+::  fi
+  
+:: module BasicFileIO
+::  copyfile "%srcpath%imp\BasicFileIO\BasicFileIO.%iolibID%.mod" "%srcpath%imp\BasicFileIO.mod"
+  
+:: module BasicFileSys
+::  if [ "$iolibID" = "pim" ] || [ "$iolibID" = "posix" ]; then
+::    copyfile "%srcpath%imp\BasicFileSys\BasicFileSys.%iolibID%.mod" "%srcpath%imp\BasicFileSys.mod"
+::  else
+::    copyfile "%srcpath%imp\BasicFileSys\BasicFileSys.%compilerID%.mod" "%srcpath%imp\BasicFileSys.mod"
+::  fi
+  
+:: posix shim libraries
+::  if [ "$needsPosixShim" = "true" ]; then
+::    echo "%compiler% requires POSIX shim libraries"
+::    echo ""
+::    copyfile "%srcpath%posix\stdio.shim.def" "%srcpath%stdio.def"
+::    copyfile "%srcpath%imp\posix/stdio.shim.mod" "%srcpath%imp\stdio.mod"
+::    copyfile "%srcpath%posix\unistd.shim.def" "%srcpath%unistd.def"
+::    copyfile "%srcpath%imp\posix\unistd.shim.mod" "%srcpath%imp\unistd.mod"
+::  fi
+  
+:: foreign interface modules stdio and unistd
+::  if [ "%iolibID" = "posix" ] || [ "%compilerID" = "p1" ]; then
+::    if [ "%compilerID" = "gm2" ]; then
+::      copyfile "%srcpath%posix\stdio.%compilerID%.%dialectID%.def" "%srcpath%stdio.def"
+::      copyfile "%srcpath%posix\unistd.%compilerID%.def" "%srcpath%unistd.def"
+::    elif [ "$needsPosixShim" = "true" ]; then
+::      copyfile "%srcpath%posix\stdio0.%compilerID%.def" "%srcpath%stdio0.def"
+::      copyfile "%srcpath%posix\unistd0.%compilerID%.def" "%srcpath%unistd0.def"
+::    else
+::      copyfile "%srcpath%posix\stdio.%compilerID%.def" "%srcpath%stdio.def"
+::      copyfile "%srcpath%posix\unistd.%compilerID%.def" "%srcpath%unistd.def"
+::    fi
+::  else
+::    remove "%srcpath%stdio.def"
+::    remove "%srcpath%stdio0.def"
+::    remove "%srcpath%unistd.def"
+::    remove "%srcpath%unistd0.def"
+::    remove "%srcpath%imp/stdio.mod"
+::    remove "%srcpath%imp/unistd.mod"
+::  fi
+  
+  echo "Build configuration completed."
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
@@ -502,13 +568,14 @@ EXIT /B 0
 :: copies first argument to second argument, prints info
 :: ---------------------------------------------------------------------------
 :copyFile
-::TODO implement variables into echoes
-echo copying %1
-echo      to %2
+::TODO implement proper interface variables into echoes and then update copy variables
+::echo copying %1
+::echo      to %2
 
 if NOT %test% == true (
-	
+	:: copy $1 $2
 )
+echo ""
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
@@ -516,6 +583,42 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 :cleanFiles
 echo.
+:: TODO Need DOS appropriate method of interfacing with the desired remove function
+:: module Infile
+::  remove "%srcpath%Infile.def"
+  
+:: module Outfile
+::  remove "%srcpath%Outfile.def"
+  
+:: module Proc
+::  remove "%srcpath%Proc.def"
+  
+:: module Size
+::  remove "%srcpath%Size.def"
+  
+:: module String
+::  remove "%srcpath%String.def"
+::  remove "%srcpath%imp/String.mod"
+  
+:: module Terminal
+::  remove "%srcpath%Terminal.def"
+::  remove "%srcpath%imp/Terminal.mod"
+  
+:: module BasicFileIO
+::  remove "%srcpath%imp\BasicFileIO.mod"
+  
+:: module BasicFileSys
+::  remove "%srcpath%imp\BasicFileSys.mod"
+  
+:: posix interfaces and shim libraries
+::  remove "%srcpath%stdio.def"
+::  remove "%srcpath%stdio0.def"
+::  remove "%srcpath%unistd.def"
+::  remove "%srcpath%unistd0.def"
+::  remove "%srcpath%imp\stdio.mod"
+::  remove "%srcpath%imp\unistd.mod"
+  
+::  remove "%srcpath%BuildInfo.def"
 
 echo Clean configuration completed.
 EXIT /B 0
@@ -526,6 +629,15 @@ EXIT /B 0
 :: removes file at path $1, prints info
 :: ---------------------------------------------------------------------------
 :remove
+:: TODO Convert to an appropriate DOS format with interface that cleanFiles can use
+::function remove {
+::  if [ -f $1 ]; then
+::    echo "removing $1"
+::    if [ "$test" != "true" ]; then
+::      rm $1
+::    fi
+    echo ""
+::  fi
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
@@ -534,6 +646,16 @@ EXIT /B 0
 :: expands template BuildInfo.gen.def with build configuration parameters
 :: ---------------------------------------------------------------------------
 :genBuildInfo
+:: TODO Convert to DOS format.  Lack of sed on DOS is a point of special concern
+::local osname="$(uname -rs)"
+::  local hardware="$(uname -m)"
+::  local platform="${osname} (${hardware})"
+::  local sub1="s|##platform##|\"${platform}\"|;"
+::  local sub2="s|##dialect##|\"${dialect}\"|;"
+::  local sub3="s|##compiler##|\"${compiler}\"|;"
+::  local sub4="s|##iolib##|\"${iolib}\"|;"
+::  local sub5="s|##mm##|\"${mm}\"|;"
+::  sed -e "${sub1}${sub2}${sub3}${sub4}${sub5}" "${srcpath}templates/BuildInfo.gen.def" > "${srcpath}BuildInfo.def"
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
