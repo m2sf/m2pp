@@ -568,12 +568,11 @@ EXIT /B 0
 :: copies first argument to second argument, prints info
 :: ---------------------------------------------------------------------------
 :copyFile
-::TODO implement proper interface variables into echoes and then update copy variables
-::echo copying %1
-::echo      to %2
+echo copying %sourceFile
+echo      to %destinationFile
 
 if NOT %test% == true (
-	:: copy $1 $2
+	copy %sourceFile %destinationFile
 )
 echo ""
 EXIT /B 0
@@ -630,7 +629,6 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 :remove
 :: TODO Convert to an appropriate DOS format with interface that cleanFiles can use
-::function remove {
 ::  if [ -f $1 ]; then
 ::    echo "removing $1"
 ::    if [ "$test" != "true" ]; then
