@@ -492,74 +492,135 @@ EXIT /B 0
 echo.
 echo Copying source files corresponding to selected build configuration ...
 echo.
-:: TODO convert to proper DOS format, interfacing with the copyfile/remove routines below
 :: module Infile
-::  copyfile "%srcpath%Infile.%dialectID%.def" "%srcpath%Infile.def"
+set sourceFile="%srcpath%Infile.%dialectID%.def"
+set destinationFile="%srcpath%Infile.def"
+call :copyFile
   
 :: module Outfile
-::  copyfile "%srcpath%Outfile.%dialectID%.def" "%srcpath%Outfile.def"
+set sourceFile="%srcpath%Outfile.%dialectID%.def"
+set destinationFile="%srcpath%Outfile.def"
+call :copyFile
   
 :: module Proc
-::  copyfile "%srcpath%Proc.%dialectID%.def" "%srcpath%Proc.def"
+set sourceFile="%srcpath%Proc.%dialectID%.def"
+set destinationFile="%srcpath%Proc.def"
+call :copyFile
   
 :: module Size
-::  copyfile "%srcpath%Size.%mmID%.def" "%srcpath%Size.def"
+set sourceFile="%srcpath%Size.%mmID%.def"
+set destinationFile="%srcpath%Size.def"
+call :copyFile
   
 :: module String
-::  copyfile "%srcpath%String.%dialectID%.def" "%srcpath%String.def"
-::  copyfile "%srcpath%imp\String.%dialectID%.mod" "%srcpath%imp\String.mod"
-  
+set sourceFile="%srcpath%String.%dialectID%.def"
+set destinationFile="%srcpath%String.def"
+call :copyFile
+set sourceFile="%srcpath%imp\String.%dialectID%.mod"
+set destinationFile="%srcpath%imp\String.mod"
+call :copyFile
+
 :: module Terminal
-::  if [ "$iolibID" = "iso" ] || [ "$iolibID" = "posix" ]; then
-::    copyfile "%srcpath%Terminal.nonpim.def" "%srcpath%Terminal.def"
-::    copyfile "%srcpath%imp\Terminal.%iolibID%.mod" "%srcpath%imp\Terminal.mod"
-::  else
-::    remove "%srcpath%Terminal.def"
-::    remove "%srcpath%imp\Terminal.mod"
-::  fi
+set res=F
+if "%iolibID"=="iso" (
+	set res=T
+)
+if "%iolibID"=="posix" (
+	set res=T
+)
+if "%res%"=="T" (
+	set sourceFile="%srcpath%Terminal.nonpim.def"
+	set destinationFile="%srcpath%Terminal.def"
+	call :copyFile
+	set sourceFile="%srcpath%imp\Terminal.%iolibID%.mod"
+	set destinationFile="%srcpath%imp\Terminal.mod"
+	call :copyFile
+) else (
+	set rmFile="%srcpath%Terminal.def"
+	call :remove
+	set rmFile="%srcpath%imp\Terminal.mod"
+	call :remove
+)
   
 :: module BasicFileIO
-::  copyfile "%srcpath%imp\BasicFileIO\BasicFileIO.%iolibID%.mod" "%srcpath%imp\BasicFileIO.mod"
-  
+set sourceFile="%srcpath%imp\BasicFileIO\BasicFileIO.%iolibID%.mod"
+set destinationFile="%srcpath%imp\BasicFileIO.mod"
+call :copyFile
+
 :: module BasicFileSys
-::  if [ "$iolibID" = "pim" ] || [ "$iolibID" = "posix" ]; then
-::    copyfile "%srcpath%imp\BasicFileSys\BasicFileSys.%iolibID%.mod" "%srcpath%imp\BasicFileSys.mod"
-::  else
-::    copyfile "%srcpath%imp\BasicFileSys\BasicFileSys.%compilerID%.mod" "%srcpath%imp\BasicFileSys.mod"
-::  fi
+set res=F
+if "%iolibID"=="pim" (
+	set res=T
+)
+if "%iolibID"=="posix" (
+	set res=T
+)
+if "%res%"=="T" (
+	set sourceFile="%srcpath%imp\BasicFileSys\BasicFileSys.%iolibID%.mod"
+	set destinationFile="%srcpath%imp\BasicFileSys.mod"
+	call :copyFile
+) else (
+	set sourceFile="%srcpath%imp\BasicFileSys\BasicFileSys.%compilerID%.mod"
+	set destinationFile="%srcpath%imp\BasicFileSys.mod"
+	call :copyFile
+)
   
 :: posix shim libraries
-::  if [ "$needsPosixShim" = "true" ]; then
-::    echo "%compiler% requires POSIX shim libraries"
-::    echo ""
-::    copyfile "%srcpath%posix\stdio.shim.def" "%srcpath%stdio.def"
-::    copyfile "%srcpath%imp\posix/stdio.shim.mod" "%srcpath%imp\stdio.mod"
-::    copyfile "%srcpath%posix\unistd.shim.def" "%srcpath%unistd.def"
-::    copyfile "%srcpath%imp\posix\unistd.shim.mod" "%srcpath%imp\unistd.mod"
-::  fi
-  
+if "%needsPosixShim%" == "true" (
+    echo "%compiler% requires POSIX shim libraries"
+    echo ""
+	set sourceFile="%srcpath%posix\stdio.shim.def"
+	set destinationFile="%srcpath%stdio.def"
+	call :copyFile
+	set sourceFile="%srcpath%imp\posix/stdio.shim.mod"
+	set destinationFile="%srcpath%imp\stdio.mod"
+	call :copyFile
+	set sourceFile="%srcpath%posix\unistd.shim.def"
+	set destinationFile="%srcpath%unistd.def"
+	call :copyFile
+	set sourceFile="%srcpath%imp\posix\unistd.shim.mod"
+	set destinationFile="%srcpath%imp\unistd.mod"
+	call :copyFile
+)
+
 :: foreign interface modules stdio and unistd
-::  if [ "%iolibID" = "posix" ] || [ "%compilerID" = "p1" ]; then
-::    if [ "%compilerID" = "gm2" ]; then
-::      copyfile "%srcpath%posix\stdio.%compilerID%.%dialectID%.def" "%srcpath%stdio.def"
-::      copyfile "%srcpath%posix\unistd.%compilerID%.def" "%srcpath%unistd.def"
-::    elif [ "$needsPosixShim" = "true" ]; then
-::      copyfile "%srcpath%posix\stdio0.%compilerID%.def" "%srcpath%stdio0.def"
-::      copyfile "%srcpath%posix\unistd0.%compilerID%.def" "%srcpath%unistd0.def"
-::    else
-::      copyfile "%srcpath%posix\stdio.%compilerID%.def" "%srcpath%stdio.def"
-::      copyfile "%srcpath%posix\unistd.%compilerID%.def" "%srcpath%unistd.def"
-::    fi
-::  else
-::    remove "%srcpath%stdio.def"
-::    remove "%srcpath%stdio0.def"
-::    remove "%srcpath%unistd.def"
-::    remove "%srcpath%unistd0.def"
-::    remove "%srcpath%imp/stdio.mod"
-::    remove "%srcpath%imp/unistd.mod"
-::  fi
-  
-  echo "Build configuration completed."
+if "%iolibID%" == "posix" (
+    if "%needsPosixShim%" == "true" (
+		set sourceFile="%srcpath%posix\stdio0.%compilerID%.def"
+		set destinationFile="%srcpath%stdio0.def"
+		call :copyFile
+		set sourceFile="%srcpath%posix\unistd0.%compilerID%.def"
+		set destinationFile="%srcpath%unistd0.def"
+		call :copyFile
+    ) else (
+		set sourceFile="%srcpath%posix\stdio.%compilerID%.def"
+		set destinationFile="%srcpath%stdio.def"
+		call :copyFile
+		set sourceFile="%srcpath%posix\unistd.%compilerID%.def"
+		set destinationFile="%srcpath%unistd.def"
+		call :copyFile
+	)
+) else (
+	set rmFile="%srcpath%stdio.def"
+	call :remove
+	set rmFile="%srcpath%stdio0.def"
+	call :remove
+	set rmFile="%srcpath%unistd.def"
+	call :remove
+	set rmFile="%srcpath%unistd0.def"
+	call :remove
+	set rmFile="%srcpath%imp/stdio.mod"
+	call :remove
+	set rmFile="%srcpath%imp/unistd.mod"
+	call :remove
+)
+
+	set res=
+	set sourceFile=
+	set destinationFile=
+	set rmFile=
+
+	echo "Build configuration completed."
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
@@ -568,11 +629,11 @@ EXIT /B 0
 :: copies first argument to second argument, prints info
 :: ---------------------------------------------------------------------------
 :copyFile
-echo copying %sourceFile
-echo      to %destinationFile
+echo copying %sourceFile%
+echo      to %destinationFile%
 
-if NOT %test% == true (
-	copy %sourceFile %destinationFile
+if NOT "%test%" == "true" (
+	copy %sourceFile% %destinationFile%
 )
 echo ""
 EXIT /B 0
@@ -648,8 +709,8 @@ EXIT /B 0
 :remove
 if EXIST %rmFile% (
     echo "removing %rmFile"
-	if NOT %test% == true (
-		del %rmFile
+	if NOT "%test%" == "true" (
+		del %rmFile%
 	)
     echo ""
 )
