@@ -582,42 +582,60 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 :cleanFiles
 echo.
-:: TODO Need DOS appropriate method of interfacing with the desired remove function
 :: module Infile
-::  remove "%srcpath%Infile.def"
+set rmFile="%srcpath%Infile.def"
+call :remove
   
 :: module Outfile
-::  remove "%srcpath%Outfile.def"
+set rmFile="%srcpath%Outfile.def"
+call :remove
   
 :: module Proc
-::  remove "%srcpath%Proc.def"
+set rmFile="%srcpath%Proc.def"
+call :remove
   
 :: module Size
-::  remove "%srcpath%Size.def"
+set rmFile="%srcpath%Size.def"
+call :remove
   
 :: module String
-::  remove "%srcpath%String.def"
-::  remove "%srcpath%imp/String.mod"
+set rmFile="%srcpath%String.def"
+call :remove
+set rmFile="%srcpath%imp/String.mod"
+call :remove
   
 :: module Terminal
-::  remove "%srcpath%Terminal.def"
-::  remove "%srcpath%imp/Terminal.mod"
+set rmFile="%srcpath%Terminal.def"
+call :remove
+set rmFile="%srcpath%imp/Terminal.mod"
+call :remove
   
 :: module BasicFileIO
-::  remove "%srcpath%imp\BasicFileIO.mod"
+set rmFile="%srcpath%imp\BasicFileIO.mod"
+call :remove
   
 :: module BasicFileSys
-::  remove "%srcpath%imp\BasicFileSys.mod"
+set rmFile="%srcpath%imp\BasicFileSys.mod"
+call :remove
   
 :: posix interfaces and shim libraries
-::  remove "%srcpath%stdio.def"
-::  remove "%srcpath%stdio0.def"
-::  remove "%srcpath%unistd.def"
-::  remove "%srcpath%unistd0.def"
-::  remove "%srcpath%imp\stdio.mod"
-::  remove "%srcpath%imp\unistd.mod"
+set rmFile="%srcpath%stdio.def"
+call :remove
+set rmFile="%srcpath%stdio0.def"
+call :remove
+set rmFile="%srcpath%unistd.def"
+call :remove
+set rmFile="%srcpath%unistd0.def"
+call :remove
+set rmFile="%srcpath%imp\stdio.mod"
+call :remove
+set rmFile="%srcpath%imp\unistd.mod"
+call :remove
   
-::  remove "%srcpath%BuildInfo.def"
+set rmFile="%srcpath%BuildInfo.def"
+call :remove
+
+set rmFile=
 
 echo Clean configuration completed.
 EXIT /B 0
