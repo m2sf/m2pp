@@ -646,14 +646,13 @@ EXIT /B 0
 :: removes file at path $1, prints info
 :: ---------------------------------------------------------------------------
 :remove
-:: TODO Convert to an appropriate DOS format with interface that cleanFiles can use
-::  if [ -f $1 ]; then
-::    echo "removing $1"
-::    if [ "$test" != "true" ]; then
-::      rm $1
-::    fi
+if EXIST %rmFile% (
+    echo "removing %rmFile"
+	if NOT %test% == true (
+		del %rmFile
+	)
     echo ""
-::  fi
+)
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
