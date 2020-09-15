@@ -156,9 +156,11 @@ EXIT /B 0
 set needsPosixShim=false
 set iso[1]=adw
 set iso[2]=xds
+::set iso[3]=clarion
 
 echo 1) ADW Modula-2
 echo 2) XDS Modula-2
+::echo 3) Clarion Modula-2
 echo 3) Quit
 
 set /p compiler=Select Compiler: 
