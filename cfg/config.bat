@@ -415,14 +415,7 @@ set destinationFile="%srcpath%imp\BasicFileIO.mod"
 call :copyFile
 
 :: module BasicFileSys
-set res=F
 if "%iolibID"=="pim" (
-	set res=T
-)
-if "%iolibID"=="posix" (
-	set res=T
-)
-if "%res%"=="T" (
 	set sourceFile="%srcpath%imp\BasicFileSys\BasicFileSys.%iolibID%.mod"
 	set destinationFile="%srcpath%imp\BasicFileSys.mod"
 	call :copyFile
@@ -432,42 +425,7 @@ if "%res%"=="T" (
 	call :copyFile
 )
   
-:: posix shim libraries
-if "%needsPosixShim%" == "true" (
-    echo "%compiler% requires POSIX shim libraries"
-    echo ""
-	set sourceFile="%srcpath%posix\stdio.shim.def"
-	set destinationFile="%srcpath%stdio.def"
-	call :copyFile
-	set sourceFile="%srcpath%imp\posix/stdio.shim.mod"
-	set destinationFile="%srcpath%imp\stdio.mod"
-	call :copyFile
-	set sourceFile="%srcpath%posix\unistd.shim.def"
-	set destinationFile="%srcpath%unistd.def"
-	call :copyFile
-	set sourceFile="%srcpath%imp\posix\unistd.shim.mod"
-	set destinationFile="%srcpath%imp\unistd.mod"
-	call :copyFile
-)
-
 :: foreign interface modules stdio and unistd
-if "%iolibID%" == "posix" (
-    if "%needsPosixShim%" == "true" (
-		set sourceFile="%srcpath%posix\stdio0.%compilerID%.def"
-		set destinationFile="%srcpath%stdio0.def"
-		call :copyFile
-		set sourceFile="%srcpath%posix\unistd0.%compilerID%.def"
-		set destinationFile="%srcpath%unistd0.def"
-		call :copyFile
-    ) else (
-		set sourceFile="%srcpath%posix\stdio.%compilerID%.def"
-		set destinationFile="%srcpath%stdio.def"
-		call :copyFile
-		set sourceFile="%srcpath%posix\unistd.%compilerID%.def"
-		set destinationFile="%srcpath%unistd.def"
-		call :copyFile
-	)
-) else (
 	set rmFile="%srcpath%stdio.def"
 	call :remove
 	set rmFile="%srcpath%stdio0.def"
@@ -480,9 +438,7 @@ if "%iolibID%" == "posix" (
 	call :remove
 	set rmFile="%srcpath%imp/unistd.mod"
 	call :remove
-)
 
-	set res=
 	set sourceFile=
 	set destinationFile=
 	set rmFile=
@@ -545,21 +501,7 @@ call :remove
 :: module BasicFileSys
 set rmFile="%srcpath%imp\BasicFileSys.mod"
 call :remove
-  
-:: posix interfaces and shim libraries
-set rmFile="%srcpath%stdio.def"
-call :remove
-set rmFile="%srcpath%stdio0.def"
-call :remove
-set rmFile="%srcpath%unistd.def"
-call :remove
-set rmFile="%srcpath%unistd0.def"
-call :remove
-set rmFile="%srcpath%imp\stdio.mod"
-call :remove
-set rmFile="%srcpath%imp\unistd.mod"
-call :remove
-  
+    
 set rmFile="%srcpath%BuildInfo.def"
 call :remove
 
