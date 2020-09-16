@@ -9,7 +9,7 @@
 :: ---------------------------------------------------------------------------
 
 :main
-echo *** M2PP build configuration script for Unix/POSIX ***
+echo *** M2PP build configuration script for DOS/Windows ***
 
 call :checkArgs %*
 
@@ -118,7 +118,7 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 :: compiler menu
 :: ---------------------------------------------------------------------------
-:: sets global variables compiler, compilerID and needsPosixShim
+:: sets global variables compiler and compilerID
 :: ---------------------------------------------------------------------------
 
 :compilerMenu
@@ -131,11 +131,11 @@ if %dialectID% == iso (
 ) else (
 
 	if %dialectID% == pim (
-		call :pimCompilerMenu
+		call set compilerID=%%pim[%compiler%]%%
 	) else (
 
 		if %dialectID% == gpm (
-			call :gpmCompilerMenu
+			call set compilerID=%%gpm[%compiler%]%%
 		) else (
 	
 			echo.
@@ -149,11 +149,10 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 :: ISO compiler selection
 :: ---------------------------------------------------------------------------
-:: sets global variables compiler, compilerID and needsPosixShim
+:: sets global variables compiler and compilerID
 :: ---------------------------------------------------------------------------
 
 :isoCompilerMenu
-set needsPosixShim=false
 set iso[1]=adw
 set iso[2]=xds
 ::set iso[3]=clarion
@@ -186,97 +185,26 @@ call set compilerID=%%iso[%compiler%]%%
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
-:: PIM compiler selection
-:: ---------------------------------------------------------------------------
-:: sets global variables compiler, compilerID and needsPosixShim
-:: ---------------------------------------------------------------------------
-
-:pimCompilerMenu
-set needsPosixShim=false
-set pim[1]=fst
-set pim[2]=logitech
-
-echo 1) FST Modula-2
-echo 2) Logitech Modula-2
-echo 3) Quit
-
-set /p compiler=Select Compiler:
-
-if "%compiler%"=="" (
-	echo Invalid Input.
-	call :pimCompilerMenu
-)
-
-if %compiler% LEQ 2  (
-call set compilerID=%%pim[%compiler%]%%
-) else (
-
-	if %compiler% == 3 (
-		EXIT 0
-		) else (
-		
-			echo Invalid input.
-			call :pimCompilerMenu
-		)
-	)
-)
-EXIT /B 0
-
-:: ---------------------------------------------------------------------------
-:: GPM compiler selection
-:: ---------------------------------------------------------------------------
-:: sets global variables compiler, compilerID and needsPosixShim
-:: ---------------------------------------------------------------------------
-
-:gpmCompilerMenu
-set needsPosixShim=false
-set pim[1]=gpm
-
-echo 1) GPM Modula-2
-echo 2) Quit
-
-set /p compiler=Select Compiler:
-
-if "%compiler%"=="" (
-	echo Invalid Input.
-	call :gpmCompilerMenu
-)
-
-if %compiler% LEQ 1  (
-call set compilerID=%%gpm[%compiler%]%%
-) else (
-
-	if %compiler% == 2 (
-		EXIT 0
-		) else (
-		
-			echo Invalid input.
-			call :gpmCompilerMenu
-		)
-	)
-)
-EXIT /B 0
-
-:: ---------------------------------------------------------------------------
 :: I/O library menu
 :: ---------------------------------------------------------------------------
 :: sets global variables iolib and iolibID
 :: ---------------------------------------------------------------------------
 :iolibMenu
-echo.
-echo I/O Library Selection
 set PS3=I/O library
 
 if %dialectID%==iso ( 
+	echo.
+	echo I/O Library Selection
 	call :isoIolibMenu 
 ) else (
 
 	if %dialectID%==pim ( 
-		call :pimIolibMenu 
+		set iolibID=pim
 	) else (
 
 		if %dialectID%==gpm ( 
-			call :gpmIolibMenu 
+			set iolib=vendor library
+			set iolibID=gpm 
 		) else (
 	
 		echo.
@@ -294,17 +222,17 @@ EXIT /B 0
 
 setlocal enabledelayedexpansion
 
-echo 1) POSIX I/O library
-echo 2) ISO I/O library
+echo 1) ISO I/O library
+echo 2) Windows I/O library
 echo 3) Quit
 set /p "iolib=Select: "
 
 if "!iolib!" == "1" (
-	set iolibID=posix
+	set iolibID=iso
 )
  
 if "!iolib!" == "2" (
-	set iolibID=iso
+	set iolibID=windows
 ) 
 	
 if "!iolib!" == "3" (
@@ -315,62 +243,6 @@ if NOT "!iolib!" LEQ "3" (
 	echo Invalid Input.
 	call :isoIolibMenu
 )
-:end
-EXIT /B 0
-
-:: ---------------------------------------------------------------------------
-:: PIM compiler I/O library selection
-:: ---------------------------------------------------------------------------
-:: sets global variables iolib and iolibID
-:: ---------------------------------------------------------------------------
-:pimIolibMenu
-setlocal enabledelayedexpansion
-set "isPosix="
-
-if defined isPosix (
-	set iolib=POSIX I/O library
-	set iolibID=posix
-	echo $iolib
-	goto :end
-) 
-
-echo 1) POSIX I/O library
-echo 2) PIM I/O library
-echo 3) Quit
-set /p "iolib=Select I/O Library: "
-
-if "!iolib!" == "1" (
-	set iolibID=posix
-)
- 
-if "!iolib!" == "2" (
-	set iolibID=pim
-) 
-	
-if "!iolib!" == "3" (
-	exit
-) 
-	
-if NOT "!iolib!" LEQ "3" (
-	echo Invalid Input.
-	call :pimIolibMenu
-)
-:end
-EXIT /B 0
-
-:: ---------------------------------------------------------------------------
-:: GPM compiler I/O library selection
-:: ---------------------------------------------------------------------------
-:: sets global variables iolib and iolibID
-:: ---------------------------------------------------------------------------
-:gpmIolibMenu
-setlocal enabledelayedexpansion
-set "isPosix="
-
-set iolib=vendor library
-set iolibID=gpm
-echo $iolib
-
 :end
 EXIT /B 0
 
@@ -523,14 +395,7 @@ set destinationFile="%srcpath%imp\String.mod"
 call :copyFile
 
 :: module Terminal
-set res=F
 if "%iolibID"=="iso" (
-	set res=T
-)
-if "%iolibID"=="posix" (
-	set res=T
-)
-if "%res%"=="T" (
 	set sourceFile="%srcpath%Terminal.nonpim.def"
 	set destinationFile="%srcpath%Terminal.def"
 	call :copyFile
@@ -724,7 +589,7 @@ EXIT /B 0
 :: expands template BuildInfo.gen.def with build configuration parameters
 :: ---------------------------------------------------------------------------
 :genBuildInfo
-:: TODO No sed on DOS/Windows.  Generate entire file?  Include JREPL.bat?  Powershell or Sed for Windows as a dependency?
+:: TODO No sed on DOS/Windows, need a workaround
 SETLOCAL
 set osname=%OS%
 set hardware=%Processor_Architecture%
