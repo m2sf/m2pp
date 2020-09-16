@@ -122,11 +122,11 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 
 :compilerMenu
-echo.
-echo Compiler Selection
 set PS3=Modula-2 Compiler
 
 if %dialectID% == iso (
+	echo.
+	echo Compiler Selection
 	call :isoCompilerMenu
 ) else (
 
