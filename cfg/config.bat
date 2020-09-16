@@ -170,9 +170,8 @@ if "%compiler%"=="" (
 )
 
 if %compiler% LEQ 2  (
-call set compilerID=%%iso[%compiler%]%%
+	call set compilerID=%%iso[%compiler%]%%
 ) else (
-
 	if %compiler% == 3 (
 		EXIT 0
 		) else (
@@ -191,13 +190,11 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 :iolibMenu
 set PS3=I/O library
-
 if %dialectID%==iso ( 
 	echo.
 	echo I/O Library Selection
 	call :isoIolibMenu 
 ) else (
-
 	if %dialectID%==pim ( 
 		set iolibID=pim
 	) else (
@@ -209,6 +206,7 @@ if %dialectID%==iso (
 	
 		echo.
 		echo internal error: invalid dialectID
+		)
 	)
 )
 EXIT /B 0
