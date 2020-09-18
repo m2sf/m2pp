@@ -298,33 +298,34 @@ EXIT /B 0
 echo.
 set /p "srcpath=Path of M2PP src directory: "
 set char1=%srcpath:~0,1%
-set lastchar=%srcpath:~-1%
-echo %char1%
-echo %lastchar%
-pause
+set char2=%srcpath:~1,1%
 
-if NOT "%char1%" == "~" (
-	call set srcpath=%systemdrive%%homepath%%char1%
+set fullpath=false
+:: First character \ is current disk absolute path
+if "%char1%" == "\" (
+	set fullpath=true
 )
-echo %srcpath%
-pause
+:: Second character : is specified disk absolute path
+if "%char2%" == ":" (
+	set fullpath=true
+)
+
+if NOT "%fullpath%" == "true" (
+	call set srcpath=%systemdrive%%homepath%\%srcpath%
+)
+ 
 ::changed / to \ because windows uses \ in directories
-if NOT "%lastchar%" == "\" ( 
-	echo last
-	pause
+set lastchar=%srcpath:~-1%
+if NOT "%lastchar%" == "\" ( 	
 	set "srcpath=%srcpath%\"
 )
-echo %srcpath%
-pause
+
 if NOT EXIST %srcpath% (
 	echo directory %srcpath% does not exist
 	pause
 	exit
 )
-
-echo %srcpath%
-pause
-set /p 
+ 
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
