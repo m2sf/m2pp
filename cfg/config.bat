@@ -157,11 +157,14 @@ EXIT /B 0
 :isoCompilerMenu
 set iso[1]=adw
 set iso[2]=xds
-::set iso[3]=clarion
+set iso[3]=clarion
+set isod[1]=ADW Modula-2
+set isod[2]=XDS Modula-2
+set isod[3]=Clarion Modula-2
 
-echo 1) ADW Modula-2
-echo 2) XDS Modula-2
-::echo 3) Clarion Modula-2
+echo 1) %isod[1]%
+echo 2) %isod[2]%
+::echo 3) %isod[3]%
 echo 3) Quit
 
 set /p compilerinput="Modula-2 compiler: "
@@ -173,6 +176,7 @@ if "%compilerinput%"=="" (
 
 if %compilerinput% LEQ 2  (
 	call set compilerID=%%iso[%compilerinput%]%%
+	call set compiler=%%isod[%compilerinput%]%%
 ) else (
 	if %compilerinput% == 3 (
 		EXIT 0
@@ -183,8 +187,6 @@ if %compilerinput% LEQ 2  (
 		)
 	)
 )
-if %compilerinput%==1 set compiler=ADW Modula-2
-if %compilerinput%==2 set compiler=XDS Modula-2
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
