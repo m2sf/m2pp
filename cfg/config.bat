@@ -82,24 +82,26 @@ EXIT /B 0
 
 :dialectMenu
 echo.
-echo Dialect Section
-
+echo Dialect Selection
 echo 1) ISO Modula-2
 echo 2) PIM Modula-2
 echo 3) GPM Modula-2
 echo 4) Quit Modula-2 dialect:  
-set /p dialect=
+set /p dialect="Modula-2 dialect: "
 
 if %dialect% == 1 (
 	set dialectID=iso
+	set dialect=ISO Modula-2
 ) else (
 
 	if %dialect% == 2 (
 		set dialectID=pim
+		set dialect=PIM Modula-2
 	) else (
 
 		if %dialect% == 3 (
 			set dialectID=gpm
+			set dialect=GPM Modula-2
 		) else (
 	
 			if %dialect% == 4 (
@@ -122,20 +124,20 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 
 :compilerMenu
-set PS3=Modula-2 Compiler
 
 if %dialectID% == iso (
 	echo.
 	echo Compiler Selection
 	call :isoCompilerMenu
 ) else (
-
 	if %dialectID% == pim (
-		call set compilerID=%%pim[%compiler%]%%
+		set compilerID=pim
+		set compiler=Generic PIM Compiler
 	) else (
 
 		if %dialectID% == gpm (
-			call set compilerID=%%gpm[%compiler%]%%
+			set compilerID=gpm
+			set compiler=GPM
 		) else (
 	
 			echo.
@@ -162,17 +164,17 @@ echo 2) XDS Modula-2
 ::echo 3) Clarion Modula-2
 echo 3) Quit
 
-set /p compiler=Select Compiler: 
+set /p compilerinput="Modula-2 compiler: "
 
-if "%compiler%"=="" (
+if "%compilerinput%"=="" (
 	echo Invalid Input.
 	call :isoCompilerMenu
 )
 
-if %compiler% LEQ 2  (
-	call set compilerID=%%iso[%compiler%]%%
+if %compilerinput% LEQ 2  (
+	call set compilerID=%%iso[%compilerinput%]%%
 ) else (
-	if %compiler% == 3 (
+	if %compilerinput% == 3 (
 		EXIT 0
 		) else (
 		
@@ -181,6 +183,8 @@ if %compiler% LEQ 2  (
 		)
 	)
 )
+if %compilerinput%==1 set compiler=ADW Modula-2
+if %compilerinput%==2 set compiler=XDS Modula-2
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
@@ -189,7 +193,6 @@ EXIT /B 0
 :: sets global variables iolib and iolibID
 :: ---------------------------------------------------------------------------
 :iolibMenu
-set PS3=I/O library
 if %dialectID%==iso ( 
 	echo.
 	echo I/O Library Selection
@@ -197,11 +200,12 @@ if %dialectID%==iso (
 ) else (
 	if %dialectID%==pim ( 
 		set iolibID=pim
+		set iolib=PIM
 	) else (
 
 		if %dialectID%==gpm ( 
-			set iolib=vendor library
-			set iolibID=gpm 
+			set iolib=Vendor I/O library
+			set iolibID=gpm
 		) else (
 	
 		echo.
@@ -218,26 +222,26 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 :isoIolibMenu
 
-setlocal enabledelayedexpansion
-
 echo 1) ISO I/O library
 echo 2) Windows I/O library
 echo 3) Quit
-set /p "iolib=Select: "
+set /p iolibinput="I/O library: "
 
-if "!iolib!" == "1" (
+if "%iolibinput%" == "1" (
 	set iolibID=iso
+	set iolib=ISO I/O library
 )
  
-if "!iolib!" == "2" (
+if "%iolibinput%" == "2" (
 	set iolibID=windows
+	set iolib=Windows I/O library
 ) 
 	
-if "!iolib!" == "3" (
+if "%iolibinput%" == "3" (
 	exit
 ) 
 	
-if NOT "!iolib!" LEQ "3" (
+if NOT "%iolibinput%" LEQ "3" (
 	echo Invalid Input.
 	call :isoIolibMenu
 )
@@ -252,7 +256,6 @@ EXIT /B 0
 :memModelMenu
 echo.
 echo Bitwidths of CARDINAL/LONGINT
-
 echo 1) 16/16 bits
 echo 2) 16/32 bits
 echo 3) 32/32 bits
@@ -260,16 +263,16 @@ echo 4) 32/64 bits
 echo 5) 64/64 bits
 echo 6) Quit
 
-set /p "mm=Memory model: "
+set /p mminput="Memory Model: "
 
-if "%mm%"=="" (
+if "%mminput%"=="" (
 	echo Invalid Input.
 	call :memModelMenu
 )
 
-if %mm% LEQ 5  (
+if %mminput% LEQ 5  (
 
-	if %mm%==2 (
+	if %mminput%==2 (
 		set mmID=longint
 	) else (
 	
@@ -277,7 +280,7 @@ if %mm% LEQ 5  (
 	)
 ) else (
 
-	if %mm% == 6 (
+	if %mminput% == 6 (
 		EXIT 0
 		) else (
 		
@@ -286,6 +289,11 @@ if %mm% LEQ 5  (
 		)
 	)
 )
+if %mminput% == 1 set mm="16/16 bits"
+if %mminput% == 2 set mm="16/32 bits"
+if %mminput% == 3 set mm="32/32 bits"
+if %mminput% == 4 set mm="32/64 bits"
+if %mminput% == 5 set mm="64/64 bits"
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
@@ -336,14 +344,14 @@ EXIT /B 0
 :getConfirmation
 echo.
 echo Selected build configuration
-echo Dialect       : %dialectID%
-echo Compiler      : %compilerID%
-echo I/O library   : %iolibID%
-echo Memory model  : %mmID%
+echo Dialect       : %dialect% (%dialectID%)
+echo Compiler      : %compiler% (%compilerID%)
+echo I/O library   : %iolib% (%iolibID%)
+echo Memory model  : %mm%(%mmID%)
 echo M2PP src path : %srcpath%
 echo.
 
-set /p "confirm=Are these details correct? (y/n) : "
+set /p confirm="Are these details correct? (y/n) : "
 
 if %confirm%==N ( set confirm=n )
 if %confirm%==Y ( set confirm=y )
