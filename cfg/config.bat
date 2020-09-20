@@ -467,7 +467,7 @@ echo      to %destinationFile%
 if NOT "%test%" == "true" (
 	copy %sourceFile% %destinationFile%
 )
-echo ""
+echo.
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
@@ -494,13 +494,13 @@ call :remove
 :: module String
 set rmFile="%srcpath%String.def"
 call :remove
-set rmFile="%srcpath%imp/String.mod"
+set rmFile="%srcpath%imp\String.mod"
 call :remove
   
 :: module Terminal
 set rmFile="%srcpath%Terminal.def"
 call :remove
-set rmFile="%srcpath%imp/Terminal.mod"
+set rmFile="%srcpath%imp\Terminal.mod"
 call :remove
   
 :: module BasicFileIO
@@ -526,11 +526,11 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 :remove
 if EXIST %rmFile% (
-    echo "removing %rmFile"
+    echo removing %rmFile%
 	if NOT "%test%" == "true" (
 		del %rmFile%
 	)
-    echo ""
+    echo.
 )
 EXIT /B 0
 
