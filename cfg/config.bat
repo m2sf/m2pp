@@ -540,18 +540,41 @@ EXIT /B 0
 :: expands template BuildInfo.gen.def with build configuration parameters
 :: ---------------------------------------------------------------------------
 :genBuildInfo
-:: TODO No sed on DOS/Windows, need a workaround
-SETLOCAL
+copy "%srcpath%templates\BuildInfo.gen.def" "%srcpath%BuildInfo.def" > nul
+
 set osname=%OS%
 set hardware=%Processor_Architecture%
 set platform="%osname% (%hardware%)"
-set sub1="s|##platform##|\"%platform%\"|;"
-set sub2="s|##dialect##|\"%dialect%\"|;"
-set sub3="s|##compiler##|\"%compiler%\"|;"
-set sub4="s|##iolib##|\"%iolib%\"|;"
-set sub5="s|##mm##|\"%mm%\"|;"
-::  sed -e "%sub1%%sub2%%sub3%%sub4%%sub5%" "%srcpath%templates/BuildInfo.gen.def" > "%srcpath%BuildInfo.def"
-ENDLOCAL
+
+set textfile="%srcpath%BuildInfo.def"
+
+set search="##platform##"
+set replace=%platform%
+call :sed
+set search="##dialect##"
+set replace=%dialect%
+call :sed
+set search="##compiler##"
+set replace=%compiler%
+call :sed
+set search="##iolib##"
+set replace=%iolib%
+call :sed
+set search="##mm##"
+set replace=%mm%
+call :sed
+
+EXIT /B 0
+
+:: ---------------------------------------------------------------------------
+:: do simple text replacements
+:: ---------------------------------------------------------------------------
+:: fill out BuildInfo template with build configuration parameters
+:: ---------------------------------------------------------------------------
+:sed
+:: TODO replace %search% with %replace% in %textfile%
+echo %search% - %replace% in %textfile%
+
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
