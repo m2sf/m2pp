@@ -545,35 +545,42 @@ copy "%srcpath%templates\BuildInfo.gen.def" "%srcpath%BuildInfo.def" > nul
 set osname=%OS%
 set hardware=%Processor_Architecture%
 set platform="%osname% (%hardware%)"
-
 set textfile="%srcpath%BuildInfo.def"
 
-set search="##platform##"
-set replace=%platform%
-call :sed
-set search="##dialect##"
-set replace=%dialect%
-call :sed
-set search="##compiler##"
-set replace=%compiler%
-call :sed
-set search="##iolib##"
-set replace=%iolib%
-call :sed
-set search="##mm##"
-set replace=%mm%
-call :sed
+for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+    set "contents=%%i"
+	setlocal enabledelayedexpansion
+	>>"%textFile%" echo(!contents:##platform##=%platform%!	    
+    endlocal
+)
 
-EXIT /B 0
+for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+    set "contents=%%i"
+	setlocal enabledelayedexpansion
+	>>"%textFile%" echo(!contents:##dialect##=%dialect%!	    
+    endlocal
+)
 
-:: ---------------------------------------------------------------------------
-:: do simple text replacements
-:: ---------------------------------------------------------------------------
-:: fill out BuildInfo template with build configuration parameters
-:: ---------------------------------------------------------------------------
-:sed
-:: TODO replace %search% with %replace% in %textfile%
-echo %search% - %replace% in %textfile%
+for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+    set "contents=%%i"
+	setlocal enabledelayedexpansion
+	>>"%textFile%" echo(!contents:##compiler##=%compiler%!	    
+    endlocal
+)
+
+for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+    set "contents=%%i"
+	setlocal enabledelayedexpansion
+	>>"%textFile%" echo(!contents:##iolib##=%iolib%!	    
+    endlocal
+)
+
+for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+    set "contents=%%i"
+	setlocal enabledelayedexpansion
+	>>"%textFile%" echo(!contents:##mm##=%mm%!	    
+    endlocal
+)
 
 EXIT /B 0
 
