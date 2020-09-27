@@ -547,36 +547,41 @@ set hardware=%Processor_Architecture%
 set platform="%osname% (%hardware%)"
 set textfile="%srcpath%BuildInfo.def"
 
-for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+for /f "delims=: tokens=1-2" %%h in ('findstr /n "^" "%textFile%" ^& break ^> "%textFile%" ') do (
     set "contents=%%i"
+	if "%%i" == "" set "contents= "
 	setlocal enabledelayedexpansion
 	>>"%textFile%" echo(!contents:##platform##=%platform%!	    
     endlocal
 )
 
-for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+for /f "delims=: tokens=1-2" %%h in ('findstr /n "^" "%textFile%" ^& break ^> "%textFile%" ') do (
     set "contents=%%i"
+	if "%%i" == "" set "contents= "
 	setlocal enabledelayedexpansion
 	>>"%textFile%" echo(!contents:##dialect##=%dialect%!	    
     endlocal
 )
 
-for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+for /f "delims=: tokens=1-2" %%h in ('findstr /n "^" "%textFile%" ^& break ^> "%textFile%" ') do (
     set "contents=%%i"
+	if "%%i" == "" set "contents= "
 	setlocal enabledelayedexpansion
 	>>"%textFile%" echo(!contents:##compiler##=%compiler%!	    
     endlocal
 )
 
-for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+for /f "delims=: tokens=1-2" %%h in ('findstr /n "^" "%textFile%" ^& break ^> "%textFile%" ') do (
     set "contents=%%i"
+	if "%%i" == "" set "contents= "
 	setlocal enabledelayedexpansion
 	>>"%textFile%" echo(!contents:##iolib##=%iolib%!	    
     endlocal
 )
 
-for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+for /f "delims=: tokens=1-2" %%h in ('findstr /n "^" "%textFile%" ^& break ^> "%textFile%" ') do (
     set "contents=%%i"
+	if "%%i" == "" set "contents= "
 	setlocal enabledelayedexpansion
 	>>"%textFile%" echo(!contents:##mm##=%mm%!	    
     endlocal
