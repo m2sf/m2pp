@@ -435,24 +435,20 @@ if "%iolibID"=="pim" (
 )
   
 :: foreign interface modules stdio and unistd
-	set rmFile="%srcpath%stdio.def"
-	call :remove
-	set rmFile="%srcpath%stdio0.def"
-	call :remove
-	set rmFile="%srcpath%unistd.def"
-	call :remove
-	set rmFile="%srcpath%unistd0.def"
-	call :remove
-	set rmFile="%srcpath%imp/stdio.mod"
-	call :remove
-	set rmFile="%srcpath%imp/unistd.mod"
-	call :remove
+set rmFile="%srcpath%stdio.def"
+call :remove
+set rmFile="%srcpath%stdio0.def"
+call :remove
+set rmFile="%srcpath%unistd.def"
+call :remove
+set rmFile="%srcpath%unistd0.def"
+call :remove
+set rmFile="%srcpath%imp/stdio.mod"
+call :remove
+set rmFile="%srcpath%imp/unistd.mod"
+call :remove
 
-	set sourceFile=
-	set destinationFile=
-	set rmFile=
-
-	echo "Build configuration completed."
+echo "Build configuration completed."
 EXIT /B 0
 
 :: ---------------------------------------------------------------------------
