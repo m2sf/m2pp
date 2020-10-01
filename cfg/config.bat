@@ -35,38 +35,27 @@ EXIT /B 0
 :: ---------------------------------------------------------------------------
 
 :checkArgs
+set clean=false
+set test=false
 if "%1" == "clean" (
 	set clean=true
 	
-	if "%2" == -t set or_2 = T
-	if "%2" == --test set or_2 = T
+	if "%2" == "-t" set test=true
+	if "%2" == "--test" set test=true
 	
-	if "%or_2%" == T (
-		set test=true
-	) else (
-		set test=false
-	)
 ) else (	
-	if "%1" == -t set or_1 = T
-	if "%1" == --test set or_1 = T
+	if "%1" == "-t" set test=true
+	if "%1" == "--test" set test=true
 	
-	if "%or_1%" == T (
-		set clean=false
-		set test=true
-		
-		if NOT $~2 == "" (
-			echo.
-			echo unknown argument $~2 ignored.
-		) 
-	) else (
-		set clean=false
-		set test=false
-	)
+	if NOT "%2" == "" (
+		echo.
+		echo unknown argument %2 ignored.
+	) 	
 )		
 
-if %test% == true (
+if "%test%" == "true" (
 	echo.
-	if %clean% == true (
+	if "%clean%" == "true" (
 		echo running in test mode, no files will be deleted.
 	) else (
 		echo running in test mode, no files will be copied or deleted.
@@ -522,6 +511,9 @@ EXIT /B 0
 :: expands template BuildInfo.gen.def with build configuration parameters
 :: ---------------------------------------------------------------------------
 :genBuildInfo
+
+if "%test%"=="true" EXIT /B 0
+
 copy "%srcpath%templates\BuildInfo.gen.def" "%srcpath%BuildInfo.def" > nul
 
 set osname=%OS%
