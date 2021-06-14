@@ -18,7 +18,7 @@ M2PP is itself portable across dialects (PIM3, PIM4, ISO) and compilers (see bel
 * [Ulm's Modula-2 System](http://www.mathematik.uni-ulm.de/modula/)
 * [XDS Modula-2](https://www.excelsior-usa.com/xds.html)
 
-Further, any Modula-2 compiler that supports PIM3/4 and includes modules `FileSystem` and `Terminal` should be able to compile M2PP without problems, for example:
+Further, any Modula-2 compiler that supports PIM3/4 and includes modules `FileSystem`, `Storage` and `Terminal` should be able to compile M2PP without problems, for example:
 * FST Modula-2
 * Logitech Modula-2
 * M2F Modula-2
