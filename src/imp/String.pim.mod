@@ -399,6 +399,7 @@ END matchesArraySlice;
 PROCEDURE comparison ( left, right : String ) : Comparison;
 VAR
   leftLen, rightLen, strIndex, maxIndex : CARDINAL;
+  leftChar, rightChar : CHAR;
 
 BEGIN
   (* strings are identical if equal *)
@@ -417,12 +418,14 @@ BEGIN
 
   strIndex := 0;
   (* compare characters up to maxIndex *)
-  WHILE (strIndex <= maxIndex) AND (left^.intern^[strIndex] = right^.intern^[strIndex]) DO
+  WHILE strIndex <= maxIndex DO
+    leftChar := left^.intern^[strIndex];
+    rightChar := right^.intern^[strIndex];
     (* continue while characters match *)
-    IF left^.intern^[strIndex] = right^.intern^[strIndex] THEN
+    IF leftChar = rightChar THEN
       strIndex := strIndex + 1
     (* first mismatch determines result *)
-    ELSIF left^.intern^[strIndex] > right^.intern^[strIndex] THEN
+    ELSIF leftChar > rightChar THEN
       RETURN Greater
     ELSE
       RETURN Less
