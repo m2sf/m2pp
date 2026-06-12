@@ -397,9 +397,37 @@ END matchesArraySlice;
  * ------------------------------------------------------------------------ *)
 
 PROCEDURE comparison ( left, right : String ) : Comparison;
+VAR
+  leftLen, rightLen, strIndex, maxIndex : CARDINAL;
 
 BEGIN
-  (* TO DO *)
+  (* strings are identical if equal *)
+  IF left = right THEN
+    RETURN Equal
+  END; (* IF *)
+
+  (* shorter string determines maximum index *)
+  leftLen := length(left);
+  rightLen := length(right);
+  If leftLen <= rightLen THEN
+    maxIndex := leftLen - 1
+  ELSE
+    maxIndex := rightLen - 1
+  END; (* IF *)
+
+  strIndex := 0;
+  (* compare characters up to maxIndex *)
+  WHILE (strIndex <= maxIndex) AND (left^.intern^[strIndex] = right^.intern^[strIndex]) DO
+    (* continue while characters match *)
+    IF left^.intern^[strIndex] = right^.intern^[strIndex] THEN
+      strIndex := strIndex + 1
+    (* first mismatch determines result *)
+    ELSIF left^.intern^[strIndex] > right^.intern^[strIndex] THEN
+      RETURN Greater
+    ELSE
+      RETURN Less
+    END (* IF *)    
+  END (* WHILE *)
 END comparison;
 
 
