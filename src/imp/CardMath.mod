@@ -240,7 +240,7 @@ BEGIN
     RETURN 0
   END; (* IF *)
   
-  RETURN n DIV (shiftFactor + 1)
+  RETURN n DIV powerOf2[shiftFactor]
 END shr;
 
 
